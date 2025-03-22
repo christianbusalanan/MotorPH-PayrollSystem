@@ -49,7 +49,8 @@ public class EmployeeDB extends javax.swing.JFrame {
     lblBirthday.setText(loggedInEmployee.getBirthDay() != null ? loggedInEmployee.getBirthDay() : "N/A");
     lblAddress.setText(loggedInEmployee.getAddress());
     lblPhone.setText(loggedInEmployee.getPhoneNumber());
-    
+    lblEmployeeID1.setText(loggedInEmployee.getEmployeeId());
+    lblEmployeeID2.setText(loggedInEmployee.getEmployeeId());
     lblStatus.setText(loggedInEmployee.getStatus());
     lblPosition.setText(loggedInEmployee.getPosition());
     lblDepartment.setText(loggedInEmployee.getDepartment());
