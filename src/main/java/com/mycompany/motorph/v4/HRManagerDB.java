@@ -97,7 +97,58 @@ public class HRManagerDB extends javax.swing.JFrame {
     txtPassword.setText("");
     txtRole.setText("");
 }
+    
+    private String getEmployeeName(String empId) {
+    String sql = "SELECT first_name, last_name FROM employee WHERE employee_id = ?";
+    try (Connection conn = Database.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        
+        pstmt.setString(1, empId);
+        ResultSet rs = pstmt.executeQuery();
+        
+        if (rs.next()) {
+            return rs.getString("first_name") + " " + rs.getString("last_name");
+        }
+    } catch (SQLException e) {
+        System.out.println("Error retrieving employee name: " + e.getMessage());
+    }
+    return null; 
+}
 
+
+private boolean deleteEmployee(String empId) {
+    String sqlDeleteUser = "DELETE FROM user WHERE id = ?";
+    String sqlDeleteEmployee = "DELETE FROM employee WHERE employee_id = ?";
+    
+    try (Connection conn = Database.getConnection()) {
+        conn.setAutoCommit(false); // Start transaction
+        
+        try (PreparedStatement pstmtUser = conn.prepareStatement(sqlDeleteUser);
+             PreparedStatement pstmtEmployee = conn.prepareStatement(sqlDeleteEmployee)) {
+            
+            // Step 1: Delete from user table
+            pstmtUser.setString(1, empId);
+            int userRows = pstmtUser.executeUpdate();
+            
+            // Step 2: Delete from employee table
+            pstmtEmployee.setString(1, empId);
+            int employeeRows = pstmtEmployee.executeUpdate();
+            
+            // Step 3: Check if both deletions were successful
+            if (userRows > 0 && employeeRows > 0) {
+                conn.commit(); // Commit transaction if both succeed
+                return true;
+            } else {
+                conn.rollback(); // Rollback if any deletion fails
+                System.out.println("Transaction rolled back. Deletion failed.");
+                return false;
+            }
+        }
+    } catch (SQLException e) {
+        System.out.println("Error during deletion: " + e.getMessage());
+    }
+    return false;
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -379,7 +430,7 @@ public class HRManagerDB extends javax.swing.JFrame {
                 btndeleteActionPerformed(evt);
             }
         });
-        employee_details.add(btndelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 200, 110, 30));
+        employee_details.add(btndelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 150, 140, 40));
 
         btncreate.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         btncreate.setText("Create");
@@ -388,7 +439,7 @@ public class HRManagerDB extends javax.swing.JFrame {
                 btncreateActionPerformed(evt);
             }
         });
-        employee_details.add(btncreate, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 100, 110, 30));
+        employee_details.add(btncreate, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 30, 140, 40));
 
         btnupdate.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         btnupdate.setText("Update");
@@ -397,7 +448,7 @@ public class HRManagerDB extends javax.swing.JFrame {
                 btnupdateActionPerformed(evt);
             }
         });
-        employee_details.add(btnupdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 150, 110, 30));
+        employee_details.add(btnupdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 90, 140, 40));
 
         label15.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         label15.setForeground(new java.awt.Color(102, 0, 102));
@@ -690,24 +741,51 @@ public class HRManagerDB extends javax.swing.JFrame {
 
     private void btndeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndeleteActionPerformed
         // TODO add your handling code here:
-    String employee_id = txtEmpID.getText().trim();
+     // Step 1: Prompt for Employee ID
+    String empId = JOptionPane.showInputDialog(this, 
+        "Enter the Employee ID to delete:", 
+        "Delete Employee", 
+        JOptionPane.QUESTION_MESSAGE);
 
-    if (employee_id.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Please enter an Employee ID to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+    // Step 2: Check if input is empty or canceled
+    if (empId == null || empId.trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, 
+            "No Employee ID entered. Deletion canceled.", 
+            "Warning", 
+            JOptionPane.WARNING_MESSAGE);
         return;
     }
 
-    int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this employee?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
-    
-    if (confirm == JOptionPane.YES_OPTION) {
-        boolean success = Database.deleteEmployee(employee_id);
+    // Step 3: Retrieve Employee Name for Confirmation
+    String empName = getEmployeeName(empId);
+    if (empName == null) {
+        JOptionPane.showMessageDialog(this, 
+            "Employee with ID " + empId + " not found.", 
+            "Error", 
+            JOptionPane.ERROR_MESSAGE);
+        return;
+    }
 
-        if (success) {
-            JOptionPane.showMessageDialog(this, "Employee deleted successfully!");
-            loadEmployeeData(); // Refresh table
-            clearTextFields();
+    // Step 4: Confirm Deletion
+    int confirm = JOptionPane.showConfirmDialog(this, 
+        "Are you sure you want to delete '" + empName + "'?", 
+        "Confirm Deletion", 
+        JOptionPane.YES_NO_OPTION, 
+        JOptionPane.WARNING_MESSAGE);
+
+    // Step 5: Proceed with Deletion if Confirmed
+    if (confirm == JOptionPane.YES_OPTION) {
+        if (deleteEmployee(empId)) {
+            JOptionPane.showMessageDialog(this, 
+                "Employee '" + empName + "' has been successfully deleted.", 
+                "Success", 
+                JOptionPane.INFORMATION_MESSAGE);
+            loadEmployeeData(); // Refresh employee table
         } else {
-            JOptionPane.showMessageDialog(this, "Error deleting employee.", "Database Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, 
+                "Failed to delete '" + empName + "'. Please try again.", 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
     }//GEN-LAST:event_btndeleteActionPerformed

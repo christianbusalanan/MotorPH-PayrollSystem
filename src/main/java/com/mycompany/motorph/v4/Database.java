@@ -233,6 +233,26 @@ public static ResultSet getLeave() {
 }
 
 
+public static ResultSet getPayrollByEmployeeId(String employeeId) {
+    String sql = "SELECT date, hourly_rate, working_hours, overtime_hours, deductions, net_salary " +
+                 "FROM payroll WHERE employee_id = ?";
+    try {
+        Connection conn = getConnection();
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, employeeId);
+        return pstmt.executeQuery();
+    } catch (SQLException e) {
+        System.out.println("Error retrieving payroll data: " + e.getMessage());
+        return null;
+    }
+}
+
+
+
+
+
+
+
 
 public static boolean requestLeave(String id, String employeeId, String leaveType, String startDate, String endDate, String status) {
     String sql = "INSERT INTO leave_request (id, employee_id, leave_type, start_date, end_date, status) VALUES (?, ?, ?, ?, ?, ?)";
