@@ -90,6 +90,36 @@ public class EmployeeDB extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Error loading leave requests: " + e.getMessage());
     }
 }
+    
+    
+    private void loadPayrollData() {
+    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+    model.setRowCount(0);
+
+    if (loggedInEmployee == null) {
+        JOptionPane.showMessageDialog(this, "Error: Employee not found.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    String employeeId = loggedInEmployee.getEmployeeId();
+    ResultSet rs = Database.getPayrollByEmployeeId(employeeId);
+
+    try {
+        while (rs != null && rs.next()) {
+            model.addRow(new Object[]{
+                rs.getString("date"),
+                rs.getDouble("hourly_rate"),
+                rs.getInt("working_hours"),
+                rs.getInt("overtime_hours"),
+                rs.getDouble("deductions"),
+                rs.getDouble("net_salary")
+            });
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error loading payroll data: " + e.getMessage());
+    }
+}
+
 
 
     /**
@@ -105,6 +135,7 @@ public class EmployeeDB extends javax.swing.JFrame {
         btnEmpDetails = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         btnRequestLeave = new javax.swing.JButton();
+        btnPayroll = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         parentPanel = new javax.swing.JPanel();
         EmpDataPanel = new javax.swing.JPanel();
@@ -146,6 +177,11 @@ public class EmployeeDB extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblLeave = new javax.swing.JTable();
         btnRequestLeaveProcess = new javax.swing.JButton();
+        payrollPanel = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jLabel28 = new javax.swing.JLabel();
+        lblEmployeeID2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Employee Dashboard");
@@ -179,6 +215,15 @@ public class EmployeeDB extends javax.swing.JFrame {
             }
         });
         jPanel1.add(btnRequestLeave, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 180, 40));
+
+        btnPayroll.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        btnPayroll.setText("Payroll");
+        btnPayroll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPayrollActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnPayroll, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 290, 180, 40));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/background.jpg"))); // NOI18N
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 220, 500));
@@ -399,6 +444,43 @@ public class EmployeeDB extends javax.swing.JFrame {
 
         parentPanel.add(requestLeavePanel, "card3");
 
+        payrollPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "Date", "Rate", "Working Hours", "Overtime Hours", "Deductions", "Net Salary"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(jTable1);
+
+        payrollPanel.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 720, 430));
+
+        jLabel28.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        jLabel28.setForeground(new java.awt.Color(153, 0, 153));
+        jLabel28.setText("Employee ID:");
+        payrollPanel.add(jLabel28, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 90, 20));
+
+        lblEmployeeID2.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        lblEmployeeID2.setForeground(new java.awt.Color(0, 0, 0));
+        lblEmployeeID2.setText("employee_id");
+        payrollPanel.add(lblEmployeeID2, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 10, -1, 20));
+
+        parentPanel.add(payrollPanel, "card4");
+
         getContentPane().add(parentPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 740, 500));
 
         pack();
@@ -458,6 +540,15 @@ public class EmployeeDB extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnRequestLeaveProcessActionPerformed
 
+    private void btnPayrollActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPayrollActionPerformed
+        // TODO add your handling code here:
+        parentPanel.removeAll();
+        parentPanel.add(payrollPanel);
+        parentPanel.repaint();
+        parentPanel.revalidate();
+        loadPayrollData(); 
+    }//GEN-LAST:event_btnPayrollActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -497,6 +588,7 @@ public class EmployeeDB extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel EmpDataPanel;
     private javax.swing.JButton btnEmpDetails;
+    private javax.swing.JButton btnPayroll;
     private javax.swing.JButton btnRequestLeave;
     private javax.swing.JButton btnRequestLeaveProcess;
     private javax.swing.JComboBox<String> combobox;
@@ -512,6 +604,7 @@ public class EmployeeDB extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -523,12 +616,15 @@ public class EmployeeDB extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lblAddress;
     private javax.swing.JLabel lblBasicSalary;
     private javax.swing.JLabel lblBirthday;
     private javax.swing.JLabel lblDepartment;
     private javax.swing.JLabel lblEmployeeID;
     private javax.swing.JLabel lblEmployeeID1;
+    private javax.swing.JLabel lblEmployeeID2;
     private javax.swing.JTextField lblEndDate;
     private javax.swing.JLabel lblFullName;
     private javax.swing.JLabel lblPhone;
@@ -538,6 +634,7 @@ public class EmployeeDB extends javax.swing.JFrame {
     private javax.swing.JLabel lblStatus;
     private javax.swing.JLabel lblSupervisor;
     private javax.swing.JPanel parentPanel;
+    private javax.swing.JPanel payrollPanel;
     private javax.swing.JPanel requestLeavePanel;
     private javax.swing.JTable tblLeave;
     // End of variables declaration//GEN-END:variables
