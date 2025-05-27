@@ -95,7 +95,6 @@ public class HRManagerDB extends javax.swing.JFrame {
     txtsalary.setText("");
     txtUsername.setText("");
     txtPassword.setText("");
-    txtRole.setText("");
 }
     
     private String getEmployeeName(String empId) {
@@ -169,6 +168,14 @@ private boolean deleteEmployee(String empId) {
         parentPanel = new javax.swing.JPanel();
         empData = new javax.swing.JScrollPane();
         employee_data = new javax.swing.JTable();
+        leavePanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tableLeave = new javax.swing.JTable();
+        jLabel2 = new javax.swing.JLabel();
+        comboboxStatus = new javax.swing.JComboBox<>();
+        jLabel3 = new javax.swing.JLabel();
+        txtID = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
         employee_details = new javax.swing.JPanel();
         label2 = new java.awt.Label();
         label3 = new java.awt.Label();
@@ -200,15 +207,7 @@ private boolean deleteEmployee(String empId) {
         label16 = new java.awt.Label();
         txtPassword = new javax.swing.JTextField();
         label17 = new java.awt.Label();
-        txtRole = new javax.swing.JTextField();
-        leavePanel = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tableLeave = new javax.swing.JTable();
-        jLabel2 = new javax.swing.JLabel();
-        comboboxStatus = new javax.swing.JComboBox<>();
-        jLabel3 = new javax.swing.JLabel();
-        txtID = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        roleCombobx = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("HR MANAGER DASHBOARD");
@@ -224,7 +223,7 @@ private boolean deleteEmployee(String empId) {
                 logoutActionPerformed(evt);
             }
         });
-        jPanel1.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 450, 180, 40));
+        jPanel1.add(logout, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 450, 180, 40));
 
         viewEmp.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         viewEmp.setText("View Employees");
@@ -233,7 +232,7 @@ private boolean deleteEmployee(String empId) {
                 viewEmpActionPerformed(evt);
             }
         });
-        jPanel1.add(viewEmp, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 180, 40));
+        jPanel1.add(viewEmp, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, 180, 40));
 
         empDetails.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         empDetails.setText("Employee Details");
@@ -242,7 +241,7 @@ private boolean deleteEmployee(String empId) {
                 empDetailsActionPerformed(evt);
             }
         });
-        jPanel1.add(empDetails, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 180, 40));
+        jPanel1.add(empDetails, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 180, 40));
 
         btnLeave.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         btnLeave.setText("Leave Requests");
@@ -251,12 +250,12 @@ private boolean deleteEmployee(String empId) {
                 btnLeaveActionPerformed(evt);
             }
         });
-        jPanel1.add(btnLeave, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 290, 180, 40));
+        jPanel1.add(btnLeave, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, 180, 40));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/background.jpg"))); // NOI18N
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 220, 500));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 220, 500));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 500));
 
         parentPanel.setBackground(new java.awt.Color(255, 255, 255));
         parentPanel.setLayout(new java.awt.CardLayout());
@@ -270,230 +269,6 @@ private boolean deleteEmployee(String empId) {
         empData.setViewportView(employee_data);
 
         parentPanel.add(empData, "card2");
-
-        employee_details.setBackground(new java.awt.Color(255, 255, 255));
-        employee_details.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        label2.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        label2.setForeground(new java.awt.Color(102, 0, 102));
-        label2.setText("First Name");
-        employee_details.add(label2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, -1));
-
-        label3.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        label3.setForeground(new java.awt.Color(102, 0, 102));
-        label3.setText("Employee ID");
-        employee_details.add(label3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, -1));
-
-        label4.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        label4.setForeground(new java.awt.Color(102, 0, 102));
-        label4.setText("Last Name");
-        employee_details.add(label4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, -1, -1));
-
-        label5.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        label5.setForeground(new java.awt.Color(102, 0, 102));
-        label5.setText("Phone");
-        employee_details.add(label5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, -1, -1));
-
-        label6.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        label6.setForeground(new java.awt.Color(102, 0, 102));
-        label6.setText("Address");
-        employee_details.add(label6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, -1, -1));
-
-        label7.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        label7.setForeground(new java.awt.Color(102, 0, 102));
-        label7.setText("Birthday");
-        employee_details.add(label7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, -1, -1));
-
-        label8.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        label8.setForeground(new java.awt.Color(102, 0, 102));
-        label8.setText("Department");
-        employee_details.add(label8, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 330, -1, -1));
-
-        label9.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        label9.setForeground(new java.awt.Color(102, 0, 102));
-        label9.setText("Position");
-        employee_details.add(label9, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, -1, -1));
-
-        label10.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        label10.setForeground(new java.awt.Color(102, 0, 102));
-        label10.setText("Status");
-        employee_details.add(label10, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, -1, -1));
-
-        label12.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        label12.setForeground(new java.awt.Color(102, 0, 102));
-        label12.setText("Basic Salary");
-        employee_details.add(label12, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 240, -1, -1));
-
-        label13.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        label13.setForeground(new java.awt.Color(102, 0, 102));
-        label13.setText("Supervisor");
-        employee_details.add(label13, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, -1, -1));
-
-        txtfirstName.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        txtfirstName.setSelectionColor(new java.awt.Color(255, 0, 255));
-        txtfirstName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtfirstNameActionPerformed(evt);
-            }
-        });
-        employee_details.add(txtfirstName, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 90, 390, -1));
-
-        txtsalary.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        txtsalary.setSelectionColor(new java.awt.Color(255, 0, 255));
-        txtsalary.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtsalaryActionPerformed(evt);
-            }
-        });
-        employee_details.add(txtsalary, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 240, 390, -1));
-
-        txtlastName.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        txtlastName.setSelectionColor(new java.awt.Color(255, 0, 255));
-        txtlastName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtlastNameActionPerformed(evt);
-            }
-        });
-        employee_details.add(txtlastName, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 60, 390, -1));
-
-        txtbirthday.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        txtbirthday.setSelectionColor(new java.awt.Color(255, 0, 255));
-        txtbirthday.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtbirthdayActionPerformed(evt);
-            }
-        });
-        employee_details.add(txtbirthday, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 300, 390, -1));
-
-        txtaddress.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        txtaddress.setSelectionColor(new java.awt.Color(255, 0, 255));
-        employee_details.add(txtaddress, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 120, 390, -1));
-
-        txtsupervisor.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        txtsupervisor.setSelectionColor(new java.awt.Color(255, 0, 255));
-        txtsupervisor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtsupervisorActionPerformed(evt);
-            }
-        });
-        employee_details.add(txtsupervisor, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 180, 390, -1));
-
-        txtEmpID.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        txtEmpID.setSelectionColor(new java.awt.Color(255, 0, 255));
-        txtEmpID.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtEmpIDActionPerformed(evt);
-            }
-        });
-        employee_details.add(txtEmpID, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 30, 390, -1));
-
-        txtstatus.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        txtstatus.setSelectionColor(new java.awt.Color(255, 0, 255));
-        txtstatus.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtstatusActionPerformed(evt);
-            }
-        });
-        employee_details.add(txtstatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 150, 390, -1));
-
-        txtphoneNumber.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        txtphoneNumber.setSelectionColor(new java.awt.Color(255, 0, 255));
-        txtphoneNumber.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtphoneNumberActionPerformed(evt);
-            }
-        });
-        employee_details.add(txtphoneNumber, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 270, 390, -1));
-
-        txtposition.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        txtposition.setSelectionColor(new java.awt.Color(255, 0, 255));
-        txtposition.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtpositionActionPerformed(evt);
-            }
-        });
-        employee_details.add(txtposition, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 210, 390, -1));
-
-        txtdepartment.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        txtdepartment.setSelectionColor(new java.awt.Color(255, 0, 255));
-        txtdepartment.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtdepartmentActionPerformed(evt);
-            }
-        });
-        employee_details.add(txtdepartment, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 330, 390, -1));
-
-        btndelete.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        btndelete.setText("Delete");
-        btndelete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btndeleteActionPerformed(evt);
-            }
-        });
-        employee_details.add(btndelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 150, 140, 40));
-
-        btncreate.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        btncreate.setText("Create");
-        btncreate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btncreateActionPerformed(evt);
-            }
-        });
-        employee_details.add(btncreate, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 30, 140, 40));
-
-        btnupdate.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        btnupdate.setText("Update");
-        btnupdate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnupdateActionPerformed(evt);
-            }
-        });
-        employee_details.add(btnupdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 90, 140, 40));
-
-        label15.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        label15.setForeground(new java.awt.Color(102, 0, 102));
-        label15.setText("Username");
-        employee_details.add(label15, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 390, 80, -1));
-
-        txtUsername.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        txtUsername.setSelectionColor(new java.awt.Color(255, 0, 255));
-        txtUsername.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtUsernameActionPerformed(evt);
-            }
-        });
-        employee_details.add(txtUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 390, 390, -1));
-
-        label16.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        label16.setForeground(new java.awt.Color(102, 0, 102));
-        label16.setText("Password");
-        employee_details.add(label16, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 420, 70, -1));
-
-        txtPassword.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        txtPassword.setSelectionColor(new java.awt.Color(255, 0, 255));
-        txtPassword.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtPasswordActionPerformed(evt);
-            }
-        });
-        employee_details.add(txtPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 420, 390, -1));
-
-        label17.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        label17.setForeground(new java.awt.Color(102, 0, 102));
-        label17.setName(""); // NOI18N
-        label17.setText("Role");
-        employee_details.add(label17, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 360, -1, -1));
-
-        txtRole.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        txtRole.setSelectionColor(new java.awt.Color(255, 0, 255));
-        txtRole.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtRoleActionPerformed(evt);
-            }
-        });
-        employee_details.add(txtRole, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 360, 390, -1));
-
-        parentPanel.add(employee_details, "card3");
 
         leavePanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -545,7 +320,230 @@ private boolean deleteEmployee(String empId) {
 
         parentPanel.add(leavePanel, "card4");
 
-        getContentPane().add(parentPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 740, 500));
+        employee_details.setBackground(new java.awt.Color(255, 255, 255));
+        employee_details.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        label2.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label2.setForeground(new java.awt.Color(102, 0, 102));
+        label2.setText("First Name");
+        employee_details.add(label2, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 70, -1, -1));
+
+        label3.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label3.setForeground(new java.awt.Color(102, 0, 102));
+        label3.setText("Employee ID");
+        employee_details.add(label3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, -1));
+
+        label4.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label4.setForeground(new java.awt.Color(102, 0, 102));
+        label4.setText("Last Name");
+        employee_details.add(label4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, -1, -1));
+
+        label5.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label5.setForeground(new java.awt.Color(102, 0, 102));
+        label5.setText("Phone");
+        employee_details.add(label5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, -1, -1));
+
+        label6.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label6.setForeground(new java.awt.Color(102, 0, 102));
+        label6.setText("Address");
+        employee_details.add(label6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, -1, -1));
+
+        label7.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label7.setForeground(new java.awt.Color(102, 0, 102));
+        label7.setText("Birthday");
+        employee_details.add(label7, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 150, -1, -1));
+
+        label8.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label8.setForeground(new java.awt.Color(102, 0, 102));
+        label8.setText("Department");
+        employee_details.add(label8, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 30, -1, -1));
+
+        label9.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label9.setForeground(new java.awt.Color(102, 0, 102));
+        label9.setText("Position");
+        employee_details.add(label9, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, -1, 20));
+
+        label10.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label10.setForeground(new java.awt.Color(102, 0, 102));
+        label10.setText("Status");
+        employee_details.add(label10, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, -1, 20));
+
+        label12.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label12.setForeground(new java.awt.Color(102, 0, 102));
+        label12.setText("Basic Salary");
+        employee_details.add(label12, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, -1, -1));
+
+        label13.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label13.setForeground(new java.awt.Color(102, 0, 102));
+        label13.setText("Supervisor");
+        employee_details.add(label13, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 230, -1, -1));
+
+        txtfirstName.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        txtfirstName.setSelectionColor(new java.awt.Color(255, 0, 255));
+        txtfirstName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtfirstNameActionPerformed(evt);
+            }
+        });
+        employee_details.add(txtfirstName, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 70, 260, -1));
+
+        txtsalary.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        txtsalary.setSelectionColor(new java.awt.Color(255, 0, 255));
+        txtsalary.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtsalaryActionPerformed(evt);
+            }
+        });
+        employee_details.add(txtsalary, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 270, 140, -1));
+
+        txtlastName.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        txtlastName.setSelectionColor(new java.awt.Color(255, 0, 255));
+        txtlastName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtlastNameActionPerformed(evt);
+            }
+        });
+        employee_details.add(txtlastName, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 70, 260, -1));
+
+        txtbirthday.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        txtbirthday.setSelectionColor(new java.awt.Color(255, 0, 255));
+        txtbirthday.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtbirthdayActionPerformed(evt);
+            }
+        });
+        employee_details.add(txtbirthday, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 150, 280, -1));
+
+        txtaddress.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        txtaddress.setSelectionColor(new java.awt.Color(255, 0, 255));
+        employee_details.add(txtaddress, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 110, 620, -1));
+
+        txtsupervisor.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        txtsupervisor.setSelectionColor(new java.awt.Color(255, 0, 255));
+        txtsupervisor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtsupervisorActionPerformed(evt);
+            }
+        });
+        employee_details.add(txtsupervisor, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 230, 620, -1));
+
+        txtEmpID.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        txtEmpID.setSelectionColor(new java.awt.Color(255, 0, 255));
+        txtEmpID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtEmpIDActionPerformed(evt);
+            }
+        });
+        employee_details.add(txtEmpID, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 30, 160, -1));
+
+        txtstatus.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        txtstatus.setSelectionColor(new java.awt.Color(255, 0, 255));
+        txtstatus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtstatusActionPerformed(evt);
+            }
+        });
+        employee_details.add(txtstatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 190, 290, -1));
+
+        txtphoneNumber.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        txtphoneNumber.setSelectionColor(new java.awt.Color(255, 0, 255));
+        txtphoneNumber.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtphoneNumberActionPerformed(evt);
+            }
+        });
+        employee_details.add(txtphoneNumber, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 150, 260, -1));
+
+        txtposition.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        txtposition.setSelectionColor(new java.awt.Color(255, 0, 255));
+        txtposition.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtpositionActionPerformed(evt);
+            }
+        });
+        employee_details.add(txtposition, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 190, 260, -1));
+
+        txtdepartment.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        txtdepartment.setSelectionColor(new java.awt.Color(255, 0, 255));
+        txtdepartment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtdepartmentActionPerformed(evt);
+            }
+        });
+        employee_details.add(txtdepartment, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 30, 170, -1));
+
+        btndelete.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        btndelete.setText("Delete");
+        btndelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btndeleteActionPerformed(evt);
+            }
+        });
+        employee_details.add(btndelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 450, 120, 30));
+
+        btncreate.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        btncreate.setText("Create");
+        btncreate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btncreateActionPerformed(evt);
+            }
+        });
+        employee_details.add(btncreate, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 390, 120, 30));
+
+        btnupdate.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        btnupdate.setText("Update");
+        btnupdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnupdateActionPerformed(evt);
+            }
+        });
+        employee_details.add(btnupdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 450, 120, 30));
+
+        label15.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label15.setForeground(new java.awt.Color(102, 0, 102));
+        label15.setText("Username");
+        employee_details.add(label15, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 310, 80, -1));
+
+        txtUsername.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        txtUsername.setSelectionColor(new java.awt.Color(255, 0, 255));
+        txtUsername.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtUsernameActionPerformed(evt);
+            }
+        });
+        employee_details.add(txtUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 310, 390, -1));
+
+        label16.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label16.setForeground(new java.awt.Color(102, 0, 102));
+        label16.setText("Password");
+        employee_details.add(label16, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 350, 70, -1));
+
+        txtPassword.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        txtPassword.setSelectionColor(new java.awt.Color(255, 0, 255));
+        txtPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPasswordActionPerformed(evt);
+            }
+        });
+        employee_details.add(txtPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 350, 390, -1));
+
+        label17.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label17.setForeground(new java.awt.Color(102, 0, 102));
+        label17.setName(""); // NOI18N
+        label17.setText("Role");
+        employee_details.add(label17, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 30, -1, -1));
+
+        roleCombobx.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Employee", "HR Manager", "Payroll Staff" }));
+        roleCombobx.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                roleCombobxActionPerformed(evt);
+            }
+        });
+        employee_details.add(roleCombobx, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 30, 130, -1));
+
+        parentPanel.add(employee_details, "card3");
+
+        getContentPane().add(parentPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 0, 760, 500));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -634,7 +632,7 @@ private boolean deleteEmployee(String empId) {
         double basic_salary  = Double.parseDouble(txtsalary.getText());
         String username  = txtUsername.getText();
         String password  = txtPassword.getText();
-        String role  = txtRole.getText();
+        String role  = (String)roleCombobx.getSelectedItem();
         double hourly_rate = (double) basic_salary / 160; 
         hourly_rate = Math.round(hourly_rate * 100.0) / 100.0;
 
@@ -664,10 +662,6 @@ private boolean deleteEmployee(String empId) {
     private void txtbirthdayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtbirthdayActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtbirthdayActionPerformed
-
-    private void txtRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtRoleActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtRoleActionPerformed
 
     private void btnLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLeaveActionPerformed
         // TODO add your handling code here:
@@ -790,6 +784,10 @@ private boolean deleteEmployee(String empId) {
     }
     }//GEN-LAST:event_btndeleteActionPerformed
 
+    private void roleCombobxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roleCombobxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_roleCombobxActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -859,11 +857,11 @@ private boolean deleteEmployee(String empId) {
     private javax.swing.JPanel leavePanel;
     private javax.swing.JButton logout;
     private javax.swing.JPanel parentPanel;
+    private javax.swing.JComboBox<String> roleCombobx;
     private javax.swing.JTable tableLeave;
     private javax.swing.JTextField txtEmpID;
     private javax.swing.JTextField txtID;
     private javax.swing.JTextField txtPassword;
-    private javax.swing.JTextField txtRole;
     private javax.swing.JTextField txtUsername;
     private javax.swing.JTextField txtaddress;
     private javax.swing.JTextField txtbirthday;

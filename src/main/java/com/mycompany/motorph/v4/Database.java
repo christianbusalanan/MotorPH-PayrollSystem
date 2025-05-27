@@ -63,7 +63,7 @@ public class Database {
 }
     
     public static ResultSet getPayrollDetails() {
-    String sql = "SELECT date, employee_id, hourly_rate, working_hours, overtime_hours, deductions, net_salary FROM payroll";
+    String sql = "SELECT employee_id, period_start , period_end, working_hours, overtime_hours, sss_contribution, philhealth_contribution, pagibig_contribution, witholding_tax, deductions, gross_pay, net_salary FROM payroll";
     try {
         Connection conn = getConnection(); // Ensure connection remains open
         if (conn == null || conn.isClosed()) {
@@ -99,21 +99,43 @@ public class Database {
     return 0; 
 }
     
+    public static float getBasicSalary(String employeeId) {
+    String sql = "SELECT basic_salary FROM employee WHERE employee_id = ?";
+    try (Connection conn = getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        
+        pstmt.setString(1, employeeId);
+        ResultSet rs = pstmt.executeQuery();
+        
+        if (rs.next()) {
+            return rs.getFloat("basic_salary");
+        }
+    } catch (SQLException e) {
+        System.out.println("Error retrieving basic_salary: " + e.getMessage());
+    }
+    return 0; 
+}
     
-    public static boolean insertPayrollRecord(String date, String employeeId, double hourlyRate, int hoursWorked, 
-                                          int overtimeHours, double deductions, double netSalary) {
-    String sql = "INSERT INTO payroll (date, employee_id, hourly_rate, working_hours, overtime_hours, deductions, net_salary) " +
-                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
+    
+    public static boolean insertPayrollRecord(String employeeId, String period_start, String period_end, int working_hours, 
+                                          int overtime_hours, double sss_contribution, double philhealth_contribution, double pagibig_contribution, double witholding_tax, double deductions, double gross_pay, double netSalary) {
+    String sql = "INSERT INTO payroll (employee_id, period_start , period_end, working_hours, overtime_hours, sss_contribution, philhealth_contribution, pagibig_contribution, witholding_tax, deductions, gross_pay, net_salary) " +
+                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     try (Connection conn = getConnection();
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-        pstmt.setString(1, date);
-        pstmt.setString(2, employeeId);
-        pstmt.setDouble(3, hourlyRate);
-        pstmt.setInt(4, hoursWorked);
-        pstmt.setInt(5, overtimeHours);
-        pstmt.setDouble(6, deductions);
-        pstmt.setDouble(7, netSalary);
+        pstmt.setString(1, employeeId);
+        pstmt.setString(2, period_start);
+        pstmt.setString(3, period_end);
+        pstmt.setInt(4, working_hours);
+        pstmt.setInt(5, overtime_hours);
+        pstmt.setDouble(6, sss_contribution);
+        pstmt.setDouble(7, philhealth_contribution);
+        pstmt.setDouble(8, pagibig_contribution);
+        pstmt.setDouble(9, witholding_tax);
+        pstmt.setDouble(10, deductions);
+        pstmt.setDouble(11, gross_pay);
+        pstmt.setDouble(12, netSalary);
 
         int rowsInserted = pstmt.executeUpdate();
         return rowsInserted > 0;
@@ -234,7 +256,7 @@ public static ResultSet getLeave() {
 
 
 public static ResultSet getPayrollByEmployeeId(String employeeId) {
-    String sql = "SELECT date, hourly_rate, working_hours, overtime_hours, deductions, net_salary " +
+    String sql = "SELECT employee_id, period_start , period_end, working_hours, overtime_hours, sss_contribution, philhealth_contribution, pagibig_contribution, witholding_tax, deductions, gross_pay, net_salary " +
                  "FROM payroll WHERE employee_id = ?";
     try {
         Connection conn = getConnection();
