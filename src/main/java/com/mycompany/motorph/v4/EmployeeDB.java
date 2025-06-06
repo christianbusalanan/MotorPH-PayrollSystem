@@ -108,12 +108,17 @@ public class EmployeeDB extends javax.swing.JFrame {
     try {
         while (rs != null && rs.next()) {
             model.addRow(new Object[]{
-                rs.getString("date"),
-                rs.getDouble("hourly_rate"),
-                rs.getInt("working_hours"),
-                rs.getInt("overtime_hours"),
-                rs.getDouble("deductions"),
-                rs.getDouble("net_salary")
+                    rs.getString("period_start"),
+                    rs.getString("period_end"), 
+                    rs.getString("working_hours"),
+                    rs.getString("overtime_hours"),
+                    rs.getString("sss_contribution"),
+                    rs.getString("philhealth_contribution"),
+                    rs.getString("pagibig_contribution"), 
+                    rs.getString("witholding_tax"),
+                    rs.getString("deductions"),
+                    rs.getString("gross_pay"),
+                    rs.getString("net_salary")
             });
         }
     } catch (SQLException e) {
@@ -157,6 +162,7 @@ public class EmployeeDB extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         lblSupervisor = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         lblRate = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
@@ -165,7 +171,6 @@ public class EmployeeDB extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         lblEmployeeID = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         requestLeavePanel = new javax.swing.JPanel();
         lblEmployeeID1 = new javax.swing.JLabel();
         jLabel24 = new javax.swing.JLabel();
@@ -197,7 +202,7 @@ public class EmployeeDB extends javax.swing.JFrame {
                 btnEmpDetailsActionPerformed(evt);
             }
         });
-        jPanel1.add(btnEmpDetails, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 180, 40));
+        jPanel1.add(btnEmpDetails, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, 180, 40));
 
         jButton3.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         jButton3.setText("Log Out");
@@ -206,7 +211,7 @@ public class EmployeeDB extends javax.swing.JFrame {
                 jButton3ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 450, 180, 40));
+        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 450, 180, 40));
 
         btnRequestLeave.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         btnRequestLeave.setText("Request Leave");
@@ -215,7 +220,7 @@ public class EmployeeDB extends javax.swing.JFrame {
                 btnRequestLeaveActionPerformed(evt);
             }
         });
-        jPanel1.add(btnRequestLeave, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 180, 40));
+        jPanel1.add(btnRequestLeave, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 180, 40));
 
         btnPayroll.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         btnPayroll.setText("Payroll");
@@ -224,12 +229,12 @@ public class EmployeeDB extends javax.swing.JFrame {
                 btnPayrollActionPerformed(evt);
             }
         });
-        jPanel1.add(btnPayroll, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 290, 180, 40));
+        jPanel1.add(btnPayroll, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, 180, 40));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/background.jpg"))); // NOI18N
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 220, 500));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 500));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 220, 500));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 500));
 
         parentPanel.setBackground(new java.awt.Color(255, 255, 255));
         parentPanel.setLayout(new java.awt.CardLayout());
@@ -238,101 +243,98 @@ public class EmployeeDB extends javax.swing.JFrame {
         EmpDataPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jPanel3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 0, 153), 1, true));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel5.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(102, 0, 102));
         jLabel5.setText("Full Name:");
-        jPanel3.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 90, 20));
+        jPanel3.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 90, 20));
 
         lblFullName.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         lblFullName.setForeground(new java.awt.Color(0, 0, 0));
         lblFullName.setText("Fullname");
-        lblFullName.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
-        jPanel3.add(lblFullName, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 20, 370, 20));
+        jPanel3.add(lblFullName, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 40, 370, 20));
 
         jLabel2.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(102, 0, 102));
         jLabel2.setText("Birthday:");
-        jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 20, 70, 20));
+        jPanel3.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 40, 70, 20));
 
         lblBirthday.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         lblBirthday.setForeground(new java.awt.Color(0, 0, 0));
         lblBirthday.setText("birthday");
-        lblBirthday.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel3.add(lblBirthday, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 20, 160, 20));
+        jPanel3.add(lblBirthday, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 40, 160, 20));
 
         jLabel6.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(102, 0, 102));
         jLabel6.setText("Address:");
-        jPanel3.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 90, 20));
+        jPanel3.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 90, 20));
 
         lblAddress.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         lblAddress.setForeground(new java.awt.Color(0, 0, 0));
         lblAddress.setText("address");
-        lblAddress.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel3.add(lblAddress, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 50, 610, 20));
+        jPanel3.add(lblAddress, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 70, 610, 20));
 
         jLabel12.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(102, 0, 102));
         jLabel12.setText("Phone:");
-        jPanel3.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 90, 20));
+        jPanel3.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, 90, 20));
 
         lblPhone.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         lblPhone.setForeground(new java.awt.Color(0, 0, 0));
         lblPhone.setText("phone_number");
-        lblPhone.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel3.add(lblPhone, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 80, 150, 20));
+        jPanel3.add(lblPhone, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 100, 150, 20));
 
         jLabel8.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(102, 0, 102));
         jLabel8.setText("Status:");
-        jPanel3.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 80, 50, 20));
+        jPanel3.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 100, 50, 20));
 
         lblStatus.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         lblStatus.setForeground(new java.awt.Color(0, 0, 0));
         lblStatus.setText("status");
-        lblStatus.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel3.add(lblStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 80, 140, 20));
+        jPanel3.add(lblStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 100, 140, 20));
 
         jLabel13.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         jLabel13.setForeground(new java.awt.Color(102, 0, 102));
         jLabel13.setText("Deparment:");
-        jPanel3.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 80, 80, 20));
+        jPanel3.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 100, 80, 20));
 
         lblDepartment.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         lblDepartment.setForeground(new java.awt.Color(0, 0, 0));
         lblDepartment.setText("department");
-        lblDepartment.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel3.add(lblDepartment, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 80, 150, 20));
+        jPanel3.add(lblDepartment, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 100, 150, 20));
 
         lblPosition.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         lblPosition.setForeground(new java.awt.Color(0, 0, 0));
         lblPosition.setText("postion");
-        lblPosition.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel3.add(lblPosition, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 110, 150, 20));
+        jPanel3.add(lblPosition, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 130, 150, 20));
 
         jLabel4.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(102, 0, 102));
         jLabel4.setText("Position:");
-        jPanel3.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 110, 60, 20));
+        jPanel3.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 130, 60, 20));
 
         lblSupervisor.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         lblSupervisor.setForeground(new java.awt.Color(0, 0, 0));
         lblSupervisor.setText("supervisor");
-        lblSupervisor.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel3.add(lblSupervisor, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 110, 380, 20));
+        jPanel3.add(lblSupervisor, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 130, 380, 20));
 
         jLabel9.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(102, 0, 102));
         jLabel9.setText("Supervisor:");
-        jPanel3.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, 90, 20));
+        jPanel3.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, 90, 20));
 
-        EmpDataPanel.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 720, 170));
+        jLabel7.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(153, 0, 153));
+        jLabel7.setText("Basic Information");
+        jPanel3.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 170, 20));
+
+        EmpDataPanel.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 720, 170));
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel4.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jPanel4.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 0, 153), 1, true));
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblRate.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
@@ -347,7 +349,6 @@ public class EmployeeDB extends javax.swing.JFrame {
         lblBasicSalary.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         lblBasicSalary.setForeground(new java.awt.Color(0, 0, 0));
         lblBasicSalary.setText("salary");
-        lblBasicSalary.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel4.add(lblBasicSalary, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 50, 100, 20));
 
         jLabel23.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
@@ -360,7 +361,7 @@ public class EmployeeDB extends javax.swing.JFrame {
         jLabel3.setText("Salary Details");
         jPanel4.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 170, 20));
 
-        EmpDataPanel.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 720, 160));
+        EmpDataPanel.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 720, 160));
 
         lblEmployeeID.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         lblEmployeeID.setForeground(new java.awt.Color(0, 0, 0));
@@ -371,11 +372,6 @@ public class EmployeeDB extends javax.swing.JFrame {
         jLabel21.setForeground(new java.awt.Color(153, 0, 153));
         jLabel21.setText("Employee ID:");
         EmpDataPanel.add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 90, 20));
-
-        jLabel7.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(153, 0, 153));
-        jLabel7.setText("Basic Information");
-        EmpDataPanel.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 170, 20));
 
         parentPanel.add(EmpDataPanel, "card2");
 
@@ -449,17 +445,17 @@ public class EmployeeDB extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Date", "Rate", "Working Hours", "Overtime Hours", "Deductions", "Net Salary"
+                "Period Start", "Period End", "Working Hours", "Overtime Hours", "SSS", "PhilHealth", "PAGIBIG", "Witholding Tax", "Deductions", "Gross", "Net Salary"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, true, false, false, true, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -467,8 +463,20 @@ public class EmployeeDB extends javax.swing.JFrame {
             }
         });
         jScrollPane2.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(0).setResizable(false);
+            jTable1.getColumnModel().getColumn(1).setResizable(false);
+            jTable1.getColumnModel().getColumn(2).setResizable(false);
+            jTable1.getColumnModel().getColumn(3).setResizable(false);
+            jTable1.getColumnModel().getColumn(4).setResizable(false);
+            jTable1.getColumnModel().getColumn(5).setResizable(false);
+            jTable1.getColumnModel().getColumn(6).setResizable(false);
+            jTable1.getColumnModel().getColumn(7).setResizable(false);
+            jTable1.getColumnModel().getColumn(8).setResizable(false);
+            jTable1.getColumnModel().getColumn(9).setResizable(false);
+        }
 
-        payrollPanel.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 720, 430));
+        payrollPanel.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 740, 430));
 
         jLabel28.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         jLabel28.setForeground(new java.awt.Color(153, 0, 153));
@@ -482,7 +490,7 @@ public class EmployeeDB extends javax.swing.JFrame {
 
         parentPanel.add(payrollPanel, "card4");
 
-        getContentPane().add(parentPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 0, 740, 500));
+        getContentPane().add(parentPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 0, 760, 500));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
