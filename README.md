@@ -11,6 +11,7 @@
 - [Tech Stack](#tech-stack)
 - [Test Scenarios](#test-scenarios)
 - [Internal Test Cases](#internal-test-cases)
+- [External Testing](#external-testing)
 - [Summary](#summary)
 - [Repository](#github-repository)
 
@@ -22,13 +23,13 @@ The **MotorPH Payroll System** is a desktop-based Java application designed to s
 ---
 
 ## Group Members
-- Christian Noel Busalanan	
-- Claude Derick Gigante	
-- Ian Federico Santiago	
-- James Earl Teriales
-- Joshua Ricohermozo
-- Kimberly Guevara
-- Ratherford Abaya	
+- Christian Noel Busalanan  
+- Claude Derick Gigante  
+- Ian Federico Santiago  
+- James Earl Teriales  
+- Joshua Ricohermozo  
+- Kimberly Guevara  
+- Ratherford Abaya  
 
 ---
 
@@ -44,9 +45,9 @@ The **MotorPH Payroll System** is a desktop-based Java application designed to s
 ## Tech Stack
 - **Language:** Java  
 - **IDE:** Netbeans, VSCODE, ECLIPSE
-- **Database:** MySQL / SQLite 
+- **Database:** MySQL / SQLite  
 - **OS Compatibility:** Windows  
-- **Dependencies:** Java Runtime Environment
+- **Dependencies:** Java Runtime Environment  
 
 ---
 
@@ -77,10 +78,30 @@ The **MotorPH Payroll System** is a desktop-based Java application designed to s
 
 ---
 
+## External Testing
+
+| **Scenario**            | **Test Case ID** | **Test Case**                           | **Steps**                                      | **Expected Result**                             | **Actual Result**                                | **Result** |
+|-------------------------|------------------|-----------------------------------------|-----------------------------------------------|-----------------------------------------------|-----------------------------------------------|------------|
+| Application Launch      | 1                | Application Launched                   | Run application on IDE and compile properly  | Login page comes up                          | Login page comes up                          | ✅ Pass    |
+|                         | 2                | Login with wrong/empty credentials      | Enter wrong credentials/leave fields empty   | Warning window pops up                       | Warning window pops up                       | ✅ Pass    |
+|                         | 3                | Login with proper credentials           | Enter HR/Finance/Employee credentials        | Logs in accordingly                          | HR & Finance logged in, Employee failed      | ✅ Pass    |
+| Employee Functions      | 4                | Employee login attempt                  | Enter employee login credentials             | Employee portal opens                        | Warning popup appears despite correct login | ❌ Fail    |
+|                         | 5                | Employee portal functions               | Try to use functions                         | Functions should work                        | Not functional                              | ❌ Fail    |
+|                         | 6                | Leave request submission                | Submit leave request                         | Request submitted successfully               | Not functional                              | ❌ Fail    |
+| Finance Functions       | 7                | Finance login                           | Enter finance credentials                    | Finance portal opens                         | Finance portal opens                         | ✅ Pass    |
+|                         | 8                | Calculate Payslip                       | Click 'Calculate Payslip'                    | Employee salary calculated                   | No response                                  | ❌ Fail    |
+|                         | 9                | Process Payroll                         | Click 'Process Payroll'                      | Payroll processed successfully               | No response                                  | ❌ Fail    |
+| HR Functions            | 10               | HR login                                | Enter HR credentials                         | HR portal opens                              | HR portal opens                              | ✅ Pass    |
+|                         | 11               | Manage Employees                        | Create, update, and delete employees         | All functions should work                    | Update failed, others work                   | ✅ Pass    |
+|                         | 12               | Leave management                        | Approve/reject leave requests                | Status updates successfully                  | Status updates successfully                  | ✅ Pass    |
+
+---
+
 ## Summary
-All test cases passed during internal testing. The **MotorPH Payroll System** meets the specified requirements for login, leave management, employee record handling, and payroll processing. The system is ready for deployment and fulfills its role in supporting efficient and accurate HR operations.
+All internal test cases passed, but external testing revealed some issues with employee functionality and payroll processing. The **MotorPH Payroll System** meets most requirements but requires fixes in certain areas before deployment.
 
 ---
 
 ## GitHub Repository
-[🔗 MotorPH Payroll System Repo](https://github.com/christianbusalanan/MotorPH-PayrollSystem)
+[🔗 MotorPH Payroll System Repo](https://github.com/christianbusalanan/MotorPH-PayrollSystem)  
+[🌍 GitHub Pages Deployment](https://santiagoian01.github.io/MotorPH-PayrollSystem/)
