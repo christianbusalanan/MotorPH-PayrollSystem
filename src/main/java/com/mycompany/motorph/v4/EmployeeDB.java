@@ -116,9 +116,9 @@ public class EmployeeDB extends javax.swing.JFrame {
                     rs.getString("philhealth_contribution"),
                     rs.getString("pagibig_contribution"), 
                     rs.getString("witholding_tax"),
-                    rs.getString("deductions"),
-                    rs.getString("gross_pay"),
-                    rs.getString("net_salary")
+                    rs.getString("rice_subsidy"),
+                    rs.getString("phone_allowance"),
+                    rs.getString("clothing_allowance")
             });
         }
     } catch (SQLException e) {
@@ -337,7 +337,7 @@ public class EmployeeDB extends javax.swing.JFrame {
         jPanel4.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 0, 153), 1, true));
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        lblRate.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        lblRate.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         lblRate.setForeground(new java.awt.Color(0, 0, 0));
         jPanel4.add(lblRate, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 80, 100, 20));
 
@@ -451,7 +451,7 @@ public class EmployeeDB extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Period Start", "Period End", "Working Hours", "Overtime Hours", "SSS", "PhilHealth", "PAGIBIG", "Witholding Tax", "Deductions", "Gross", "Net Salary"
+                "Period Start", "Period End", "Working Hours", "Overtime Hours", "SSS", "PhilHealth", "PAGIBIG", "Witholding Tax", "Rice Subsidy", "Phone Allowance", "Clothing Allowance"
             }
         ) {
             boolean[] canEdit = new boolean [] {

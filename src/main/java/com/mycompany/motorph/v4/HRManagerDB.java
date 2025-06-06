@@ -88,8 +88,6 @@ public class HRManagerDB extends javax.swing.JFrame {
     txtbirthday.setText("");
     txtaddress.setText("");
     txtphoneNumber.setText("");
-    txtstatus.setText("");
-    txtposition.setText("");
     txtdepartment.setText("");
     txtsupervisor.setText("");
     txtsalary.setText("");
@@ -195,9 +193,7 @@ private boolean deleteEmployee(String empId) {
         txtaddress = new javax.swing.JTextField();
         txtsupervisor = new javax.swing.JTextField();
         txtEmpID = new javax.swing.JTextField();
-        txtstatus = new javax.swing.JTextField();
         txtphoneNumber = new javax.swing.JTextField();
-        txtposition = new javax.swing.JTextField();
         txtdepartment = new javax.swing.JTextField();
         btndelete = new javax.swing.JButton();
         btncreate = new javax.swing.JButton();
@@ -208,6 +204,8 @@ private boolean deleteEmployee(String empId) {
         txtPassword = new javax.swing.JTextField();
         label17 = new java.awt.Label();
         roleCombobx = new javax.swing.JComboBox<>();
+        comboPosition = new javax.swing.JComboBox<>();
+        comboStatus = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("HR MANAGER DASHBOARD");
@@ -436,15 +434,6 @@ private boolean deleteEmployee(String empId) {
         });
         employee_details.add(txtEmpID, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 30, 160, -1));
 
-        txtstatus.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        txtstatus.setSelectionColor(new java.awt.Color(255, 0, 255));
-        txtstatus.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtstatusActionPerformed(evt);
-            }
-        });
-        employee_details.add(txtstatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 190, 290, -1));
-
         txtphoneNumber.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         txtphoneNumber.setSelectionColor(new java.awt.Color(255, 0, 255));
         txtphoneNumber.addActionListener(new java.awt.event.ActionListener() {
@@ -453,15 +442,6 @@ private boolean deleteEmployee(String empId) {
             }
         });
         employee_details.add(txtphoneNumber, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 150, 260, -1));
-
-        txtposition.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        txtposition.setSelectionColor(new java.awt.Color(255, 0, 255));
-        txtposition.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtpositionActionPerformed(evt);
-            }
-        });
-        employee_details.add(txtposition, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 190, 260, -1));
 
         txtdepartment.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         txtdepartment.setSelectionColor(new java.awt.Color(255, 0, 255));
@@ -541,6 +521,14 @@ private boolean deleteEmployee(String empId) {
         });
         employee_details.add(roleCombobx, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 30, 130, -1));
 
+        comboPosition.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Chief Executive Officer", "Chief Operating Officer", "Chief Finance Officer", "Chief Marketing Officer", "IT Operations and Systems", "HR Manager", "HR Team Leader", "HR Rank and File", "Accounting Head", "Payroll Manager", "Payroll Team Leader", "Payroll Rank and File", "Account Manager", "Account Team Leader", "Account Rank and File", "Sales & Marketing", "Supply Chain and Logistics", "Customer Service and Relations" }));
+        comboPosition.setSelectedIndex(11);
+        comboPosition.setToolTipText("");
+        employee_details.add(comboPosition, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 190, 260, -1));
+
+        comboStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Regular", "Probationary" }));
+        employee_details.add(comboStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 190, 280, -1));
+
         parentPanel.add(employee_details, "card3");
 
         getContentPane().add(parentPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 0, 760, 500));
@@ -594,17 +582,9 @@ private boolean deleteEmployee(String empId) {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtEmpIDActionPerformed
 
-    private void txtstatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtstatusActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtstatusActionPerformed
-
     private void txtphoneNumberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtphoneNumberActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtphoneNumberActionPerformed
-
-    private void txtpositionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtpositionActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtpositionActionPerformed
 
     private void txtdepartmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtdepartmentActionPerformed
         // TODO add your handling code here:
@@ -625,8 +605,8 @@ private boolean deleteEmployee(String empId) {
         String birthday  = txtbirthday.getText();
         String address  = txtaddress.getText();
         String phone_number  = txtphoneNumber.getText();
-        String status  = txtstatus.getText();
-        String position  = txtposition.getText();
+        String status  = (String)comboboxStatus.getSelectedItem();
+        String position  = (String)comboPosition.getSelectedItem();
         String department  = txtdepartment.getText();
         String supervisor = txtsupervisor.getText();
         double basic_salary  = Double.parseDouble(txtsalary.getText());
@@ -705,8 +685,8 @@ private boolean deleteEmployee(String empId) {
     String phone_number = txtphoneNumber.getText().trim();
     String address = txtaddress.getText().trim();
     
-    String status = txtstatus.getText().trim();
-    String position = txtposition.getText().trim();
+    String status = (String)comboStatus.getSelectedItem();
+    String position = (String)comboPosition.getSelectedItem();
     String supervisor = txtsupervisor.getText().trim();
     String department = txtdepartment.getText().trim();
     
@@ -829,6 +809,8 @@ private boolean deleteEmployee(String empId) {
     private javax.swing.JButton btndelete;
     private javax.swing.JButton btnupdate;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JComboBox<String> comboPosition;
+    private javax.swing.JComboBox<String> comboStatus;
     private javax.swing.JComboBox<String> comboboxStatus;
     private javax.swing.JScrollPane empData;
     private javax.swing.JButton empDetails;
@@ -869,9 +851,7 @@ private boolean deleteEmployee(String empId) {
     private javax.swing.JTextField txtfirstName;
     private javax.swing.JTextField txtlastName;
     private javax.swing.JTextField txtphoneNumber;
-    private javax.swing.JTextField txtposition;
     private javax.swing.JTextField txtsalary;
-    private javax.swing.JTextField txtstatus;
     private javax.swing.JTextField txtsupervisor;
     private javax.swing.JButton viewEmp;
     // End of variables declaration//GEN-END:variables

@@ -55,6 +55,9 @@ public class PayrollStaffDB extends javax.swing.JFrame {
     }
     
     
+    
+    
+    
     public static double calculateSSSContribution(double compensation) {
         if (compensation < 3250) return 135.00;
         else if (compensation < 3750) return 157.50;
@@ -152,9 +155,9 @@ public class PayrollStaffDB extends javax.swing.JFrame {
                     rs.getString("philhealth_contribution"),
                     rs.getString("pagibig_contribution"), 
                     rs.getString("witholding_tax"),
-                    rs.getString("deductions"),
-                    rs.getString("gross_pay"),
-                    rs.getString("net_salary")
+                    rs.getString("rice_subsidy"),
+                    rs.getString("phone_allowance"),
+                    rs.getString("clothing_allowance")
                    
                 });
             }
@@ -213,6 +216,12 @@ public class PayrollStaffDB extends javax.swing.JFrame {
         txtPeriodStart = new javax.swing.JTextField();
         label15 = new java.awt.Label();
         txtPeriodEnd = new javax.swing.JTextField();
+        label2 = new java.awt.Label();
+        label16 = new java.awt.Label();
+        label17 = new java.awt.Label();
+        lblRice = new java.awt.Label();
+        lblClothing = new java.awt.Label();
+        lblPhone = new java.awt.Label();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PAYROLL DASHBOARD");
@@ -279,7 +288,7 @@ public class PayrollStaffDB extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Employee ID", "Start Date", "End Date", "Hours Worked", "Overtime", "SSS", "Philhealth", "Pagibig", "Witholding Tax", "Deductions", "Gross Pay", "Net Pay"
+                "Employee ID", "Start Date", "End Date", "Hours Worked", "Overtime", "SSS", "Philhealth", "Pagibig", "Witholding Tax", "Rice Subsidy", "Phone Allowance", "Clothing Allowance"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -310,26 +319,26 @@ public class PayrollStaffDB extends javax.swing.JFrame {
         label5.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         label5.setForeground(new java.awt.Color(153, 0, 153));
         label5.setText("Rate");
-        processPayrollPanel.add(label5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, -1, -1));
+        processPayrollPanel.add(label5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, -1, -1));
 
         label6.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         label6.setForeground(new java.awt.Color(153, 0, 153));
         label6.setText("Hours Worked");
-        processPayrollPanel.add(label6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, -1));
+        processPayrollPanel.add(label6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, -1, -1));
 
         label7.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         label7.setForeground(new java.awt.Color(153, 0, 153));
         label7.setText("Overtime");
-        processPayrollPanel.add(label7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, -1, -1));
+        processPayrollPanel.add(label7, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, -1));
 
         txtEmpID.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         processPayrollPanel.add(txtEmpID, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 10, 130, -1));
 
         txtHrsWorked.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        processPayrollPanel.add(txtHrsWorked, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 130, 130, -1));
+        processPayrollPanel.add(txtHrsWorked, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 100, 130, -1));
 
         txtOvertime.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        processPayrollPanel.add(txtOvertime, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 160, 130, -1));
+        processPayrollPanel.add(txtOvertime, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 130, 130, -1));
 
         label8.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         label8.setForeground(new java.awt.Color(153, 0, 153));
@@ -362,7 +371,7 @@ public class PayrollStaffDB extends javax.swing.JFrame {
 
         lblRate.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         lblRate.setForeground(new java.awt.Color(0, 0, 0));
-        processPayrollPanel.add(lblRate, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 100, 130, -1));
+        processPayrollPanel.add(lblRate, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 160, 130, -1));
 
         btnPP.setText("Process Payroll");
         btnPP.addActionListener(new java.awt.event.ActionListener() {
@@ -370,7 +379,7 @@ public class PayrollStaffDB extends javax.swing.JFrame {
                 btnPPActionPerformed(evt);
             }
         });
-        processPayrollPanel.add(btnPP, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 83, 150, 30));
+        processPayrollPanel.add(btnPP, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 210, 150, 30));
 
         btnCalculate.setText("Calculate");
         btnCalculate.addActionListener(new java.awt.event.ActionListener() {
@@ -378,7 +387,7 @@ public class PayrollStaffDB extends javax.swing.JFrame {
                 btnCalculateActionPerformed(evt);
             }
         });
-        processPayrollPanel.add(btnCalculate, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 40, 150, 30));
+        processPayrollPanel.add(btnCalculate, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 210, 150, 30));
 
         lblDeductions.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         lblDeductions.setForeground(new java.awt.Color(0, 0, 0));
@@ -417,7 +426,6 @@ public class PayrollStaffDB extends javax.swing.JFrame {
         label14.setForeground(new java.awt.Color(153, 0, 153));
         label14.setText("Period Start");
         processPayrollPanel.add(label14, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, -1, -1));
-        label14.getAccessibleContext().setAccessibleName("Period Start");
 
         txtPeriodStart.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         processPayrollPanel.add(txtPeriodStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 40, 130, -1));
@@ -429,6 +437,34 @@ public class PayrollStaffDB extends javax.swing.JFrame {
 
         txtPeriodEnd.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         processPayrollPanel.add(txtPeriodEnd, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 70, 130, -1));
+
+        label2.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label2.setForeground(new java.awt.Color(153, 0, 153));
+        label2.setName(""); // NOI18N
+        label2.setText("Rice Subsidy");
+        processPayrollPanel.add(label2, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 10, 100, -1));
+
+        label16.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label16.setForeground(new java.awt.Color(153, 0, 153));
+        label16.setText("Phone Allowance");
+        processPayrollPanel.add(label16, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 40, -1, -1));
+
+        label17.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        label17.setForeground(new java.awt.Color(153, 0, 153));
+        label17.setText("Clothing Allowance");
+        processPayrollPanel.add(label17, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 70, -1, -1));
+
+        lblRice.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        lblRice.setForeground(new java.awt.Color(0, 0, 0));
+        processPayrollPanel.add(lblRice, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 10, 90, -1));
+
+        lblClothing.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        lblClothing.setForeground(new java.awt.Color(0, 0, 0));
+        processPayrollPanel.add(lblClothing, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 70, 90, -1));
+
+        lblPhone.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        lblPhone.setForeground(new java.awt.Color(0, 0, 0));
+        processPayrollPanel.add(lblPhone, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 40, 90, -1));
 
         parentPanel.add(processPayrollPanel, "card3");
 
@@ -484,8 +520,11 @@ public class PayrollStaffDB extends javax.swing.JFrame {
         double deductions = Double.parseDouble(lblDeductions.getText());
         double gross = Double.parseDouble(lblgrossSalary.getText());
         double netSalary = Double.parseDouble(lblNetSalary.getText());
+        double rice = Double.parseDouble(lblRice.getText());
+        double phone = Double.parseDouble(lblPhone.getText());
+        double clothing = Double.parseDouble(lblClothing.getText());
 
-        boolean success = Database.insertPayrollRecord(employeeId, startDate, endDate, hoursWorked, overtimeHours, sss, philhealth, pagibig, witholding_tax, deductions, gross, netSalary);
+        boolean success = Database.insertPayrollRecord(employeeId, startDate, endDate, hoursWorked, overtimeHours, sss, philhealth, pagibig, witholding_tax, rice, phone, clothing);
 
         if (success) {
             JOptionPane.showMessageDialog(this, "Payroll processed successfully!");
@@ -496,6 +535,11 @@ public class PayrollStaffDB extends javax.swing.JFrame {
     } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(this, "Invalid input. Please enter valid numbers.", "Input Error", JOptionPane.ERROR_MESSAGE);
     }
+    
+    if (employeeId.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter an Employee ID.", "Input Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         
     }//GEN-LAST:event_btnPPActionPerformed
 
@@ -541,6 +585,28 @@ public class PayrollStaffDB extends javax.swing.JFrame {
         lblphilhealth.setText(String.format("%.2f", philhealth));
         lblpagibig.setText(String.format("%.2f", pagibig));
         lbltax.setText(String.format("%.2f", witholdingtax));
+        
+        try {
+            ResultSet benefitsRs = Database.getBenefits(employeeId);
+            if (benefitsRs != null && benefitsRs.next()) {
+                double riceSubsidy = benefitsRs.getDouble("rice_subsidy");
+                double phoneAllowance = benefitsRs.getDouble("phone_allowance");
+                double clothingAllowance = benefitsRs.getDouble("clothing_allowance");
+
+                lblRice.setText(String.format("%.2f", riceSubsidy));
+                lblPhone.setText(String.format("%.2f", phoneAllowance));
+                lblClothing.setText(String.format("%.2f", clothingAllowance));
+
+            } else {
+                lblRice.setText("N/A");
+                lblPhone.setText("N/A");
+                lblClothing.setText("N/A");
+                JOptionPane.showMessageDialog(this, "No benefits found for Employee ID: " + employeeId, "No Data", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error retrieving benefits: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+    
     }//GEN-LAST:event_btnCalculateActionPerformed
 
     /**
@@ -595,15 +661,21 @@ public class PayrollStaffDB extends javax.swing.JFrame {
     private java.awt.Label label13;
     private java.awt.Label label14;
     private java.awt.Label label15;
+    private java.awt.Label label16;
+    private java.awt.Label label17;
+    private java.awt.Label label2;
     private java.awt.Label label3;
     private java.awt.Label label5;
     private java.awt.Label label6;
     private java.awt.Label label7;
     private java.awt.Label label8;
     private java.awt.Label label9;
+    private java.awt.Label lblClothing;
     private java.awt.Label lblDeductions;
     private java.awt.Label lblNetSalary;
+    private java.awt.Label lblPhone;
     private java.awt.Label lblRate;
+    private java.awt.Label lblRice;
     private java.awt.Label lblSSS;
     private java.awt.Label lblSSS3;
     private java.awt.Label lblgrossSalary;
