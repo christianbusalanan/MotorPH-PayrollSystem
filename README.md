@@ -23,13 +23,12 @@ The **MotorPH Payroll System** is a desktop-based Java application designed to s
 ---
 
 ## Group Members
-- Christian Noel Busalanan  
-- Claude Derick Gigante  
-- Ian Federico Santiago  
-- James Earl Teriales  
-- Joshua Ricohermozo  
-- Kimberly Guevara  
-- Ratherford Abaya  
+- Busalanan, C.N.
+- Guevara, K.
+- Ricohermozo, J.
+- Nacpil, A.J.
+- Torrijos, E.M.
+- Dela Cruz, P.P.
 
 ---
 
