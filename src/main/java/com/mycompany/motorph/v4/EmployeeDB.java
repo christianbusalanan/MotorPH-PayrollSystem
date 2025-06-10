@@ -116,9 +116,9 @@ public class EmployeeDB extends javax.swing.JFrame {
                     rs.getString("philhealth_contribution"),
                     rs.getString("pagibig_contribution"), 
                     rs.getString("witholding_tax"),
-                    rs.getString("deductions"),
-                    rs.getString("gross_pay"),
-                    rs.getString("net_salary")
+                    rs.getString("rice_subsidy"),
+                    rs.getString("phone_allowance"),
+                    rs.getString("clothing_allowance")
             });
         }
     } catch (SQLException e) {
@@ -137,6 +137,7 @@ public class EmployeeDB extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         btnEmpDetails = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -188,6 +189,9 @@ public class EmployeeDB extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
         jLabel28 = new javax.swing.JLabel();
         lblEmployeeID2 = new javax.swing.JLabel();
+        btnGeneratePayslip = new javax.swing.JButton();
+
+        jButton1.setText("jButton1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Employee Dashboard");
@@ -337,7 +341,7 @@ public class EmployeeDB extends javax.swing.JFrame {
         jPanel4.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 0, 153), 1, true));
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        lblRate.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        lblRate.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         lblRate.setForeground(new java.awt.Color(0, 0, 0));
         jPanel4.add(lblRate, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 80, 100, 20));
 
@@ -451,7 +455,7 @@ public class EmployeeDB extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Period Start", "Period End", "Working Hours", "Overtime Hours", "SSS", "PhilHealth", "PAGIBIG", "Witholding Tax", "Deductions", "Gross", "Net Salary"
+                "Period Start", "Period End", "Working Hours", "Overtime Hours", "SSS", "PhilHealth", "PAGIBIG", "Witholding Tax", "Rice Subsidy", "Phone Allowance", "Clothing Allowance"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -487,6 +491,15 @@ public class EmployeeDB extends javax.swing.JFrame {
         lblEmployeeID2.setForeground(new java.awt.Color(0, 0, 0));
         lblEmployeeID2.setText("employee_id");
         payrollPanel.add(lblEmployeeID2, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 10, -1, 20));
+
+        btnGeneratePayslip.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        btnGeneratePayslip.setText("Generate Payslip");
+        btnGeneratePayslip.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGeneratePayslipActionPerformed(evt);
+            }
+        });
+        payrollPanel.add(btnGeneratePayslip, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 10, 170, -1));
 
         parentPanel.add(payrollPanel, "card4");
 
@@ -558,6 +571,12 @@ public class EmployeeDB extends javax.swing.JFrame {
         loadPayrollData(); 
     }//GEN-LAST:event_btnPayrollActionPerformed
 
+    private void btnGeneratePayslipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGeneratePayslipActionPerformed
+        // TODO add your handling code here:
+         String employeeId = loggedInEmployee.getEmployeeId();
+        Database.generatePayslip(employeeId);
+    }//GEN-LAST:event_btnGeneratePayslipActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -597,10 +616,12 @@ public class EmployeeDB extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel EmpDataPanel;
     private javax.swing.JButton btnEmpDetails;
+    private javax.swing.JButton btnGeneratePayslip;
     private javax.swing.JButton btnPayroll;
     private javax.swing.JButton btnRequestLeave;
     private javax.swing.JButton btnRequestLeaveProcess;
     private javax.swing.JComboBox<String> combobox;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;

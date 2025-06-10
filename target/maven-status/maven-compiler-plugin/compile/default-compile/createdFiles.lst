@@ -15,9 +15,11 @@ com\mycompany\motorph\v4\HRManagerDB$14.class
 com\mycompany\motorph\v4\HRManagerDB$3.class
 com\mycompany\motorph\v4\HRManagerDB$22.class
 com\mycompany\motorph\v4\PayrollStaffDB$2.class
+com\mycompany\motorph\v4\PayrollStaffDB$8.class
 com\mycompany\motorph\v4\HRManagerDB$9.class
 com\mycompany\motorph\v4\HRManagerDB$17.class
 com\mycompany\motorph\v4\PayrollStaffDB$5.class
+com\mycompany\motorph\v4\EmployeeDB$9.class
 com\mycompany\motorph\v4\EmployeeDB$2.class
 com\mycompany\motorph\v4\HRManagerDB$2.class
 com\mycompany\motorph\v4\PayrollStaffDB.class
@@ -26,7 +28,6 @@ com\mycompany\motorph\v4\HRManagerDB$10.class
 com\mycompany\motorph\v4\HRManagerDB$20.class
 com\mycompany\motorph\v4\HRManagerDB$13.class
 com\mycompany\motorph\v4\HRManagerDB.class
-com\mycompany\motorph\v4\HRManagerDB$23.class
 com\mycompany\motorph\v4\LoginForm$3.class
 com\mycompany\motorph\v4\PayrollStaffDB$1.class
 com\mycompany\motorph\v4\HRManagerDB$5.class
