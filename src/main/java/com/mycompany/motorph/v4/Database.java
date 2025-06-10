@@ -310,7 +310,7 @@ public static ResultSet getLeave() {
 
 
 public static ResultSet getPayrollByEmployeeId(String employeeId) {
-    String sql = "SELECT employee_id, period_start , period_end, working_hours, sss_contribution, philhealth_contribution, pagibig_contribution, witholding_tax, rice_subsidy, phone_allowance, clothing_allowance " +
+    String sql = "SELECT payroll_id, employee_id, period_start , period_end, working_hours, sss_contribution, philhealth_contribution, pagibig_contribution, witholding_tax, rice_subsidy, phone_allowance, clothing_allowance " +
                  "FROM payroll WHERE employee_id = ?";
     try {
         Connection conn = getConnection();
@@ -468,11 +468,11 @@ public static ResultSet getEmployeeLeave(String employeeId) {
         }
     }
     
-   public static void generatePayslip(String employeeId) {
+   public static void generatePayslip(String payroll_id) {
         try {
             JasperReport report = JasperCompileManager.compileReport("payslip.jrxml");
             Map<String, Object> parameters = new HashMap<>();
-            parameters.put("employee_id", employeeId);
+            parameters.put("payroll_id", payroll_id);
             Connection conn = DriverManager.getConnection("jdbc:sqlite:MotorPH Payroll System.db");
             JasperPrint print = JasperFillManager.fillReport(report, parameters, conn);
             JasperViewer.viewReport(print, false);

@@ -823,21 +823,27 @@
                 <Component class="javax.swing.JTable" name="jTable1">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="10" rowCount="4">
+                      <Table columnCount="11" rowCount="4">
+                        <Column editable="false" title="Period ID" type="java.lang.Object"/>
                         <Column editable="false" title="Period Start" type="java.lang.Object"/>
                         <Column editable="false" title="Period End" type="java.lang.Object"/>
                         <Column editable="false" title="Working Hours" type="java.lang.Object"/>
                         <Column editable="false" title="SSS" type="java.lang.Object"/>
-                        <Column editable="true" title="PhilHealth" type="java.lang.Object"/>
+                        <Column editable="false" title="PhilHealth" type="java.lang.Object"/>
                         <Column editable="false" title="PAGIBIG" type="java.lang.Object"/>
                         <Column editable="false" title="Witholding Tax" type="java.lang.Object"/>
-                        <Column editable="true" title="Rice Subsidy" type="java.lang.Object"/>
+                        <Column editable="false" title="Rice Subsidy" type="java.lang.Object"/>
                         <Column editable="false" title="Phone Allowance" type="java.lang.Object"/>
                         <Column editable="false" title="Clothing Allowance" type="java.lang.Object"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                       <TableColumnModel selectionModel="0">
+                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
                           <Title/>
                           <Editor/>
@@ -894,6 +900,9 @@
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTable1MouseClicked"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -905,15 +914,15 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="99" green="0" red="99" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Employee ID:"/>
+                <Property name="text" type="java.lang.String" value="Payroll ID:"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="10" y="10" width="90" height="20"/>
+                  <AbsoluteConstraints x="20" y="20" width="80" height="20"/>
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="javax.swing.JLabel" name="lblEmployeeID2">
+            <Component class="javax.swing.JLabel" name="lblPayrollIdDisplay">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Verdana" size="12" style="0"/>
@@ -921,11 +930,11 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="employee_id"/>
+                <Property name="text" type="java.lang.String" value="payroll_id"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="110" y="10" width="-1" height="20"/>
+                  <AbsoluteConstraints x="100" y="20" width="310" height="20"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -941,7 +950,7 @@
               </Events>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="540" y="10" width="170" height="-1"/>
+                  <AbsoluteConstraints x="560" y="20" width="170" height="-1"/>
                 </Constraint>
               </Constraints>
             </Component>

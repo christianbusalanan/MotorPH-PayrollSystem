@@ -58,7 +58,9 @@
 			<![CDATA[]]>
 		</queryString>
 	</subDataset>
-	<parameter name="employee_id" class="java.lang.String"/>
+	<parameter name="payroll_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[$P{payroll_id}]]></defaultValueExpression>
+	</parameter>
 	<queryString language="SQL">
 		<![CDATA[SELECT 
 	p.payroll_id,
@@ -90,7 +92,7 @@
 FROM benefits AS b 
 JOIN employee AS e ON b.position = e.position
 JOIN payroll AS p ON e.employee_id = p.employee_id
-WHERE p.employee_id = $P{employee_id}]]>
+WHERE p.payroll_id = $P{payroll_id}]]>
 	</queryString>
 	<field name="payroll_id" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="payroll_id"/>
