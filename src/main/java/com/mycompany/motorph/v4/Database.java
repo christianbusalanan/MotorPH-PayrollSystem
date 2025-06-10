@@ -91,7 +91,7 @@ public class Database {
     
     
     public static ResultSet getPayrollDetails() {
-    String sql = "SELECT employee_id, period_start , period_end, working_hours, overtime_hours, sss_contribution, philhealth_contribution, pagibig_contribution, witholding_tax, rice_subsidy, phone_allowance, clothing_allowance FROM payroll";
+    String sql = "SELECT employee_id, period_start , period_end, working_hours, sss_contribution, philhealth_contribution, pagibig_contribution, witholding_tax, rice_subsidy, phone_allowance, clothing_allowance FROM payroll";
     try {
         Connection conn = getConnection(); // Ensure connection remains open
         if (conn == null || conn.isClosed()) {
@@ -143,10 +143,38 @@ public class Database {
 }
     
     
-    public static boolean insertPayrollRecord(String payroll_id, String employeeId, String period_start, String period_end, int working_hours, 
-                                          int overtime_hours, double sss_contribution, double philhealth_contribution, double pagibig_contribution, double witholding_tax, double rice_subsidy, double phone_allowance, double clothing_allowance) {
-    String sql = "INSERT INTO payroll (payroll_id, employee_id, period_start , period_end, working_hours, overtime_hours, sss_contribution, philhealth_contribution, pagibig_contribution, witholding_tax, rice_subsidy, phone_allowance, clothing_allowance ) " +
-                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+public static float getHoursWorked(String period_start, String period_end, String employee_id) {
+    String sql = "SELECT  " +
+                    " sum(time_out - time_in) as hours_worked " +
+                    "FROM " +
+                    " attendance " +
+                    "where date >= ? and date <= ? and employee_id = ? " ;
+
+    try (Connection conn = getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        pstmt.setString(1, period_start);
+        pstmt.setString(2, period_end);
+        pstmt.setString(3, employee_id);
+
+        try (ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getFloat("hours_worked");
+            }
+        }
+
+    } catch (SQLException e) {
+        System.out.println("Error retrieving hours worked: " + e.getMessage());
+    }
+
+    return 0;
+}
+
+    
+    public static boolean insertPayrollRecord(String payroll_id, String employeeId, String period_start, String period_end, double working_hours, 
+                                           double sss_contribution, double philhealth_contribution, double pagibig_contribution, double witholding_tax, double rice_subsidy, double phone_allowance, double clothing_allowance) {
+    String sql = "INSERT INTO payroll (payroll_id, employee_id, period_start , period_end, working_hours, sss_contribution, philhealth_contribution, pagibig_contribution, witholding_tax, rice_subsidy, phone_allowance, clothing_allowance ) " +
+                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     try (Connection conn = getConnection();
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
         
@@ -154,15 +182,14 @@ public class Database {
         pstmt.setString(2, employeeId);
         pstmt.setString(3, period_start);
         pstmt.setString(4, period_end);
-        pstmt.setInt(5, working_hours);
-        pstmt.setInt(6, overtime_hours);
-        pstmt.setDouble(7, sss_contribution);
-        pstmt.setDouble(8, philhealth_contribution);
-        pstmt.setDouble(9, pagibig_contribution);
-        pstmt.setDouble(10, witholding_tax);
-        pstmt.setDouble(11, rice_subsidy);
-        pstmt.setDouble(12, phone_allowance);
-        pstmt.setDouble(13, clothing_allowance);
+        pstmt.setDouble(5, working_hours);
+        pstmt.setDouble(6, sss_contribution);
+        pstmt.setDouble(7, philhealth_contribution);
+        pstmt.setDouble(8, pagibig_contribution);
+        pstmt.setDouble(9, witholding_tax);
+        pstmt.setDouble(10, rice_subsidy);
+        pstmt.setDouble(11, phone_allowance);
+        pstmt.setDouble(12, clothing_allowance);
 
         int rowsInserted = pstmt.executeUpdate();
         return rowsInserted > 0;
@@ -283,7 +310,7 @@ public static ResultSet getLeave() {
 
 
 public static ResultSet getPayrollByEmployeeId(String employeeId) {
-    String sql = "SELECT employee_id, period_start , period_end, working_hours, overtime_hours, sss_contribution, philhealth_contribution, pagibig_contribution, witholding_tax, rice_subsidy, phone_allowance, clothing_allowance " +
+    String sql = "SELECT employee_id, period_start , period_end, working_hours, sss_contribution, philhealth_contribution, pagibig_contribution, witholding_tax, rice_subsidy, phone_allowance, clothing_allowance " +
                  "FROM payroll WHERE employee_id = ?";
     try {
         Connection conn = getConnection();
@@ -443,20 +470,11 @@ public static ResultSet getEmployeeLeave(String employeeId) {
     
    public static void generatePayslip(String employeeId) {
         try {
-            // 1. Compile JRXML file
             JasperReport report = JasperCompileManager.compileReport("payslip.jrxml");
-
-            // 2. Set parameters
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("employee_id", employeeId);
-
-            // 3. Connect to your database
             Connection conn = DriverManager.getConnection("jdbc:sqlite:MotorPH Payroll System.db");
-
-            // 4. Fill the report
             JasperPrint print = JasperFillManager.fillReport(report, parameters, conn);
-
-            // 5. Show the report in a viewer
             JasperViewer.viewReport(print, false);
 
             conn.close();

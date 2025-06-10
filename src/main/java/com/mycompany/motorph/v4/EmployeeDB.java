@@ -111,7 +111,6 @@ public class EmployeeDB extends javax.swing.JFrame {
                     rs.getString("period_start"),
                     rs.getString("period_end"), 
                     rs.getString("working_hours"),
-                    rs.getString("overtime_hours"),
                     rs.getString("sss_contribution"),
                     rs.getString("philhealth_contribution"),
                     rs.getString("pagibig_contribution"), 
@@ -449,17 +448,17 @@ public class EmployeeDB extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Period Start", "Period End", "Working Hours", "Overtime Hours", "SSS", "PhilHealth", "PAGIBIG", "Witholding Tax", "Rice Subsidy", "Phone Allowance", "Clothing Allowance"
+                "Period Start", "Period End", "Working Hours", "SSS", "PhilHealth", "PAGIBIG", "Witholding Tax", "Rice Subsidy", "Phone Allowance", "Clothing Allowance"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true, false, false, true, false, false
+                false, false, false, false, true, false, false, true, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -477,7 +476,6 @@ public class EmployeeDB extends javax.swing.JFrame {
             jTable1.getColumnModel().getColumn(6).setResizable(false);
             jTable1.getColumnModel().getColumn(7).setResizable(false);
             jTable1.getColumnModel().getColumn(8).setResizable(false);
-            jTable1.getColumnModel().getColumn(9).setResizable(false);
         }
 
         payrollPanel.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 740, 430));
@@ -574,7 +572,7 @@ public class EmployeeDB extends javax.swing.JFrame {
     private void btnGeneratePayslipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGeneratePayslipActionPerformed
         // TODO add your handling code here:
          String employeeId = loggedInEmployee.getEmployeeId();
-        Database.generatePayslip(employeeId);
+         Database.generatePayslip(employeeId);
     }//GEN-LAST:event_btnGeneratePayslipActionPerformed
 
     /**

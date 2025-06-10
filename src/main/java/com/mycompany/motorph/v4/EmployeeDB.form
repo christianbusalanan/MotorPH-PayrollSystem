@@ -823,11 +823,10 @@
                 <Component class="javax.swing.JTable" name="jTable1">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="11" rowCount="4">
+                      <Table columnCount="10" rowCount="4">
                         <Column editable="false" title="Period Start" type="java.lang.Object"/>
                         <Column editable="false" title="Period End" type="java.lang.Object"/>
                         <Column editable="false" title="Working Hours" type="java.lang.Object"/>
-                        <Column editable="false" title="Overtime Hours" type="java.lang.Object"/>
                         <Column editable="false" title="SSS" type="java.lang.Object"/>
                         <Column editable="true" title="PhilHealth" type="java.lang.Object"/>
                         <Column editable="false" title="PAGIBIG" type="java.lang.Object"/>
@@ -839,11 +838,6 @@
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                       <TableColumnModel selectionModel="0">
-                        <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
-                          <Title/>
-                          <Editor/>
-                          <Renderer/>
-                        </Column>
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
                           <Title/>
                           <Editor/>

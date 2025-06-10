@@ -61,6 +61,7 @@
 	<parameter name="employee_id" class="java.lang.String"/>
 	<queryString language="SQL">
 		<![CDATA[SELECT 
+	p.payroll_id,
     p.employee_id, 
     e.first_name || ' ' || e.last_name AS employee_name, 
     p.period_start, 
@@ -68,9 +69,8 @@
     e.position, 
     e.basic_salary, 
     e.hourly_rate,
-    p.working_hours, 
-    p.overtime_hours,  
-    ((p.working_hours + p.overtime_hours) * e.hourly_rate) AS gross_income,
+    p.working_hours,
+    (p.working_hours * e.hourly_rate) AS gross_income,
     
     p.sss_contribution, 
     p.philhealth_contribution, 
@@ -83,7 +83,7 @@
     b.clothing_allowance, 
     (b.rice_subsidy + b.phone_allowance + b.clothing_allowance) AS total_benefits,
     
-    (((p.working_hours + p.overtime_hours) * e.hourly_rate) 
+    ((p.working_hours  * e.hourly_rate) 
      + (b.rice_subsidy + b.phone_allowance + b.clothing_allowance) 
      - (p.sss_contribution + p.philhealth_contribution + p.pagibig_contribution + p.witholding_tax)) AS net_salary
 
@@ -92,98 +92,98 @@ JOIN employee AS e ON b.position = e.position
 JOIN payroll AS p ON e.employee_id = p.employee_id
 WHERE p.employee_id = $P{employee_id}]]>
 	</queryString>
-	<field name="employee_id" class="java.lang.String">
+	<field name="payroll_id" class="java.lang.Object">
+		<property name="com.jaspersoft.studio.field.name" value="payroll_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="payroll_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="payroll"/>
+	</field>
+	<field name="employee_id" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="employee_id"/>
 		<property name="com.jaspersoft.studio.field.label" value="employee_id"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="payroll"/>
 	</field>
-	<field name="employee_name" class="java.lang.String">
+	<field name="employee_name" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="employee_name"/>
 		<property name="com.jaspersoft.studio.field.label" value="employee_name"/>
 	</field>
-	<field name="period_start" class="java.lang.String">
+	<field name="period_start" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="period_start"/>
 		<property name="com.jaspersoft.studio.field.label" value="period_start"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="payroll"/>
 	</field>
-	<field name="period_end" class="java.lang.String">
+	<field name="period_end" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="period_end"/>
 		<property name="com.jaspersoft.studio.field.label" value="period_end"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="payroll"/>
 	</field>
-	<field name="position" class="java.lang.String">
+	<field name="position" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="position"/>
 		<property name="com.jaspersoft.studio.field.label" value="position"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="employee"/>
 	</field>
-	<field name="basic_salary" class="java.lang.Double">
+	<field name="basic_salary" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="basic_salary"/>
 		<property name="com.jaspersoft.studio.field.label" value="basic_salary"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="employee"/>
 	</field>
-	<field name="hourly_rate" class="java.lang.Double">
+	<field name="hourly_rate" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="hourly_rate"/>
 		<property name="com.jaspersoft.studio.field.label" value="hourly_rate"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="employee"/>
 	</field>
-	<field name="working_hours" class="java.lang.Double">
+	<field name="working_hours" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="working_hours"/>
 		<property name="com.jaspersoft.studio.field.label" value="working_hours"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="payroll"/>
 	</field>
-	<field name="overtime_hours" class="java.lang.Double">
-		<property name="com.jaspersoft.studio.field.name" value="overtime_hours"/>
-		<property name="com.jaspersoft.studio.field.label" value="overtime_hours"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="payroll"/>
-	</field>
-	<field name="gross_income" class="java.lang.Double">
+	<field name="gross_income" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="gross_income"/>
 		<property name="com.jaspersoft.studio.field.label" value="gross_income"/>
 	</field>
-	<field name="sss_contribution" class="java.lang.Double">
+	<field name="sss_contribution" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="sss_contribution"/>
 		<property name="com.jaspersoft.studio.field.label" value="sss_contribution"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="payroll"/>
 	</field>
-	<field name="philhealth_contribution" class="java.lang.Double">
+	<field name="philhealth_contribution" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="philhealth_contribution"/>
 		<property name="com.jaspersoft.studio.field.label" value="philhealth_contribution"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="payroll"/>
 	</field>
-	<field name="pagibig_contribution" class="java.lang.Double">
+	<field name="pagibig_contribution" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="pagibig_contribution"/>
 		<property name="com.jaspersoft.studio.field.label" value="pagibig_contribution"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="payroll"/>
 	</field>
-	<field name="witholding_tax" class="java.lang.Double">
+	<field name="witholding_tax" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="witholding_tax"/>
 		<property name="com.jaspersoft.studio.field.label" value="witholding_tax"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="payroll"/>
 	</field>
-	<field name="total_deductions" class="java.lang.Double">
+	<field name="total_deductions" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="total_deductions"/>
 		<property name="com.jaspersoft.studio.field.label" value="total_deductions"/>
 	</field>
-	<field name="rice_subsidy" class="java.lang.Double">
+	<field name="rice_subsidy" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="rice_subsidy"/>
 		<property name="com.jaspersoft.studio.field.label" value="rice_subsidy"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="benefits"/>
 	</field>
-	<field name="phone_allowance" class="java.lang.Double">
+	<field name="phone_allowance" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="phone_allowance"/>
 		<property name="com.jaspersoft.studio.field.label" value="phone_allowance"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="benefits"/>
 	</field>
-	<field name="clothing_allowance" class="java.lang.Double">
+	<field name="clothing_allowance" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="clothing_allowance"/>
 		<property name="com.jaspersoft.studio.field.label" value="clothing_allowance"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="benefits"/>
 	</field>
-	<field name="total_benefits" class="java.lang.Double">
+	<field name="total_benefits" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="total_benefits"/>
 		<property name="com.jaspersoft.studio.field.label" value="total_benefits"/>
 	</field>
-	<field name="net_salary" class="java.lang.Double">
+	<field name="net_salary" class="java.lang.Object">
 		<property name="com.jaspersoft.studio.field.name" value="net_salary"/>
 		<property name="com.jaspersoft.studio.field.label" value="net_salary"/>
 	</field>
@@ -196,11 +196,11 @@ WHERE p.employee_id = $P{employee_id}]]>
 				</reportElement>
 			</line>
 			<staticText>
-				<reportElement x="0" y="116" width="80" height="15" uuid="1d3045ed-03d6-4253-a959-aeeb491b73ca"/>
+				<reportElement x="0" y="131" width="80" height="15" uuid="1d3045ed-03d6-4253-a959-aeeb491b73ca"/>
 				<text><![CDATA[Employee Id:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="131" width="80" height="15" uuid="235bf8b6-1e1e-49c7-b59f-7a46c30b8209"/>
+				<reportElement x="0" y="146" width="80" height="15" uuid="235bf8b6-1e1e-49c7-b59f-7a46c30b8209"/>
 				<text><![CDATA[Employee Name:]]></text>
 			</staticText>
 			<staticText>
@@ -254,15 +254,15 @@ WHERE p.employee_id = $P{employee_id}]]>
 				<text><![CDATA[End Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="146" width="80" height="15" uuid="aacfee3f-42ec-4d7a-9697-b14861b947e5"/>
+				<reportElement x="330" y="146" width="84" height="15" uuid="aacfee3f-42ec-4d7a-9697-b14861b947e5"/>
 				<text><![CDATA[Position]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="80" y="116" width="200" height="14" uuid="1c56ebd2-c82c-452b-84a3-672e700af39e"/>
+				<reportElement x="80" y="131" width="200" height="14" uuid="1c56ebd2-c82c-452b-84a3-672e700af39e"/>
 				<textFieldExpression><![CDATA[$F{employee_id}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="80" y="131" width="200" height="14" uuid="c9f3ab83-bffd-46b7-afd9-550ecf42ae5a"/>
+				<reportElement x="80" y="146" width="200" height="14" uuid="c9f3ab83-bffd-46b7-afd9-550ecf42ae5a"/>
 				<textFieldExpression><![CDATA[$F{employee_name}]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -274,9 +274,17 @@ WHERE p.employee_id = $P{employee_id}]]>
 				<textFieldExpression><![CDATA[$F{period_end}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="80" y="146" width="200" height="14" uuid="91f5bf37-10f9-40a0-b00a-46ed7530a6f9"/>
+				<reportElement x="414" y="146" width="141" height="14" uuid="91f5bf37-10f9-40a0-b00a-46ed7530a6f9"/>
 				<textFieldExpression><![CDATA[$F{position}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="80" y="115" width="200" height="14" uuid="115150fe-efb4-474e-bc19-e349545303c4"/>
+				<textFieldExpression><![CDATA[$F{payroll_id}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="115" width="80" height="15" uuid="7c850248-a5ca-4a59-8831-413ef6c65b11"/>
+				<text><![CDATA[Payroll ID:]]></text>
+			</staticText>
 		</band>
 	</title>
 	<columnHeader>
@@ -322,29 +330,21 @@ WHERE p.employee_id = $P{employee_id}]]>
 				<textFieldExpression><![CDATA[$F{working_hours}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="85" width="80" height="15" uuid="1186b104-669e-4610-b4f8-0e6eddc6ee9b"/>
-				<text><![CDATA[Overtime:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="0" y="100" width="80" height="15" uuid="29b28869-51a8-4770-b938-041577e804e1"/>
+				<reportElement x="0" y="85" width="80" height="15" uuid="29b28869-51a8-4770-b938-041577e804e1"/>
 				<text><![CDATA[Gross Income]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="80" y="85" width="200" height="14" uuid="72944cd7-d1e2-4917-8d27-a751f2b705c8"/>
-				<textFieldExpression><![CDATA[$F{overtime_hours}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="80" y="100" width="200" height="14" uuid="92066109-c3c6-458f-a031-42c6c24f5cb5"/>
+				<reportElement x="80" y="85" width="200" height="14" uuid="92066109-c3c6-458f-a031-42c6c24f5cb5"/>
 				<textFieldExpression><![CDATA[$F{gross_income}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="0" y="130" width="556" height="1" uuid="283d7e5e-2487-4e94-babe-1946fb1b4c8a">
+				<reportElement x="0" y="120" width="556" height="1" uuid="283d7e5e-2487-4e94-babe-1946fb1b4c8a">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 			</line>
 			<staticText>
-				<reportElement x="220" y="140" width="114" height="25" uuid="455bfd28-f684-49b2-8f75-db3efec607bc">
+				<reportElement x="220" y="135" width="114" height="25" uuid="455bfd28-f684-49b2-8f75-db3efec607bc">
 					<property name="local_mesure_unitheight" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
@@ -354,43 +354,43 @@ WHERE p.employee_id = $P{employee_id}]]>
 				<text><![CDATA[Deductions]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="170" width="80" height="15" uuid="2a32b82e-85f6-460c-94f9-ec69afd44881"/>
+				<reportElement x="0" y="165" width="80" height="15" uuid="2a32b82e-85f6-460c-94f9-ec69afd44881"/>
 				<text><![CDATA[SSS:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="185" width="80" height="15" uuid="c337391b-ce30-44ee-83f4-07a42d2abc35"/>
+				<reportElement x="0" y="180" width="80" height="15" uuid="c337391b-ce30-44ee-83f4-07a42d2abc35"/>
 				<text><![CDATA[PhilHealth]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="200" width="80" height="15" uuid="3e4c6ae4-d546-4bd9-9ad4-0bc99d5b55b5"/>
+				<reportElement x="0" y="195" width="80" height="15" uuid="3e4c6ae4-d546-4bd9-9ad4-0bc99d5b55b5"/>
 				<text><![CDATA[PAGIBIG]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="80" y="170" width="200" height="14" uuid="438dbf87-2c13-433d-b2c2-ef90c94ea54b"/>
+				<reportElement x="80" y="165" width="200" height="14" uuid="438dbf87-2c13-433d-b2c2-ef90c94ea54b"/>
 				<textFieldExpression><![CDATA[$F{sss_contribution}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="80" y="185" width="200" height="14" uuid="8786ffc9-ffe4-45f6-ab7f-6f554561de9f"/>
+				<reportElement x="80" y="180" width="200" height="14" uuid="8786ffc9-ffe4-45f6-ab7f-6f554561de9f"/>
 				<textFieldExpression><![CDATA[$F{philhealth_contribution}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="80" y="200" width="200" height="14" uuid="dda43186-902c-4015-8fa8-2e00b20cd80e"/>
+				<reportElement x="80" y="195" width="200" height="14" uuid="dda43186-902c-4015-8fa8-2e00b20cd80e"/>
 				<textFieldExpression><![CDATA[$F{pagibig_contribution}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="215" width="80" height="15" uuid="5f96503f-6979-4f10-b0f2-c039626cf8f4"/>
+				<reportElement x="0" y="210" width="80" height="15" uuid="5f96503f-6979-4f10-b0f2-c039626cf8f4"/>
 				<text><![CDATA[Witholding Tax:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="230" width="80" height="15" uuid="769bdc0b-9768-42b4-8a88-ce9456091161"/>
+				<reportElement x="0" y="225" width="80" height="15" uuid="769bdc0b-9768-42b4-8a88-ce9456091161"/>
 				<text><![CDATA[Total Deductions:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="80" y="215" width="200" height="14" uuid="13a3c7f4-5f33-415d-8c86-eb7505fb1475"/>
+				<reportElement x="80" y="210" width="200" height="14" uuid="13a3c7f4-5f33-415d-8c86-eb7505fb1475"/>
 				<textFieldExpression><![CDATA[$F{witholding_tax}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="80" y="230" width="200" height="14" uuid="a5640d3d-0106-401f-820a-50f5cd33e71f"/>
+				<reportElement x="80" y="225" width="200" height="14" uuid="a5640d3d-0106-401f-820a-50f5cd33e71f"/>
 				<textFieldExpression><![CDATA[$F{total_deductions}]]></textFieldExpression>
 			</textField>
 			<line>
