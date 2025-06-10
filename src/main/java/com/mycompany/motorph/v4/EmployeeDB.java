@@ -50,14 +50,13 @@ public class EmployeeDB extends javax.swing.JFrame {
     lblAddress.setText(loggedInEmployee.getAddress());
     lblPhone.setText(loggedInEmployee.getPhoneNumber());
     lblEmployeeID1.setText(loggedInEmployee.getEmployeeId());
-    lblEmployeeID2.setText(loggedInEmployee.getEmployeeId());
+    lblPayrollIdDisplay.setText("Click Payroll ID in the table to generate");
     lblStatus.setText(loggedInEmployee.getStatus());
     lblPosition.setText(loggedInEmployee.getPosition());
     lblDepartment.setText(loggedInEmployee.getDepartment());
     lblSupervisor.setText(loggedInEmployee.getSupervisor());
     lblRate.setText(String.valueOf(loggedInEmployee.getHourlyRate()));
     lblBasicSalary.setText(String.valueOf(loggedInEmployee.getBasicSalary()));
-    
     lblEmployeeID1.setText(loggedInEmployee.getEmployeeId());
 }
 
@@ -66,7 +65,7 @@ public class EmployeeDB extends javax.swing.JFrame {
     
     private void loadEmployeeLeaveData() {
     DefaultTableModel model = (DefaultTableModel) tblLeave.getModel();
-    model.setRowCount(0); // Clear existing data
+    model.setRowCount(0);
 
     if (loggedInEmployee == null) {
         JOptionPane.showMessageDialog(this, "Error loading employee details. Employee not found.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -108,10 +107,10 @@ public class EmployeeDB extends javax.swing.JFrame {
     try {
         while (rs != null && rs.next()) {
             model.addRow(new Object[]{
+                    rs.getString("payroll_id"),
                     rs.getString("period_start"),
                     rs.getString("period_end"), 
                     rs.getString("working_hours"),
-                    rs.getString("overtime_hours"),
                     rs.getString("sss_contribution"),
                     rs.getString("philhealth_contribution"),
                     rs.getString("pagibig_contribution"), 
@@ -188,7 +187,7 @@ public class EmployeeDB extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jLabel28 = new javax.swing.JLabel();
-        lblEmployeeID2 = new javax.swing.JLabel();
+        lblPayrollIdDisplay = new javax.swing.JLabel();
         btnGeneratePayslip = new javax.swing.JButton();
 
         jButton1.setText("jButton1");
@@ -455,20 +454,24 @@ public class EmployeeDB extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Period Start", "Period End", "Working Hours", "Overtime Hours", "SSS", "PhilHealth", "PAGIBIG", "Witholding Tax", "Rice Subsidy", "Phone Allowance", "Clothing Allowance"
+                "Period ID", "Period Start", "Period End", "Working Hours", "SSS", "PhilHealth", "PAGIBIG", "Witholding Tax", "Rice Subsidy", "Phone Allowance", "Clothing Allowance"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true, false, false, true, false, false
+                false, false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTable1);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setResizable(false);
             jTable1.getColumnModel().getColumn(1).setResizable(false);
             jTable1.getColumnModel().getColumn(2).setResizable(false);
             jTable1.getColumnModel().getColumn(3).setResizable(false);
@@ -484,13 +487,13 @@ public class EmployeeDB extends javax.swing.JFrame {
 
         jLabel28.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         jLabel28.setForeground(new java.awt.Color(153, 0, 153));
-        jLabel28.setText("Employee ID:");
-        payrollPanel.add(jLabel28, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 90, 20));
+        jLabel28.setText("Payroll ID:");
+        payrollPanel.add(jLabel28, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 80, 20));
 
-        lblEmployeeID2.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        lblEmployeeID2.setForeground(new java.awt.Color(0, 0, 0));
-        lblEmployeeID2.setText("employee_id");
-        payrollPanel.add(lblEmployeeID2, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 10, -1, 20));
+        lblPayrollIdDisplay.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        lblPayrollIdDisplay.setForeground(new java.awt.Color(0, 0, 0));
+        lblPayrollIdDisplay.setText("payroll_id");
+        payrollPanel.add(lblPayrollIdDisplay, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 20, 310, 20));
 
         btnGeneratePayslip.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         btnGeneratePayslip.setText("Generate Payslip");
@@ -499,7 +502,7 @@ public class EmployeeDB extends javax.swing.JFrame {
                 btnGeneratePayslipActionPerformed(evt);
             }
         });
-        payrollPanel.add(btnGeneratePayslip, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 10, 170, -1));
+        payrollPanel.add(btnGeneratePayslip, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 20, 170, -1));
 
         parentPanel.add(payrollPanel, "card4");
 
@@ -573,9 +576,29 @@ public class EmployeeDB extends javax.swing.JFrame {
 
     private void btnGeneratePayslipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGeneratePayslipActionPerformed
         // TODO add your handling code here:
-         String employeeId = loggedInEmployee.getEmployeeId();
-        Database.generatePayslip(employeeId);
+         String payrollId = lblPayrollIdDisplay.getText().trim();
+         Database.generatePayslip(payrollId);
     }//GEN-LAST:event_btnGeneratePayslipActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+        int selectedRow = jTable1.getSelectedRow();
+            if (selectedRow >= 0) {
+                // Assuming payroll_id is in the first column (index 0).
+                // Adjust this index if your payroll_id column is elsewhere.
+                Object payrollIdObject = jTable1.getModel().getValueAt(selectedRow, 0);
+
+                if (payrollIdObject != null) {
+                    String payrollId = payrollIdObject.toString();
+                    lblPayrollIdDisplay.setText( payrollId);
+
+                    // You can also store the payrollId for later use, e.g., in a class variable
+                    // currentSelectedPayrollId = payrollId;
+                } else {
+                    lblPayrollIdDisplay.setText("Payroll ID: N/A (No ID found)");
+                }
+            }
+    }//GEN-LAST:event_jTable1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -654,9 +677,9 @@ public class EmployeeDB extends javax.swing.JFrame {
     private javax.swing.JLabel lblDepartment;
     private javax.swing.JLabel lblEmployeeID;
     private javax.swing.JLabel lblEmployeeID1;
-    private javax.swing.JLabel lblEmployeeID2;
     private javax.swing.JTextField lblEndDate;
     private javax.swing.JLabel lblFullName;
+    private javax.swing.JLabel lblPayrollIdDisplay;
     private javax.swing.JLabel lblPhone;
     private javax.swing.JLabel lblPosition;
     private javax.swing.JLabel lblRate;
