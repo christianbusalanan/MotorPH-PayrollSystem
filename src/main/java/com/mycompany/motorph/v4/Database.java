@@ -9,6 +9,14 @@ package com.mycompany.motorph.v4;
  * @author KrisChan
  */
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.JOptionPane;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
 public class Database {
     private static final String URL = "jdbc:sqlite:MotorPH Payroll System.db";
     private static Connection connection = null;
@@ -61,6 +69,26 @@ public class Database {
         return null;
     }
 }
+    
+    public static ResultSet getAttendance() {
+    String sql = "SELECT e.last_name, e.first_name, a.date, a.time_in, a.time_out " +
+                 "FROM employee AS e JOIN attendance AS a " +
+                 "ON e.employee_id = a.employee_id";
+    try {
+        Connection conn = getConnection();
+        if (conn == null || conn.isClosed()) {
+            System.out.println("Database connection is closed. Reconnecting...");
+            conn = DriverManager.getConnection(URL);
+        }
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        return pstmt.executeQuery();
+    } catch (SQLException e) {
+        System.out.println("Error retrieving attendance: " + e.getMessage());
+        return null;
+    }
+}
+    
+    
     
     public static ResultSet getPayrollDetails() {
     String sql = "SELECT employee_id, period_start , period_end, working_hours, overtime_hours, sss_contribution, philhealth_contribution, pagibig_contribution, witholding_tax, rice_subsidy, phone_allowance, clothing_allowance FROM payroll";
@@ -115,25 +143,26 @@ public class Database {
 }
     
     
-    public static boolean insertPayrollRecord(String employeeId, String period_start, String period_end, int working_hours, 
+    public static boolean insertPayrollRecord(String payroll_id, String employeeId, String period_start, String period_end, int working_hours, 
                                           int overtime_hours, double sss_contribution, double philhealth_contribution, double pagibig_contribution, double witholding_tax, double rice_subsidy, double phone_allowance, double clothing_allowance) {
-    String sql = "INSERT INTO payroll (employee_id, period_start , period_end, working_hours, overtime_hours, sss_contribution, philhealth_contribution, pagibig_contribution, witholding_tax, rice_subsidy, phone_allowance, clothing_allowance ) " +
-                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO payroll (payroll_id, employee_id, period_start , period_end, working_hours, overtime_hours, sss_contribution, philhealth_contribution, pagibig_contribution, witholding_tax, rice_subsidy, phone_allowance, clothing_allowance ) " +
+                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     try (Connection conn = getConnection();
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-        pstmt.setString(1, employeeId);
-        pstmt.setString(2, period_start);
-        pstmt.setString(3, period_end);
-        pstmt.setInt(4, working_hours);
-        pstmt.setInt(5, overtime_hours);
-        pstmt.setDouble(6, sss_contribution);
-        pstmt.setDouble(7, philhealth_contribution);
-        pstmt.setDouble(8, pagibig_contribution);
-        pstmt.setDouble(9, witholding_tax);
-        pstmt.setDouble(10, rice_subsidy);
-        pstmt.setDouble(11, phone_allowance);
-        pstmt.setDouble(12, clothing_allowance);
+        
+        pstmt.setString(1, payroll_id);
+        pstmt.setString(2, employeeId);
+        pstmt.setString(3, period_start);
+        pstmt.setString(4, period_end);
+        pstmt.setInt(5, working_hours);
+        pstmt.setInt(6, overtime_hours);
+        pstmt.setDouble(7, sss_contribution);
+        pstmt.setDouble(8, philhealth_contribution);
+        pstmt.setDouble(9, pagibig_contribution);
+        pstmt.setDouble(10, witholding_tax);
+        pstmt.setDouble(11, rice_subsidy);
+        pstmt.setDouble(12, phone_allowance);
+        pstmt.setDouble(13, clothing_allowance);
 
         int rowsInserted = pstmt.executeUpdate();
         return rowsInserted > 0;
@@ -411,6 +440,29 @@ public static ResultSet getEmployeeLeave(String employeeId) {
             }
         }
     }
-
     
+   public static void generatePayslip(String employeeId) {
+        try {
+            // 1. Compile JRXML file
+            JasperReport report = JasperCompileManager.compileReport("payslip.jrxml");
+
+            // 2. Set parameters
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("employee_id", employeeId);
+
+            // 3. Connect to your database
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:MotorPH Payroll System.db");
+
+            // 4. Fill the report
+            JasperPrint print = JasperFillManager.fillReport(report, parameters, conn);
+
+            // 5. Show the report in a viewer
+            JasperViewer.viewReport(print, false);
+
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Failed to generate payslip.");
+        }
+    }
 }

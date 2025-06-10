@@ -22,8 +22,10 @@ public class PayrollStaffDB extends javax.swing.JFrame {
     public PayrollStaffDB() {
         initComponents();
         loadEmployeeData();
-        setLocationRelativeTo(null);
         loadPayrollData();
+        loadAttendanceData();
+        setLocationRelativeTo(null);
+        
     }
     
     private void loadEmployeeData() {
@@ -37,7 +39,7 @@ public class PayrollStaffDB extends javax.swing.JFrame {
                     rs.getString("employee_id"),
                     rs.getString("last_name"),
                     rs.getString("first_name"),
-                    rs.getString("birthday"), // Converts SQL Date to Java Date
+                    rs.getString("birthday"), 
                     rs.getString("address"),
                     rs.getString("phone_number"),
                     rs.getString("status"),
@@ -54,7 +56,25 @@ public class PayrollStaffDB extends javax.swing.JFrame {
         }
     }
     
-    
+    private void loadAttendanceData() {
+        DefaultTableModel model = (DefaultTableModel) attendance_data.getModel();
+        model.setRowCount(0); // Clear existing data
+
+        ResultSet rs = Database.getAttendance();
+        try {
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    rs.getString("last_name"),
+                    rs.getString("first_name"),
+                    rs.getString("date"),
+                    rs.getString("time_in"), 
+                    rs.getString("time_out") 
+                });
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error loading attendance data: " + e.getMessage());
+        }
+    }
     
     
     
@@ -179,6 +199,7 @@ public class PayrollStaffDB extends javax.swing.JFrame {
         viewEmp = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         processPayroll = new javax.swing.JButton();
+        btnAttendance = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         parentPanel = new javax.swing.JPanel();
         empData = new javax.swing.JScrollPane();
@@ -222,6 +243,8 @@ public class PayrollStaffDB extends javax.swing.JFrame {
         lblRice = new java.awt.Label();
         lblClothing = new java.awt.Label();
         lblPhone = new java.awt.Label();
+        panelAttendance = new javax.swing.JScrollPane();
+        attendance_data = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PAYROLL DASHBOARD");
@@ -256,6 +279,15 @@ public class PayrollStaffDB extends javax.swing.JFrame {
             }
         });
         jPanel1.add(processPayroll, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, 180, 40));
+
+        btnAttendance.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        btnAttendance.setText("Attendance");
+        btnAttendance.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAttendanceActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnAttendance, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 180, 40));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/background.jpg"))); // NOI18N
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 500));
@@ -468,6 +500,21 @@ public class PayrollStaffDB extends javax.swing.JFrame {
 
         parentPanel.add(processPayrollPanel, "card3");
 
+        attendance_data.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Last Name", "First Name", "Date", "Time-in", "Time-out"
+            }
+        ));
+        panelAttendance.setViewportView(attendance_data);
+
+        parentPanel.add(panelAttendance, "card5");
+
         getContentPane().add(parentPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 0, 760, 500));
 
         pack();
@@ -503,6 +550,7 @@ public class PayrollStaffDB extends javax.swing.JFrame {
     String employeeId = txtEmpID.getText().trim();
     String startDate = txtPeriodStart.getText().trim();
     String endDate = txtPeriodEnd.getText().trim();
+    String payrollId = employeeId + "-" + startDate + "-" + endDate;
 
     if (startDate.isEmpty() || employeeId.isEmpty() || endDate.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Date and Employee ID cannot be empty.", "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -524,7 +572,7 @@ public class PayrollStaffDB extends javax.swing.JFrame {
         double phone = Double.parseDouble(lblPhone.getText());
         double clothing = Double.parseDouble(lblClothing.getText());
 
-        boolean success = Database.insertPayrollRecord(employeeId, startDate, endDate, hoursWorked, overtimeHours, sss, philhealth, pagibig, witholding_tax, rice, phone, clothing);
+        boolean success = Database.insertPayrollRecord(payrollId, employeeId, startDate, endDate, hoursWorked, overtimeHours, sss, philhealth, pagibig, witholding_tax, rice, phone, clothing);
 
         if (success) {
             JOptionPane.showMessageDialog(this, "Payroll processed successfully!");
@@ -609,6 +657,14 @@ public class PayrollStaffDB extends javax.swing.JFrame {
     
     }//GEN-LAST:event_btnCalculateActionPerformed
 
+    private void btnAttendanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAttendanceActionPerformed
+        // TODO add your handling code here:
+        parentPanel.removeAll();
+        parentPanel.add(panelAttendance);
+        parentPanel.repaint();
+        parentPanel.revalidate();
+    }//GEN-LAST:event_btnAttendanceActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -645,6 +701,8 @@ public class PayrollStaffDB extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable attendance_data;
+    private javax.swing.JButton btnAttendance;
     private javax.swing.JButton btnCalculate;
     private javax.swing.JButton btnPP;
     private javax.swing.JScrollPane empData;
@@ -682,6 +740,7 @@ public class PayrollStaffDB extends javax.swing.JFrame {
     private java.awt.Label lblpagibig;
     private java.awt.Label lblphilhealth;
     private java.awt.Label lbltax;
+    private javax.swing.JScrollPane panelAttendance;
     private javax.swing.JPanel parentPanel;
     private javax.swing.JTable payrollData;
     private javax.swing.JButton processPayroll;

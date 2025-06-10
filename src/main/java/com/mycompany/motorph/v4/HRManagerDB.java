@@ -20,8 +20,9 @@ public class HRManagerDB extends javax.swing.JFrame {
     public HRManagerDB() {
         initComponents();
         loadEmployeeData();
-        setLocationRelativeTo(null);
+        loadAttendanceData();
         loadLeaveData();
+        setLocationRelativeTo(null);  
     }
     
     private void loadEmployeeData() {
@@ -77,7 +78,25 @@ public class HRManagerDB extends javax.swing.JFrame {
         }
     }
     
-    
+        private void loadAttendanceData() {
+        DefaultTableModel model = (DefaultTableModel) attendance_data.getModel();
+        model.setRowCount(0);
+
+        ResultSet rs = Database.getAttendance();
+        try {
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    rs.getString("last_name"),
+                    rs.getString("first_name"),
+                    rs.getString("date"),
+                    rs.getString("time_in"), 
+                    rs.getString("time_out") 
+                });
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error loading attendance data: " + e.getMessage());
+        }
+    }
    
     
     
@@ -162,6 +181,7 @@ private boolean deleteEmployee(String empId) {
         viewEmp = new javax.swing.JButton();
         empDetails = new javax.swing.JButton();
         btnLeave = new javax.swing.JButton();
+        btnAttendance = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         parentPanel = new javax.swing.JPanel();
         empData = new javax.swing.JScrollPane();
@@ -206,6 +226,8 @@ private boolean deleteEmployee(String empId) {
         roleCombobx = new javax.swing.JComboBox<>();
         comboPosition = new javax.swing.JComboBox<>();
         comboStatus = new javax.swing.JComboBox<>();
+        panelAttendance = new javax.swing.JScrollPane();
+        attendance_data = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("HR MANAGER DASHBOARD");
@@ -250,8 +272,17 @@ private boolean deleteEmployee(String empId) {
         });
         jPanel1.add(btnLeave, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, 180, 40));
 
+        btnAttendance.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
+        btnAttendance.setText("Attendance");
+        btnAttendance.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAttendanceActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnAttendance, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 340, 180, 40));
+
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/background.jpg"))); // NOI18N
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 220, 500));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 500));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 500));
 
@@ -531,6 +562,21 @@ private boolean deleteEmployee(String empId) {
 
         parentPanel.add(employee_details, "card3");
 
+        attendance_data.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Last Name", "First Name", "Date", "Time-in", "Time-out"
+            }
+        ));
+        panelAttendance.setViewportView(attendance_data);
+
+        parentPanel.add(panelAttendance, "card5");
+
         getContentPane().add(parentPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 0, 760, 500));
 
         pack();
@@ -768,6 +814,14 @@ private boolean deleteEmployee(String empId) {
         // TODO add your handling code here:
     }//GEN-LAST:event_roleCombobxActionPerformed
 
+    private void btnAttendanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAttendanceActionPerformed
+        // TODO add your handling code here:
+        parentPanel.removeAll();
+        parentPanel.add(panelAttendance);
+        parentPanel.repaint();
+        parentPanel.revalidate();
+    }//GEN-LAST:event_btnAttendanceActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -804,6 +858,8 @@ private boolean deleteEmployee(String empId) {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable attendance_data;
+    private javax.swing.JButton btnAttendance;
     private javax.swing.JButton btnLeave;
     private javax.swing.JButton btncreate;
     private javax.swing.JButton btndelete;
@@ -838,6 +894,7 @@ private boolean deleteEmployee(String empId) {
     private java.awt.Label label9;
     private javax.swing.JPanel leavePanel;
     private javax.swing.JButton logout;
+    private javax.swing.JScrollPane panelAttendance;
     private javax.swing.JPanel parentPanel;
     private javax.swing.JComboBox<String> roleCombobx;
     private javax.swing.JTable tableLeave;
