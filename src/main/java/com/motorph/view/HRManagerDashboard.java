@@ -6,6 +6,7 @@ import com.motorph.model.LeaveRequest;
 import com.motorph.service.EmployeeService;
 import com.motorph.service.LeaveRequestService;
 import com.motorph.dao.AttendanceDAO;
+import com.motorph.dao.AttendanceDAO.AttendanceWithEmployee;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -426,8 +427,8 @@ public class HRManagerDashboard extends JFrame {
         
         panel.add(controlPanel, BorderLayout.NORTH);
         
-        // Table for attendance records
-        String[] columnNames = {"Employee ID", "Date", "Time In", "Time Out", "Hours Worked"};
+        // Table for attendance records with updated columns
+        String[] columnNames = {"Employee ID", "Last Name", "First Name", "Date", "Time In", "Time Out"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -560,26 +561,28 @@ public class HRManagerDashboard extends JFrame {
     }
 
     private void loadAttendanceData() {
-        System.out.println("HRManagerDashboard: Starting to load attendance data...");
+        System.out.println("HRManagerDashboard: Starting to load attendance data with employee details...");
         
         try {
-            List<Attendance> attendanceRecords = attendanceDAO.getAllAttendance();
-            System.out.println("HRManagerDashboard: Retrieved " + attendanceRecords.size() + " attendance records");
+            List<AttendanceWithEmployee> attendanceRecords = attendanceDAO.getAllAttendanceWithEmployeeDetails();
+            System.out.println("HRManagerDashboard: Retrieved " + attendanceRecords.size() + " attendance records with employee details");
             
             DefaultTableModel model = (DefaultTableModel) attendanceTable.getModel();
             model.setRowCount(0); // Clear existing data
             
-            for (Attendance attendance : attendanceRecords) {
+            for (AttendanceWithEmployee attendance : attendanceRecords) {
                 Object[] row = {
                     attendance.getEmployeeId() != null ? attendance.getEmployeeId() : "N/A",
+                    attendance.getLastName() != null ? attendance.getLastName() : "N/A",
+                    attendance.getFirstName() != null ? attendance.getFirstName() : "N/A",
                     attendance.getDate() != null ? attendance.getDate().toString() : "N/A",
                     attendance.getTimeIn() != null ? attendance.getTimeIn().toString() : "N/A",
-                    attendance.getTimeOut() != null ? attendance.getTimeOut().toString() : "N/A",
-                    String.format("%.2f", attendance.getHoursWorked())
+                    attendance.getTimeOut() != null ? attendance.getTimeOut().toString() : "N/A"
                 };
                 model.addRow(row);
-                System.out.println("HRManagerDashboard: Added attendance record for employee: " + 
-                                 attendance.getEmployeeId() + " on " + attendance.getDate());
+                System.out.println("HRManagerDashboard: Added attendance record for " + 
+                                 attendance.getEmployeeId() + " - " + attendance.getFullName() + 
+                                 " on " + attendance.getDate());
             }
             
             System.out.println("HRManagerDashboard: Attendance table updated with " + model.getRowCount() + " rows");
@@ -612,31 +615,26 @@ public class HRManagerDashboard extends JFrame {
         System.out.println("HRManagerDashboard: Filtering attendance for employee: " + employeeId);
         
         try {
-            List<Attendance> allAttendance = attendanceDAO.getAllAttendance();
+            List<AttendanceWithEmployee> filteredAttendance = attendanceDAO.getAttendanceWithEmployeeDetailsByEmployeeId(employeeId);
             DefaultTableModel model = (DefaultTableModel) attendanceTable.getModel();
             model.setRowCount(0); // Clear existing data
             
-            int filteredCount = 0;
-            for (Attendance attendance : allAttendance) {
-                if (attendance.getEmployeeId() != null && 
-                    attendance.getEmployeeId().toLowerCase().contains(employeeId.toLowerCase())) {
-                    
-                    Object[] row = {
-                        attendance.getEmployeeId(),
-                        attendance.getDate() != null ? attendance.getDate().toString() : "N/A",
-                        attendance.getTimeIn() != null ? attendance.getTimeIn().toString() : "N/A",
-                        attendance.getTimeOut() != null ? attendance.getTimeOut().toString() : "N/A",
-                        String.format("%.2f", attendance.getHoursWorked())
-                    };
-                    model.addRow(row);
-                    filteredCount++;
-                }
+            for (AttendanceWithEmployee attendance : filteredAttendance) {
+                Object[] row = {
+                    attendance.getEmployeeId(),
+                    attendance.getLastName() != null ? attendance.getLastName() : "N/A",
+                    attendance.getFirstName() != null ? attendance.getFirstName() : "N/A",
+                    attendance.getDate() != null ? attendance.getDate().toString() : "N/A",
+                    attendance.getTimeIn() != null ? attendance.getTimeIn().toString() : "N/A",
+                    attendance.getTimeOut() != null ? attendance.getTimeOut().toString() : "N/A"
+                };
+                model.addRow(row);
             }
             
             System.out.println("HRManagerDashboard: Filtered attendance table updated with " + 
-                             filteredCount + " records for employee: " + employeeId);
+                             filteredAttendance.size() + " records for employee: " + employeeId);
             
-            if (filteredCount == 0) {
+            if (filteredAttendance.isEmpty()) {
                 JOptionPane.showMessageDialog(this, 
                     "No attendance records found for Employee ID: " + employeeId, 
                     "No Records Found", 
