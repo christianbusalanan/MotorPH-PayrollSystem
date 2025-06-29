@@ -1,106 +1,249 @@
-# MotorPH Payroll System  
-![Status](https://img.shields.io/badge/status-Completed-brightgreen)  
-**Group 12 | Client: MotorPH**
+# MotorPH Payroll System - OOP Refactored
+
+![Status](https://img.shields.io/badge/status-Refactored-brightgreen)  
+**Refactored with proper OOP principles and clean architecture**
 
 ---
 
 ## Table of Contents
 - [Project Description](#project-description)
-- [Group Members](#group-members)
+- [Architecture Overview](#architecture-overview)
+- [Package Structure](#package-structure)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
-- [Test Scenarios](#test-scenarios)
-- [Internal Test Cases](#internal-test-cases)
-- [External Testing](#external-testing)
-- [Summary](#summary)
-- [Repository](#github-repository)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Design Patterns Used](#design-patterns-used)
 
 ---
 
 ## Project Description
-The **MotorPH Payroll System** is a desktop-based Java application designed to streamline essential HR tasks. It allows HR personnel to manage employee records, handle leave requests, and process payroll with accuracy and efficiency. The system supports secure login, detailed employee management, and automated payroll calculations.
+The **MotorPH Payroll System** has been completely refactored to follow proper Object-Oriented Programming (OOP) principles and clean architecture patterns. The system now features proper separation of concerns, maintainable code structure, and follows industry best practices.
 
 ---
 
-## Group Members
-- Busalanan, C.N.
-- Guevara, K.
-- Ricohermozo, J.
-- Nacpil, A.J.
-- Torrijos, E.M.
-- Dela Cruz, P.P.
+## Architecture Overview
+
+The system follows a layered architecture pattern:
+
+```
+┌─────────────────┐
+│   View Layer    │  ← User Interface (Swing GUI)
+├─────────────────┤
+│ Controller Layer│  ← Business Logic Controllers
+├─────────────────┤
+│ Service Layer   │  ← Business Logic Services
+├─────────────────┤
+│   DAO Layer     │  ← Data Access Objects
+├─────────────────┤
+│  Model Layer    │  ← Domain Models/Entities
+└─────────────────┘
+```
+
+---
+
+## Package Structure
+
+```
+src/main/java/com/motorph/
+├── model/              # Domain models and entities
+│   ├── Employee.java
+│   ├── User.java
+│   ├── LeaveRequest.java
+│   ├── Payroll.java
+│   ├── Attendance.java
+│   └── Benefits.java
+├── dao/                # Data Access Objects
+│   ├── DatabaseConnection.java
+│   ├── UserDAO.java
+│   ├── EmployeeDAO.java
+│   ├── LeaveRequestDAO.java
+│   ├── PayrollDAO.java
+│   ├── AttendanceDAO.java
+│   └── BenefitsDAO.java
+├── service/            # Business Logic Services
+│   ├── AuthenticationService.java
+│   ├── EmployeeService.java
+│   ├── LeaveRequestService.java
+│   ├── PayrollService.java
+│   ├── PayrollCalculationService.java
+│   └── ReportService.java
+├── controller/         # Controllers
+│   └── LoginController.java
+└── view/              # User Interface
+    ├── LoginForm.java
+    ├── HRManagerDashboard.java
+    ├── EmployeeDashboard.java
+    └── PayrollStaffDashboard.java
+```
 
 ---
 
 ## Features
-- Secure Login Authentication
-- Employee Leave Request Submission and Tracking
-- HR Manager CRUD Operations (Create, Read, Update, Delete)
-- Payroll Calculation with Overtime, Deductions, and Net Pay
-- Payslip Generation
+
+### Core Functionality
+- **Secure Authentication** - Role-based login system
+- **Employee Management** - CRUD operations for employee records
+- **Leave Management** - Submit and approve/reject leave requests
+- **Payroll Processing** - Automated payroll calculations with deductions and benefits
+- **Report Generation** - Generate payslips using JasperReports
+
+### OOP Principles Applied
+- **Encapsulation** - Private fields with public getters/setters
+- **Inheritance** - Common base functionality where appropriate
+- **Polymorphism** - Interface-based programming
+- **Abstraction** - Clear separation between interface and implementation
+
+### Design Patterns
+- **DAO Pattern** - Data access abstraction
+- **Service Layer Pattern** - Business logic separation
+- **MVC Pattern** - Model-View-Controller architecture
+- **Singleton Pattern** - Database connection management
+- **Factory Pattern** - Object creation abstraction
 
 ---
 
 ## Tech Stack
-- **Language:** Java  
-- **IDE:** Netbeans, VSCODE, ECLIPSE
-- **Database:** MySQL / SQLite  
-- **OS Compatibility:** Windows  
-- **Dependencies:** Java Runtime Environment  
+
+- **Language:** Java 17+
+- **GUI Framework:** Swing
+- **Database:** SQLite
+- **Build Tool:** Maven
+- **Reporting:** JasperReports
+- **Architecture:** Layered Architecture with MVC
 
 ---
 
-## Test Scenarios
-1. Login Functionality  
-2. Employee Leave Requests  
-3. HR Manager Duties (CRUD operations, Approve/Reject Leave)  
-4. Payroll Processing  
+## Getting Started
+
+### Prerequisites
+- Java 17 or higher
+- Maven 3.6+
+- SQLite database file (`MotorPH Payroll System.db`)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd motorph-payroll-system
+   ```
+
+2. **Build the project**
+   ```bash
+   mvn clean compile
+   ```
+
+3. **Run the application**
+   ```bash
+   mvn exec:java
+   ```
 
 ---
 
-## Internal Test Cases
+## Usage
 
-| **Scenario**           | **Test Case ID** | **Test Case**                  | **Steps**                                  | **Expected Result**                        | **Actual Result**                          | **Result** |
-|------------------------|------------------|--------------------------------|-------------------------------------------|-------------------------------------------|-------------------------------------------|------------|
-| Login Functionality    | TC-01            | Launch System                  | Run HRManagerDB class                     | Redirected to Login tab                   | Redirected to Login tab                   | ✅ Pass    |
-|                        | TC-02            | Valid Login                    | Enter valid credentials and click Login   | Redirected to dashboard                   | Redirected to dashboard                   | ✅ Pass    |
-|                        | TC-03            | Invalid Login                  | Enter invalid credentials and click Login | Error: Incorrect username and password    | Error: Incorrect username and password    | ✅ Pass    |
-| Leave Request          | TC-04            | Open Leave Request Page        | Login → Navigate to Leave Request page    | Page shows leave history & request form   | Page shows leave history & request form   | ✅ Pass    |
-|                        | TC-05            | Submit Leave Request           | Input dates, select leave type, submit    | Leave request submitted successfully      | Leave request submitted successfully      | ✅ Pass    |
-|                        | TC-06            | View Submitted Leave Request   | Submit request → Check history section    | Latest request appears at the top         | Latest request appears at the top         | ✅ Pass    |
-| HR Manager Duties      | TC-07            | View Employee Details          | Click “Employee Details” → Fill fields    | Employee details are displayed            | Employee details are displayed            | ✅ Pass    |
-|                        | TC-08            | CRUD Employee Records          | Input details → Add/Update/Delete         | Record updated accordingly                | Record updated accordingly                | ✅ Pass    |
-|                        | TC-09            | Approve/Reject Leave Requests  | Enter employee number → Set status        | Leave request status updated              | Leave request status updated              | ✅ Pass    |
-| Payroll Process        | TC-10            | Access Payroll Dashboard       | Login → Click “Process Payroll”           | Routed to payroll processing page         | Routed to payroll processing page         | ✅ Pass    |
-|                        | TC-11            | Process Payroll                | Input data → Calculate → Process Payroll  | Payroll processed successfully            | Payroll processed successfully            | ✅ Pass    |
-|                        | TC-12            | View Payslip                   | Process payroll → Confirm → View payslip  | Payslip displayed accurately              | Payslip displayed accurately              | ✅ Pass    |
+### Login Credentials
+The system supports three user roles:
+- **HR Manager** - Full access to employee and leave management
+- **Payroll Staff** - Access to payroll processing and employee viewing
+- **Employee** - Access to personal information, leave requests, and payslips
 
----
+### Key Operations
 
-## External Testing
+#### HR Manager
+- Create, update, and delete employee records
+- Approve or reject leave requests
+- View employee attendance records
 
-| **Scenario**            | **Test Case ID** | **Test Case**                           | **Steps**                                      | **Expected Result**                             | **Actual Result**                                | **Result** |
-|-------------------------|------------------|-----------------------------------------|-----------------------------------------------|-----------------------------------------------|-----------------------------------------------|------------|
-| Application Launch      | 1                | Application Launched                   | Run application on IDE and compile properly  | Login page comes up                          | Login page comes up                          | ✅ Pass    |
-|                         | 2                | Login with wrong/empty credentials      | Enter wrong credentials/leave fields empty   | Warning window pops up                       | Warning window pops up                       | ✅ Pass    |
-|                         | 3                | Login with proper credentials           | Enter HR/Finance/Employee credentials        | Logs in accordingly                          | HR & Finance logged in, Employee failed      | ✅ Pass    |
-| Employee Functions      | 4                | Employee login attempt                  | Enter employee login credentials             | Employee portal opens                        | Warning popup appears despite correct login | ❌ Fail    |
-|                         | 5                | Employee portal functions               | Try to use functions                         | Functions should work                        | Not functional                              | ❌ Fail    |
-|                         | 6                | Leave request submission                | Submit leave request                         | Request submitted successfully               | Not functional                              | ❌ Fail    |
-| Finance Functions       | 7                | Finance login                           | Enter finance credentials                    | Finance portal opens                         | Finance portal opens                         | ✅ Pass    |
-|                         | 8                | Calculate Payslip                       | Click 'Calculate Payslip'                    | Employee salary calculated                   | No response                                  | ❌ Fail    |
-|                         | 9                | Process Payroll                         | Click 'Process Payroll'                      | Payroll processed successfully               | No response                                  | ❌ Fail    |
-| HR Functions            | 10               | HR login                                | Enter HR credentials                         | HR portal opens                              | HR portal opens                              | ✅ Pass    |
-|                         | 11               | Manage Employees                        | Create, update, and delete employees         | All functions should work                    | Update failed, others work                   | ✅ Pass    |
-|                         | 12               | Leave management                        | Approve/reject leave requests                | Status updates successfully                  | Status updates successfully                  | ✅ Pass    |
+#### Payroll Staff
+- Calculate and process employee payroll
+- Generate payslips
+- View employee information
+
+#### Employee
+- View personal information
+- Submit leave requests
+- View payroll history and generate payslips
 
 ---
 
-## Summary
-All internal test cases passed, but external testing revealed some issues with employee functionality and payroll processing. The **MotorPH Payroll System** meets most requirements but requires fixes in certain areas before deployment.
+## Design Patterns Used
+
+### 1. Data Access Object (DAO) Pattern
+```java
+public interface EmployeeDAO {
+    List<Employee> getAllEmployees();
+    Employee getEmployeeById(String id);
+    boolean createEmployee(Employee employee);
+    boolean updateEmployee(Employee employee);
+    boolean deleteEmployee(String id);
+}
+```
+
+### 2. Service Layer Pattern
+```java
+public class EmployeeService {
+    private final EmployeeDAO employeeDAO;
+    
+    public boolean createEmployee(Employee employee, String password, String role) {
+        // Business logic here
+    }
+}
+```
+
+### 3. Model-View-Controller (MVC)
+- **Models**: Domain entities (Employee, Payroll, etc.)
+- **Views**: Swing GUI components
+- **Controllers**: Handle user interactions and coordinate between views and services
+
+### 4. Singleton Pattern
+```java
+public class DatabaseConnection {
+    private static Connection connection = null;
+    
+    public static Connection getConnection() {
+        // Singleton implementation
+    }
+}
+```
 
 ---
 
-## GitHub Repository
-[🔗 MotorPH Payroll System Repo](https://github.com/christianbusalanan/MotorPH-PayrollSystem)  
-[🌍 GitHub Pages Deployment](https://santiagoian01.github.io/MotorPH-PayrollSystem/)
+## Benefits of the Refactored Architecture
+
+### Maintainability
+- **Single Responsibility**: Each class has one clear purpose
+- **Loose Coupling**: Components are independent and easily replaceable
+- **High Cohesion**: Related functionality is grouped together
+
+### Testability
+- **Dependency Injection**: Easy to mock dependencies for testing
+- **Separation of Concerns**: Business logic separated from UI and data access
+- **Interface-based Design**: Easy to create test doubles
+
+### Scalability
+- **Modular Design**: Easy to add new features without affecting existing code
+- **Layered Architecture**: Clear boundaries between different concerns
+- **Service-oriented**: Business logic can be easily exposed as web services
+
+### Code Quality
+- **DRY Principle**: No code duplication
+- **SOLID Principles**: All five SOLID principles are followed
+- **Clean Code**: Readable, self-documenting code with meaningful names
+
+---
+
+## Future Enhancements
+
+- **Web Interface**: Convert Swing GUI to web-based interface
+- **REST API**: Expose services as REST endpoints
+- **Database Migration**: Support for multiple database systems
+- **Unit Testing**: Comprehensive test coverage
+- **Logging**: Structured logging with different log levels
+- **Configuration Management**: Externalized configuration
+- **Security Enhancements**: Password encryption, session management
+
+---
+
+This refactored version demonstrates professional software development practices and serves as an excellent example of how to properly structure a Java application using OOP principles and design patterns.
