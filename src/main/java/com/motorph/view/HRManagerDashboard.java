@@ -184,7 +184,7 @@ public class HRManagerDashboard extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
 
         // Add title
-        JLabel titleLabel = new JLabel("Employee Management");
+        JLabel titleLabel = new JLabel("Employee Management (Normalized Database)");
         titleLabel.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 18));
         titleLabel.setForeground(new Color(102, 0, 102));
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 4;
@@ -292,6 +292,15 @@ public class HRManagerDashboard extends JFrame {
         panel.add(txtSupervisor, gbc);
         gbc.gridwidth = 1; // Reset
 
+        // Add info label about normalized database
+        JLabel infoLabel = new JLabel("<html><i>Note: Employee ID, Username, Password, and Role are stored in the User table</i></html>");
+        infoLabel.setFont(new Font("Arial", Font.ITALIC, 11));
+        infoLabel.setForeground(new Color(102, 102, 102));
+        gbc.gridx = 0; gbc.gridy = 9;
+        gbc.gridwidth = 4;
+        panel.add(infoLabel, gbc);
+        gbc.gridwidth = 1; // Reset
+
         // Add buttons
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.setBackground(Color.WHITE);
@@ -316,7 +325,7 @@ public class HRManagerDashboard extends JFrame {
         buttonPanel.add(btnDelete);
         buttonPanel.add(btnClear);
 
-        gbc.gridx = 0; gbc.gridy = 9;
+        gbc.gridx = 0; gbc.gridy = 10;
         gbc.gridwidth = 4;
         panel.add(buttonPanel, gbc);
 
@@ -656,6 +665,8 @@ public class HRManagerDashboard extends JFrame {
     }
 
     private void createEmployeeActionPerformed(ActionEvent evt) {
+        System.out.println("HRManagerDashboard: Create employee button clicked");
+        
         try {
             // Validate required fields
             if (txtEmployeeId.getText().trim().isEmpty() || 
@@ -666,17 +677,24 @@ public class HRManagerDashboard extends JFrame {
                 txtSalary.getText().trim().isEmpty()) {
                 
                 JOptionPane.showMessageDialog(this, 
-                    "Please fill in all required fields.", 
+                    "Please fill in all required fields:\n" +
+                    "- Employee ID\n" +
+                    "- First Name\n" +
+                    "- Last Name\n" +
+                    "- Username\n" +
+                    "- Password\n" +
+                    "- Basic Salary", 
                     "Input Error", 
                     JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
+            // Create employee object
             Employee employee = new Employee();
             employee.setEmployeeId(txtEmployeeId.getText().trim());
             employee.setFirstName(txtFirstName.getText().trim());
             employee.setLastName(txtLastName.getText().trim());
-            employee.setUsername(txtUsername.getText().trim());
+            employee.setUsername(txtUsername.getText().trim()); // This will be stored in user table
             
             // Parse birthday
             String birthdayStr = txtBirthday.getText().trim();
@@ -699,6 +717,7 @@ public class HRManagerDashboard extends JFrame {
             employee.setDepartment(txtDepartment.getText().trim());
             employee.setSupervisor(txtSupervisor.getText().trim());
             
+            // Parse salary
             try {
                 employee.setBasicSalary(Double.parseDouble(txtSalary.getText().trim()));
             } catch (NumberFormatException e) {
@@ -712,15 +731,33 @@ public class HRManagerDashboard extends JFrame {
             String password = txtPassword.getText().trim();
             String role = (String) comboRole.getSelectedItem();
 
+            System.out.println("HRManagerDashboard: Creating employee with normalized database structure");
+            System.out.println("HRManagerDashboard: Employee ID: " + employee.getEmployeeId());
+            System.out.println("HRManagerDashboard: Username: " + employee.getUsername());
+            System.out.println("HRManagerDashboard: Role: " + role);
+
+            // Create employee using service (handles both user and employee tables)
             boolean success = employeeService.createEmployee(employee, password, role);
 
             if (success) {
-                JOptionPane.showMessageDialog(this, "Employee created successfully!");
+                JOptionPane.showMessageDialog(this, 
+                    "Employee created successfully!\n\n" +
+                    "Employee ID: " + employee.getEmployeeId() + "\n" +
+                    "Username: " + employee.getUsername() + "\n" +
+                    "Role: " + role + "\n\n" +
+                    "Both User and Employee records have been created.", 
+                    "Success", 
+                    JOptionPane.INFORMATION_MESSAGE);
                 clearEmployeeFields();
-                loadEmployeeData();
+                loadEmployeeData(); // Refresh the table
             } else {
                 JOptionPane.showMessageDialog(this, 
-                    "Error creating employee. Employee ID might already exist.", 
+                    "Error creating employee.\n\n" +
+                    "Possible causes:\n" +
+                    "- Employee ID already exists\n" +
+                    "- Username already exists\n" +
+                    "- Database connection error\n\n" +
+                    "Please check the console for detailed error messages.", 
                     "Database Error", 
                     JOptionPane.ERROR_MESSAGE);
             }
@@ -728,7 +765,8 @@ public class HRManagerDashboard extends JFrame {
             System.out.println("HRManagerDashboard: Error creating employee: " + e.getMessage());
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, 
-                "Error creating employee: " + e.getMessage(), 
+                "Unexpected error creating employee:\n" + e.getMessage() + 
+                "\n\nPlease check the console for detailed error information.", 
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
         }
@@ -736,7 +774,10 @@ public class HRManagerDashboard extends JFrame {
 
     private void updateEmployeeActionPerformed(ActionEvent evt) {
         JOptionPane.showMessageDialog(this, 
-            "Update functionality will be implemented in the next version.", 
+            "Update functionality will be implemented in the next version.\n\n" +
+            "For normalized database structure, updates need to handle both:\n" +
+            "- Employee table (personal/job information)\n" +
+            "- User table (username, password, role)", 
             "Feature Not Available", 
             JOptionPane.INFORMATION_MESSAGE);
     }
@@ -752,7 +793,11 @@ public class HRManagerDashboard extends JFrame {
             
             if (empName != null) {
                 int confirm = JOptionPane.showConfirmDialog(this,
-                    "Are you sure you want to delete '" + empName + "'?",
+                    "Are you sure you want to delete '" + empName + "'?\n\n" +
+                    "This will remove both:\n" +
+                    "- Employee record (personal/job information)\n" +
+                    "- User account (username, password, role)\n\n" +
+                    "This action cannot be undone!",
                     "Confirm Deletion",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE);
@@ -761,19 +806,24 @@ public class HRManagerDashboard extends JFrame {
                     boolean success = employeeService.deleteEmployee(empId.trim());
                     
                     if (success) {
-                        JOptionPane.showMessageDialog(this, "Employee deleted successfully!");
+                        JOptionPane.showMessageDialog(this, 
+                            "Employee '" + empName + "' deleted successfully!\n\n" +
+                            "Both User and Employee records have been removed.", 
+                            "Success", 
+                            JOptionPane.INFORMATION_MESSAGE);
                         loadEmployeeData();
                     } else {
                         JOptionPane.showMessageDialog(this, 
-                            "Error deleting employee.", 
+                            "Error deleting employee.\n\n" +
+                            "Please check the console for detailed error messages.", 
                             "Database Error", 
                             JOptionPane.ERROR_MESSAGE);
                     }
                 }
             } else {
                 JOptionPane.showMessageDialog(this, 
-                    "Employee not found.", 
-                    "Error", 
+                    "Employee not found with ID: " + empId.trim(), 
+                    "Employee Not Found", 
                     JOptionPane.ERROR_MESSAGE);
             }
         }

@@ -172,9 +172,12 @@ public class EmployeeDAO {
     }
     
     public boolean createEmployee(Employee employee) {
-        String sql = "INSERT INTO employee (employee_id, last_name, first_name, username, birthday, " +
+        // For normalized database, we only store employee data (no username in employee table)
+        String sql = "INSERT INTO employee (employee_id, last_name, first_name, birthday, " +
                     "address, phone_number, status, position, department, supervisor, basic_salary, hourly_rate) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        System.out.println("EmployeeDAO: Creating employee record for ID: " + employee.getEmployeeId());
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -182,41 +185,6 @@ public class EmployeeDAO {
             pstmt.setString(1, employee.getEmployeeId());
             pstmt.setString(2, employee.getLastName());
             pstmt.setString(3, employee.getFirstName());
-            pstmt.setString(4, employee.getUsername());
-            
-            // Convert LocalDate to String for SQLite
-            String birthdayStr = employee.getBirthday() != null ? 
-                employee.getBirthday().format(DATE_FORMATTER) : null;
-            pstmt.setString(5, birthdayStr);
-            
-            pstmt.setString(6, employee.getAddress());
-            pstmt.setString(7, employee.getPhoneNumber());
-            pstmt.setString(8, employee.getStatus());
-            pstmt.setString(9, employee.getPosition());
-            pstmt.setString(10, employee.getDepartment());
-            pstmt.setString(11, employee.getSupervisor());
-            pstmt.setDouble(12, employee.getBasicSalary());
-            pstmt.setDouble(13, employee.getHourlyRate());
-            
-            int rowsInserted = pstmt.executeUpdate();
-            return rowsInserted > 0;
-        } catch (SQLException e) {
-            System.out.println("Error creating employee: " + e.getMessage());
-            return false;
-        }
-    }
-    
-    public boolean updateEmployee(Employee employee) {
-        String sql = "UPDATE employee SET last_name = ?, first_name = ?, username = ?, birthday = ?, " +
-                    "address = ?, phone_number = ?, status = ?, position = ?, department = ?, " +
-                    "supervisor = ?, basic_salary = ?, hourly_rate = ? WHERE employee_id = ?";
-        
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setString(1, employee.getLastName());
-            pstmt.setString(2, employee.getFirstName());
-            pstmt.setString(3, employee.getUsername());
             
             // Convert LocalDate to String for SQLite
             String birthdayStr = employee.getBirthday() != null ? 
@@ -231,7 +199,43 @@ public class EmployeeDAO {
             pstmt.setString(10, employee.getSupervisor());
             pstmt.setDouble(11, employee.getBasicSalary());
             pstmt.setDouble(12, employee.getHourlyRate());
-            pstmt.setString(13, employee.getEmployeeId());
+            
+            int rowsInserted = pstmt.executeUpdate();
+            System.out.println("EmployeeDAO: Employee record created successfully: " + (rowsInserted > 0));
+            return rowsInserted > 0;
+        } catch (SQLException e) {
+            System.out.println("EmployeeDAO: Error creating employee: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean updateEmployee(Employee employee) {
+        // For normalized database, we only update employee data (no username in employee table)
+        String sql = "UPDATE employee SET last_name = ?, first_name = ?, birthday = ?, " +
+                    "address = ?, phone_number = ?, status = ?, position = ?, department = ?, " +
+                    "supervisor = ?, basic_salary = ?, hourly_rate = ? WHERE employee_id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, employee.getLastName());
+            pstmt.setString(2, employee.getFirstName());
+            
+            // Convert LocalDate to String for SQLite
+            String birthdayStr = employee.getBirthday() != null ? 
+                employee.getBirthday().format(DATE_FORMATTER) : null;
+            pstmt.setString(3, birthdayStr);
+            
+            pstmt.setString(4, employee.getAddress());
+            pstmt.setString(5, employee.getPhoneNumber());
+            pstmt.setString(6, employee.getStatus());
+            pstmt.setString(7, employee.getPosition());
+            pstmt.setString(8, employee.getDepartment());
+            pstmt.setString(9, employee.getSupervisor());
+            pstmt.setDouble(10, employee.getBasicSalary());
+            pstmt.setDouble(11, employee.getHourlyRate());
+            pstmt.setString(12, employee.getEmployeeId());
             
             int rowsUpdated = pstmt.executeUpdate();
             return rowsUpdated > 0;
@@ -256,14 +260,13 @@ public class EmployeeDAO {
         }
     }
     
-    // Standard mapping method for employee table only
+    // Standard mapping method for employee table only (no username field)
     private Employee mapResultSetToEmployee(ResultSet rs) {
         try {
             Employee employee = new Employee();
             employee.setEmployeeId(rs.getString("employee_id"));
             employee.setLastName(rs.getString("last_name"));
             employee.setFirstName(rs.getString("first_name"));
-            employee.setUsername(rs.getString("username"));
             
             // Handle SQLite TEXT date field safely
             String birthdayStr = rs.getString("birthday");
