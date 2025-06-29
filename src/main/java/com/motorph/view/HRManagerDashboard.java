@@ -1,9 +1,11 @@
 package com.motorph.view;
 
+import com.motorph.model.Attendance;
 import com.motorph.model.Employee;
 import com.motorph.model.LeaveRequest;
 import com.motorph.service.EmployeeService;
 import com.motorph.service.LeaveRequestService;
+import com.motorph.dao.AttendanceDAO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -16,20 +18,24 @@ import java.util.List;
 public class HRManagerDashboard extends JFrame {
     private final EmployeeService employeeService;
     private final LeaveRequestService leaveRequestService;
+    private final AttendanceDAO attendanceDAO;
     
     // UI Components
     private JPanel parentPanel;
     private JTable employeeTable;
     private JTable leaveTable;
+    private JTable attendanceTable;
     private JTextField txtEmployeeId, txtFirstName, txtLastName, txtUsername, txtPassword;
     private JTextField txtBirthday, txtAddress, txtPhoneNumber, txtDepartment, txtSupervisor, txtSalary;
     private JComboBox<String> comboPosition, comboStatus, comboRole;
     private JTextField txtLeaveId;
     private JComboBox<String> comboLeaveStatus;
+    private JTextField txtAttendanceEmployeeId;
 
     public HRManagerDashboard() {
         this.employeeService = new EmployeeService();
         this.leaveRequestService = new LeaveRequestService();
+        this.attendanceDAO = new AttendanceDAO();
         initComponents();
         setLocationRelativeTo(null);
         
@@ -38,6 +44,7 @@ public class HRManagerDashboard extends JFrame {
             System.out.println("HRManagerDashboard: Loading initial data...");
             loadEmployeeData();
             loadLeaveData();
+            loadAttendanceData();
         });
     }
 
@@ -59,6 +66,7 @@ public class HRManagerDashboard extends JFrame {
         parentPanel.add(createEmployeeListPanel(), "employees");
         parentPanel.add(createEmployeeDetailsPanel(), "employee_details");
         parentPanel.add(createLeaveRequestPanel(), "leave_requests");
+        parentPanel.add(createAttendancePanel(), "attendance");
         
         // Show employees panel by default
         showPanel("employees");
@@ -73,17 +81,20 @@ public class HRManagerDashboard extends JFrame {
         JButton btnViewEmployees = new JButton("View Employees");
         JButton btnEmployeeDetails = new JButton("Employee Details");
         JButton btnLeaveRequests = new JButton("Leave Requests");
+        JButton btnAttendance = new JButton("Attendance");
         JButton btnLogout = new JButton("Log Out");
 
         // Style buttons
         styleButton(btnViewEmployees);
         styleButton(btnEmployeeDetails);
         styleButton(btnLeaveRequests);
+        styleButton(btnAttendance);
         styleButton(btnLogout);
 
         btnViewEmployees.addActionListener(e -> showPanel("employees"));
         btnEmployeeDetails.addActionListener(e -> showPanel("employee_details"));
         btnLeaveRequests.addActionListener(e -> showPanel("leave_requests"));
+        btnAttendance.addActionListener(e -> showPanel("attendance"));
         btnLogout.addActionListener(this::logoutActionPerformed);
 
         sidebar.add(Box.createVerticalStrut(50));
@@ -92,6 +103,8 @@ public class HRManagerDashboard extends JFrame {
         sidebar.add(btnEmployeeDetails);
         sidebar.add(Box.createVerticalStrut(10));
         sidebar.add(btnLeaveRequests);
+        sidebar.add(Box.createVerticalStrut(10));
+        sidebar.add(btnAttendance);
         sidebar.add(Box.createVerticalGlue());
         sidebar.add(btnLogout);
         sidebar.add(Box.createVerticalStrut(20));
@@ -377,6 +390,67 @@ public class HRManagerDashboard extends JFrame {
         return panel;
     }
 
+    private JPanel createAttendancePanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+        
+        // Add title
+        JLabel titleLabel = new JLabel("Employee Attendance Records", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 18));
+        titleLabel.setForeground(new Color(102, 0, 102));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        panel.add(titleLabel, BorderLayout.NORTH);
+        
+        // Top panel for controls
+        JPanel controlPanel = new JPanel(new FlowLayout());
+        controlPanel.setBackground(Color.WHITE);
+        
+        controlPanel.add(new JLabel("Filter by Employee ID:"));
+        txtAttendanceEmployeeId = new JTextField(15);
+        controlPanel.add(txtAttendanceEmployeeId);
+        
+        JButton btnFilterAttendance = new JButton("Filter");
+        styleActionButton(btnFilterAttendance);
+        btnFilterAttendance.addActionListener(this::filterAttendanceActionPerformed);
+        controlPanel.add(btnFilterAttendance);
+        
+        JButton btnShowAllAttendance = new JButton("Show All");
+        styleActionButton(btnShowAllAttendance);
+        btnShowAllAttendance.addActionListener(e -> loadAttendanceData());
+        controlPanel.add(btnShowAllAttendance);
+        
+        JButton btnRefreshAttendance = new JButton("Refresh");
+        styleActionButton(btnRefreshAttendance);
+        btnRefreshAttendance.addActionListener(e -> loadAttendanceData());
+        controlPanel.add(btnRefreshAttendance);
+        
+        panel.add(controlPanel, BorderLayout.NORTH);
+        
+        // Table for attendance records
+        String[] columnNames = {"Employee ID", "Date", "Time In", "Time Out", "Hours Worked"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        
+        attendanceTable = new JTable(model);
+        attendanceTable.setFont(new Font("Arial", Font.PLAIN, 12));
+        attendanceTable.setRowHeight(25);
+        attendanceTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        attendanceTable.getTableHeader().setBackground(new Color(102, 0, 102));
+        attendanceTable.getTableHeader().setForeground(Color.WHITE);
+        attendanceTable.setSelectionBackground(new Color(153, 0, 153));
+        attendanceTable.setSelectionForeground(Color.WHITE);
+        
+        JScrollPane scrollPane = new JScrollPane(attendanceTable);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.add(scrollPane, BorderLayout.CENTER);
+        
+        return panel;
+    }
+
     private void showPanel(String panelName) {
         CardLayout cl = (CardLayout) parentPanel.getLayout();
         cl.show(parentPanel, panelName);
@@ -390,6 +464,10 @@ public class HRManagerDashboard extends JFrame {
             case "leave_requests" -> {
                 System.out.println("HRManagerDashboard: Showing leave requests panel, loading data...");
                 loadLeaveData();
+            }
+            case "attendance" -> {
+                System.out.println("HRManagerDashboard: Showing attendance panel, loading data...");
+                loadAttendanceData();
             }
         }
     }
@@ -476,6 +554,104 @@ public class HRManagerDashboard extends JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, 
                 "Error loading leave data: " + e.getMessage(), 
+                "Database Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void loadAttendanceData() {
+        System.out.println("HRManagerDashboard: Starting to load attendance data...");
+        
+        try {
+            List<Attendance> attendanceRecords = attendanceDAO.getAllAttendance();
+            System.out.println("HRManagerDashboard: Retrieved " + attendanceRecords.size() + " attendance records");
+            
+            DefaultTableModel model = (DefaultTableModel) attendanceTable.getModel();
+            model.setRowCount(0); // Clear existing data
+            
+            for (Attendance attendance : attendanceRecords) {
+                Object[] row = {
+                    attendance.getEmployeeId() != null ? attendance.getEmployeeId() : "N/A",
+                    attendance.getDate() != null ? attendance.getDate().toString() : "N/A",
+                    attendance.getTimeIn() != null ? attendance.getTimeIn().toString() : "N/A",
+                    attendance.getTimeOut() != null ? attendance.getTimeOut().toString() : "N/A",
+                    String.format("%.2f", attendance.getHoursWorked())
+                };
+                model.addRow(row);
+                System.out.println("HRManagerDashboard: Added attendance record for employee: " + 
+                                 attendance.getEmployeeId() + " on " + attendance.getDate());
+            }
+            
+            System.out.println("HRManagerDashboard: Attendance table updated with " + model.getRowCount() + " rows");
+            
+            // Force table to refresh
+            attendanceTable.revalidate();
+            attendanceTable.repaint();
+            
+        } catch (Exception e) {
+            System.out.println("HRManagerDashboard: Error loading attendance data: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, 
+                "Error loading attendance data: " + e.getMessage(), 
+                "Database Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void filterAttendanceActionPerformed(ActionEvent evt) {
+        String employeeId = txtAttendanceEmployeeId.getText().trim();
+        
+        if (employeeId.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Please enter an Employee ID to filter.", 
+                "Input Required", 
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        System.out.println("HRManagerDashboard: Filtering attendance for employee: " + employeeId);
+        
+        try {
+            List<Attendance> allAttendance = attendanceDAO.getAllAttendance();
+            DefaultTableModel model = (DefaultTableModel) attendanceTable.getModel();
+            model.setRowCount(0); // Clear existing data
+            
+            int filteredCount = 0;
+            for (Attendance attendance : allAttendance) {
+                if (attendance.getEmployeeId() != null && 
+                    attendance.getEmployeeId().toLowerCase().contains(employeeId.toLowerCase())) {
+                    
+                    Object[] row = {
+                        attendance.getEmployeeId(),
+                        attendance.getDate() != null ? attendance.getDate().toString() : "N/A",
+                        attendance.getTimeIn() != null ? attendance.getTimeIn().toString() : "N/A",
+                        attendance.getTimeOut() != null ? attendance.getTimeOut().toString() : "N/A",
+                        String.format("%.2f", attendance.getHoursWorked())
+                    };
+                    model.addRow(row);
+                    filteredCount++;
+                }
+            }
+            
+            System.out.println("HRManagerDashboard: Filtered attendance table updated with " + 
+                             filteredCount + " records for employee: " + employeeId);
+            
+            if (filteredCount == 0) {
+                JOptionPane.showMessageDialog(this, 
+                    "No attendance records found for Employee ID: " + employeeId, 
+                    "No Records Found", 
+                    JOptionPane.INFORMATION_MESSAGE);
+            }
+            
+            // Force table to refresh
+            attendanceTable.revalidate();
+            attendanceTable.repaint();
+            
+        } catch (Exception e) {
+            System.out.println("HRManagerDashboard: Error filtering attendance data: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, 
+                "Error filtering attendance data: " + e.getMessage(), 
                 "Database Error", 
                 JOptionPane.ERROR_MESSAGE);
         }
