@@ -10,7 +10,7 @@ public class LeaveRequestDAO {
     
     public List<LeaveRequest> getAllLeaveRequests() {
         List<LeaveRequest> leaveRequests = new ArrayList<>();
-        String sql = "SELECT * FROM leave_request";
+        String sql = "SELECT * FROM leave_request ORDER BY start_date DESC";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -18,10 +18,14 @@ public class LeaveRequestDAO {
             
             while (rs.next()) {
                 LeaveRequest leaveRequest = mapResultSetToLeaveRequest(rs);
-                leaveRequests.add(leaveRequest);
+                if (leaveRequest != null) {
+                    leaveRequests.add(leaveRequest);
+                }
             }
+            System.out.println("Retrieved " + leaveRequests.size() + " leave requests");
         } catch (SQLException e) {
             System.out.println("Error retrieving leave requests: " + e.getMessage());
+            e.printStackTrace();
         }
         
         return leaveRequests;
@@ -29,7 +33,7 @@ public class LeaveRequestDAO {
     
     public List<LeaveRequest> getLeaveRequestsByEmployeeId(String employeeId) {
         List<LeaveRequest> leaveRequests = new ArrayList<>();
-        String sql = "SELECT * FROM leave_request WHERE employee_id = ?";
+        String sql = "SELECT * FROM leave_request WHERE employee_id = ? ORDER BY start_date DESC";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -39,10 +43,14 @@ public class LeaveRequestDAO {
             
             while (rs.next()) {
                 LeaveRequest leaveRequest = mapResultSetToLeaveRequest(rs);
-                leaveRequests.add(leaveRequest);
+                if (leaveRequest != null) {
+                    leaveRequests.add(leaveRequest);
+                }
             }
+            System.out.println("Retrieved " + leaveRequests.size() + " leave requests for employee: " + employeeId);
         } catch (SQLException e) {
             System.out.println("Error retrieving leave requests for employee: " + e.getMessage());
+            e.printStackTrace();
         }
         
         return leaveRequests;
@@ -63,9 +71,11 @@ public class LeaveRequestDAO {
             pstmt.setString(6, leaveRequest.getStatus());
             
             int rowsInserted = pstmt.executeUpdate();
+            System.out.println("Leave request created: " + (rowsInserted > 0));
             return rowsInserted > 0;
         } catch (SQLException e) {
             System.out.println("Error creating leave request: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -80,22 +90,51 @@ public class LeaveRequestDAO {
             pstmt.setString(2, leaveRequestId);
             
             int rowsUpdated = pstmt.executeUpdate();
+            System.out.println("Leave request status updated: " + (rowsUpdated > 0));
             return rowsUpdated > 0;
         } catch (SQLException e) {
             System.out.println("Error updating leave request status: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
     
-    private LeaveRequest mapResultSetToLeaveRequest(ResultSet rs) throws SQLException {
-        LeaveRequest leaveRequest = new LeaveRequest();
-        leaveRequest.setId(rs.getString("id"));
-        leaveRequest.setEmployeeId(rs.getString("employee_id"));
-        leaveRequest.setLeaveType(rs.getString("leave_type"));
-        leaveRequest.setStartDate(LocalDate.parse(rs.getString("start_date")));
-        leaveRequest.setEndDate(LocalDate.parse(rs.getString("end_date")));
-        leaveRequest.setStatus(rs.getString("status"));
-        
-        return leaveRequest;
+    private LeaveRequest mapResultSetToLeaveRequest(ResultSet rs) {
+        try {
+            LeaveRequest leaveRequest = new LeaveRequest();
+            leaveRequest.setId(rs.getString("id"));
+            leaveRequest.setEmployeeId(rs.getString("employee_id"));
+            leaveRequest.setLeaveType(rs.getString("leave_type"));
+            
+            // Handle date parsing more safely
+            String startDateStr = rs.getString("start_date");
+            String endDateStr = rs.getString("end_date");
+            
+            if (startDateStr != null && !startDateStr.trim().isEmpty()) {
+                try {
+                    leaveRequest.setStartDate(LocalDate.parse(startDateStr));
+                } catch (Exception e) {
+                    System.out.println("Error parsing start date: " + startDateStr + " - " + e.getMessage());
+                    return null;
+                }
+            }
+            
+            if (endDateStr != null && !endDateStr.trim().isEmpty()) {
+                try {
+                    leaveRequest.setEndDate(LocalDate.parse(endDateStr));
+                } catch (Exception e) {
+                    System.out.println("Error parsing end date: " + endDateStr + " - " + e.getMessage());
+                    return null;
+                }
+            }
+            
+            leaveRequest.setStatus(rs.getString("status"));
+            
+            return leaveRequest;
+        } catch (SQLException e) {
+            System.out.println("Error mapping result set to leave request: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
 }

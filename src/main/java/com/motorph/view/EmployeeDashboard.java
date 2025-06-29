@@ -217,6 +217,15 @@ public class EmployeeDashboard extends JFrame {
         gbc.gridx = 2; gbc.gridy = 1;
         formPanel.add(btnSubmitLeave, gbc);
 
+        // Add refresh button for debugging
+        JButton btnRefreshLeave = new JButton("Refresh Leave Data");
+        btnRefreshLeave.addActionListener(e -> {
+            System.out.println("Manually refreshing leave data...");
+            loadLeaveData();
+        });
+        gbc.gridx = 2; gbc.gridy = 2;
+        formPanel.add(btnRefreshLeave, gbc);
+
         panel.add(formPanel, BorderLayout.NORTH);
 
         // Table for leave history
@@ -261,13 +270,16 @@ public class EmployeeDashboard extends JFrame {
     }
 
     private void loadEmployeeDetails() {
+        System.out.println("Loading employee details for username: " + username);
         loggedInEmployee = employeeService.getEmployeeByUsername(username);
         
         if (loggedInEmployee == null) {
             JOptionPane.showMessageDialog(this, "Error: Employee not found in the database.", "Error", JOptionPane.ERROR_MESSAGE);
+            System.out.println("Employee not found for username: " + username);
             return;
         }
 
+        System.out.println("Employee found: " + loggedInEmployee.getEmployeeId());
         lblEmployeeId.setText(loggedInEmployee.getEmployeeId());
         lblFullName.setText(loggedInEmployee.getFullName());
         lblBirthday.setText(loggedInEmployee.getBirthday() != null ? loggedInEmployee.getBirthday().toString() : "N/A");
@@ -282,22 +294,48 @@ public class EmployeeDashboard extends JFrame {
     }
 
     private void loadLeaveData() {
-        if (loggedInEmployee == null) return;
+        System.out.println("Loading leave data...");
         
-        List<LeaveRequest> leaveRequests = leaveRequestService.getLeaveRequestsByEmployeeId(loggedInEmployee.getEmployeeId());
-        String[] columnNames = {"ID", "Employee ID", "Leave Type", "Start Date", "End Date", "Status"};
-        
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-        
-        for (LeaveRequest leave : leaveRequests) {
-            Object[] row = {
-                leave.getId(), leave.getEmployeeId(), leave.getLeaveType(),
-                leave.getStartDate(), leave.getEndDate(), leave.getStatus()
-            };
-            model.addRow(row);
+        if (loggedInEmployee == null) {
+            System.out.println("Cannot load leave data: loggedInEmployee is null");
+            JOptionPane.showMessageDialog(this, "Employee information not loaded. Please restart the application.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
         
-        leaveTable.setModel(model);
+        System.out.println("Loading leave data for employee ID: " + loggedInEmployee.getEmployeeId());
+        
+        try {
+            List<LeaveRequest> leaveRequests = leaveRequestService.getLeaveRequestsByEmployeeId(loggedInEmployee.getEmployeeId());
+            System.out.println("Retrieved " + leaveRequests.size() + " leave requests");
+            
+            String[] columnNames = {"ID", "Employee ID", "Leave Type", "Start Date", "End Date", "Status"};
+            DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+            
+            for (LeaveRequest leave : leaveRequests) {
+                Object[] row = {
+                    leave.getId(), 
+                    leave.getEmployeeId(), 
+                    leave.getLeaveType(),
+                    leave.getStartDate(), 
+                    leave.getEndDate(), 
+                    leave.getStatus()
+                };
+                model.addRow(row);
+                System.out.println("Added leave request: " + leave.getId());
+            }
+            
+            leaveTable.setModel(model);
+            System.out.println("Leave table model updated with " + model.getRowCount() + " rows");
+            
+            // Force table to repaint
+            leaveTable.revalidate();
+            leaveTable.repaint();
+            
+        } catch (Exception e) {
+            System.out.println("Error loading leave data: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error loading leave data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void loadPayrollData() {
@@ -325,7 +363,10 @@ public class EmployeeDashboard extends JFrame {
     }
 
     private void submitLeaveActionPerformed(ActionEvent evt) {
-        if (loggedInEmployee == null) return;
+        if (loggedInEmployee == null) {
+            JOptionPane.showMessageDialog(this, "Employee information not loaded.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         
         try {
             String startDateStr = txtStartDate.getText().trim();
@@ -340,6 +381,8 @@ public class EmployeeDashboard extends JFrame {
             LocalDate startDate = LocalDate.parse(startDateStr);
             LocalDate endDate = LocalDate.parse(endDateStr);
             
+            System.out.println("Submitting leave request for employee: " + loggedInEmployee.getEmployeeId());
+            
             boolean success = leaveRequestService.submitLeaveRequest(
                 loggedInEmployee.getEmployeeId(), leaveType, startDate, endDate
             );
@@ -348,12 +391,14 @@ public class EmployeeDashboard extends JFrame {
                 JOptionPane.showMessageDialog(this, "Leave Request submitted successfully!");
                 txtStartDate.setText("");
                 txtEndDate.setText("");
-                loadLeaveData();
+                loadLeaveData(); // Refresh the table
             } else {
                 JOptionPane.showMessageDialog(this, "Error submitting leave request.", "Database Error", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Invalid date format. Please use YYYY-MM-DD.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            System.out.println("Error submitting leave request: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
