@@ -3,10 +3,15 @@ package com.motorph.dao;
 import com.motorph.model.Employee;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeeDAO {
+    
+    // SQLite stores dates as TEXT in YYYY-MM-DD format
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     
     public List<Employee> getAllEmployees() {
         List<Employee> employees = new ArrayList<>();
@@ -18,7 +23,9 @@ public class EmployeeDAO {
             
             while (rs.next()) {
                 Employee employee = mapResultSetToEmployee(rs);
-                employees.add(employee);
+                if (employee != null) {
+                    employees.add(employee);
+                }
             }
         } catch (SQLException e) {
             System.out.println("Error retrieving employees: " + e.getMessage());
@@ -77,7 +84,12 @@ public class EmployeeDAO {
             pstmt.setString(2, employee.getLastName());
             pstmt.setString(3, employee.getFirstName());
             pstmt.setString(4, employee.getUsername());
-            pstmt.setString(5, employee.getBirthday() != null ? employee.getBirthday().toString() : null);
+            
+            // Convert LocalDate to String for SQLite
+            String birthdayStr = employee.getBirthday() != null ? 
+                employee.getBirthday().format(DATE_FORMATTER) : null;
+            pstmt.setString(5, birthdayStr);
+            
             pstmt.setString(6, employee.getAddress());
             pstmt.setString(7, employee.getPhoneNumber());
             pstmt.setString(8, employee.getStatus());
@@ -106,7 +118,12 @@ public class EmployeeDAO {
             pstmt.setString(1, employee.getLastName());
             pstmt.setString(2, employee.getFirstName());
             pstmt.setString(3, employee.getUsername());
-            pstmt.setString(4, employee.getBirthday() != null ? employee.getBirthday().toString() : null);
+            
+            // Convert LocalDate to String for SQLite
+            String birthdayStr = employee.getBirthday() != null ? 
+                employee.getBirthday().format(DATE_FORMATTER) : null;
+            pstmt.setString(4, birthdayStr);
+            
             pstmt.setString(5, employee.getAddress());
             pstmt.setString(6, employee.getPhoneNumber());
             pstmt.setString(7, employee.getStatus());
@@ -140,27 +157,44 @@ public class EmployeeDAO {
         }
     }
     
-    private Employee mapResultSetToEmployee(ResultSet rs) throws SQLException {
-        Employee employee = new Employee();
-        employee.setEmployeeId(rs.getString("employee_id"));
-        employee.setLastName(rs.getString("last_name"));
-        employee.setFirstName(rs.getString("first_name"));
-        employee.setUsername(rs.getString("username"));
-        
-        String birthdayStr = rs.getString("birthday");
-        if (birthdayStr != null && !birthdayStr.isEmpty()) {
-            employee.setBirthday(LocalDate.parse(birthdayStr));
+    private Employee mapResultSetToEmployee(ResultSet rs) {
+        try {
+            Employee employee = new Employee();
+            employee.setEmployeeId(rs.getString("employee_id"));
+            employee.setLastName(rs.getString("last_name"));
+            employee.setFirstName(rs.getString("first_name"));
+            employee.setUsername(rs.getString("username"));
+            
+            // Handle SQLite TEXT date field
+            String birthdayStr = rs.getString("birthday");
+            if (birthdayStr != null && !birthdayStr.trim().isEmpty()) {
+                try {
+                    LocalDate birthday = LocalDate.parse(birthdayStr.trim(), DATE_FORMATTER);
+                    employee.setBirthday(birthday);
+                } catch (DateTimeParseException e) {
+                    try {
+                        LocalDate birthday = LocalDate.parse(birthdayStr.trim());
+                        employee.setBirthday(birthday);
+                    } catch (DateTimeParseException e2) {
+                        System.out.println("Could not parse birthday: " + birthdayStr);
+                        // Continue without setting birthday
+                    }
+                }
+            }
+            
+            employee.setAddress(rs.getString("address"));
+            employee.setPhoneNumber(rs.getString("phone_number"));
+            employee.setStatus(rs.getString("status"));
+            employee.setPosition(rs.getString("position"));
+            employee.setDepartment(rs.getString("department"));
+            employee.setSupervisor(rs.getString("supervisor"));
+            employee.setBasicSalary(rs.getDouble("basic_salary"));
+            employee.setHourlyRate(rs.getDouble("hourly_rate"));
+            
+            return employee;
+        } catch (SQLException e) {
+            System.out.println("Error mapping employee result set: " + e.getMessage());
+            return null;
         }
-        
-        employee.setAddress(rs.getString("address"));
-        employee.setPhoneNumber(rs.getString("phone_number"));
-        employee.setStatus(rs.getString("status"));
-        employee.setPosition(rs.getString("position"));
-        employee.setDepartment(rs.getString("department"));
-        employee.setSupervisor(rs.getString("supervisor"));
-        employee.setBasicSalary(rs.getDouble("basic_salary"));
-        employee.setHourlyRate(rs.getDouble("hourly_rate"));
-        
-        return employee;
     }
 }

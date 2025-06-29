@@ -3,14 +3,19 @@ package com.motorph.dao;
 import com.motorph.model.Payroll;
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PayrollDAO {
     
+    // SQLite stores dates as TEXT in YYYY-MM-DD format
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    
     public List<Payroll> getAllPayrolls() {
         List<Payroll> payrolls = new ArrayList<>();
-        String sql = "SELECT * FROM payroll";
+        String sql = "SELECT * FROM payroll ORDER BY period_start DESC";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -18,7 +23,9 @@ public class PayrollDAO {
             
             while (rs.next()) {
                 Payroll payroll = mapResultSetToPayroll(rs);
-                payrolls.add(payroll);
+                if (payroll != null) {
+                    payrolls.add(payroll);
+                }
             }
         } catch (SQLException e) {
             System.out.println("Error retrieving payrolls: " + e.getMessage());
@@ -29,7 +36,7 @@ public class PayrollDAO {
     
     public List<Payroll> getPayrollsByEmployeeId(String employeeId) {
         List<Payroll> payrolls = new ArrayList<>();
-        String sql = "SELECT * FROM payroll WHERE employee_id = ?";
+        String sql = "SELECT * FROM payroll WHERE employee_id = ? ORDER BY period_start DESC";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -39,7 +46,9 @@ public class PayrollDAO {
             
             while (rs.next()) {
                 Payroll payroll = mapResultSetToPayroll(rs);
-                payrolls.add(payroll);
+                if (payroll != null) {
+                    payrolls.add(payroll);
+                }
             }
         } catch (SQLException e) {
             System.out.println("Error retrieving payrolls for employee: " + e.getMessage());
@@ -58,8 +67,11 @@ public class PayrollDAO {
             
             pstmt.setString(1, payroll.getPayrollId());
             pstmt.setString(2, payroll.getEmployeeId());
-            pstmt.setString(3, payroll.getPeriodStart().toString());
-            pstmt.setString(4, payroll.getPeriodEnd().toString());
+            
+            // Convert LocalDate to String for SQLite
+            pstmt.setString(3, payroll.getPeriodStart().format(DATE_FORMATTER));
+            pstmt.setString(4, payroll.getPeriodEnd().format(DATE_FORMATTER));
+            
             pstmt.setDouble(5, payroll.getWorkingHours());
             pstmt.setDouble(6, payroll.getSssContribution());
             pstmt.setDouble(7, payroll.getPhilhealthContribution());
@@ -77,21 +89,59 @@ public class PayrollDAO {
         }
     }
     
-    private Payroll mapResultSetToPayroll(ResultSet rs) throws SQLException {
-        Payroll payroll = new Payroll();
-        payroll.setPayrollId(rs.getString("payroll_id"));
-        payroll.setEmployeeId(rs.getString("employee_id"));
-        payroll.setPeriodStart(LocalDate.parse(rs.getString("period_start")));
-        payroll.setPeriodEnd(LocalDate.parse(rs.getString("period_end")));
-        payroll.setWorkingHours(rs.getDouble("working_hours"));
-        payroll.setSssContribution(rs.getDouble("sss_contribution"));
-        payroll.setPhilhealthContribution(rs.getDouble("philhealth_contribution"));
-        payroll.setPagibigContribution(rs.getDouble("pagibig_contribution"));
-        payroll.setWithholdingTax(rs.getDouble("witholding_tax"));
-        payroll.setRiceSubsidy(rs.getDouble("rice_subsidy"));
-        payroll.setPhoneAllowance(rs.getDouble("phone_allowance"));
-        payroll.setClothingAllowance(rs.getDouble("clothing_allowance"));
-        
-        return payroll;
+    private Payroll mapResultSetToPayroll(ResultSet rs) {
+        try {
+            Payroll payroll = new Payroll();
+            payroll.setPayrollId(rs.getString("payroll_id"));
+            payroll.setEmployeeId(rs.getString("employee_id"));
+            
+            // Handle SQLite TEXT date fields
+            String periodStartStr = rs.getString("period_start");
+            String periodEndStr = rs.getString("period_end");
+            
+            if (periodStartStr != null && !periodStartStr.trim().isEmpty()) {
+                try {
+                    LocalDate periodStart = LocalDate.parse(periodStartStr.trim(), DATE_FORMATTER);
+                    payroll.setPeriodStart(periodStart);
+                } catch (DateTimeParseException e) {
+                    try {
+                        LocalDate periodStart = LocalDate.parse(periodStartStr.trim());
+                        payroll.setPeriodStart(periodStart);
+                    } catch (DateTimeParseException e2) {
+                        System.out.println("Could not parse period start date: " + periodStartStr);
+                        return null;
+                    }
+                }
+            }
+            
+            if (periodEndStr != null && !periodEndStr.trim().isEmpty()) {
+                try {
+                    LocalDate periodEnd = LocalDate.parse(periodEndStr.trim(), DATE_FORMATTER);
+                    payroll.setPeriodEnd(periodEnd);
+                } catch (DateTimeParseException e) {
+                    try {
+                        LocalDate periodEnd = LocalDate.parse(periodEndStr.trim());
+                        payroll.setPeriodEnd(periodEnd);
+                    } catch (DateTimeParseException e2) {
+                        System.out.println("Could not parse period end date: " + periodEndStr);
+                        return null;
+                    }
+                }
+            }
+            
+            payroll.setWorkingHours(rs.getDouble("working_hours"));
+            payroll.setSssContribution(rs.getDouble("sss_contribution"));
+            payroll.setPhilhealthContribution(rs.getDouble("philhealth_contribution"));
+            payroll.setPagibigContribution(rs.getDouble("pagibig_contribution"));
+            payroll.setWithholdingTax(rs.getDouble("witholding_tax"));
+            payroll.setRiceSubsidy(rs.getDouble("rice_subsidy"));
+            payroll.setPhoneAllowance(rs.getDouble("phone_allowance"));
+            payroll.setClothingAllowance(rs.getDouble("clothing_allowance"));
+            
+            return payroll;
+        } catch (SQLException e) {
+            System.out.println("Error mapping payroll result set: " + e.getMessage());
+            return null;
+        }
     }
 }
