@@ -15,20 +15,29 @@ public class EmployeeDAO {
     
     public List<Employee> getAllEmployees() {
         List<Employee> employees = new ArrayList<>();
-        String sql = "SELECT * FROM employee";
+        String sql = "SELECT * FROM employee ORDER BY employee_id";
+        
+        System.out.println("EmployeeDAO: Executing query to get all employees");
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
             
+            System.out.println("EmployeeDAO: Query executed successfully");
+            
             while (rs.next()) {
                 Employee employee = mapResultSetToEmployee(rs);
                 if (employee != null) {
                     employees.add(employee);
+                    System.out.println("EmployeeDAO: Mapped employee: " + employee.getEmployeeId() + " - " + employee.getFullName());
                 }
             }
+            
+            System.out.println("EmployeeDAO: Retrieved " + employees.size() + " employees total");
+            
         } catch (SQLException e) {
-            System.out.println("Error retrieving employees: " + e.getMessage());
+            System.out.println("EmployeeDAO: Error retrieving employees: " + e.getMessage());
+            e.printStackTrace();
         }
         
         return employees;
@@ -165,7 +174,7 @@ public class EmployeeDAO {
             employee.setFirstName(rs.getString("first_name"));
             employee.setUsername(rs.getString("username"));
             
-            // Handle SQLite TEXT date field
+            // Handle SQLite TEXT date field safely
             String birthdayStr = rs.getString("birthday");
             if (birthdayStr != null && !birthdayStr.trim().isEmpty()) {
                 try {
@@ -176,7 +185,7 @@ public class EmployeeDAO {
                         LocalDate birthday = LocalDate.parse(birthdayStr.trim());
                         employee.setBirthday(birthday);
                     } catch (DateTimeParseException e2) {
-                        System.out.println("Could not parse birthday: " + birthdayStr);
+                        System.out.println("Could not parse birthday: " + birthdayStr + " for employee: " + employee.getEmployeeId());
                         // Continue without setting birthday
                     }
                 }
@@ -194,6 +203,7 @@ public class EmployeeDAO {
             return employee;
         } catch (SQLException e) {
             System.out.println("Error mapping employee result set: " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }

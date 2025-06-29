@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class HRManagerDashboard extends JFrame {
@@ -30,9 +31,14 @@ public class HRManagerDashboard extends JFrame {
         this.employeeService = new EmployeeService();
         this.leaveRequestService = new LeaveRequestService();
         initComponents();
-        loadEmployeeData();
-        loadLeaveData();
         setLocationRelativeTo(null);
+        
+        // Load data after UI is initialized
+        SwingUtilities.invokeLater(() -> {
+            System.out.println("Loading initial data for HR Manager Dashboard...");
+            loadEmployeeData();
+            loadLeaveData();
+        });
     }
 
     private void initComponents() {
@@ -53,6 +59,9 @@ public class HRManagerDashboard extends JFrame {
         parentPanel.add(createEmployeeListPanel(), "employees");
         parentPanel.add(createEmployeeDetailsPanel(), "employee_details");
         parentPanel.add(createLeaveRequestPanel(), "leave_requests");
+        
+        // Show employees panel by default
+        showPanel("employees");
     }
 
     private JPanel createSidebar() {
@@ -65,6 +74,12 @@ public class HRManagerDashboard extends JFrame {
         JButton btnEmployeeDetails = new JButton("Employee Details");
         JButton btnLeaveRequests = new JButton("Leave Requests");
         JButton btnLogout = new JButton("Log Out");
+
+        // Style buttons
+        styleButton(btnViewEmployees);
+        styleButton(btnEmployeeDetails);
+        styleButton(btnLeaveRequests);
+        styleButton(btnLogout);
 
         btnViewEmployees.addActionListener(e -> showPanel("employees"));
         btnEmployeeDetails.addActionListener(e -> showPanel("employee_details"));
@@ -84,21 +99,83 @@ public class HRManagerDashboard extends JFrame {
         return sidebar;
     }
 
+    private void styleButton(JButton button) {
+        button.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 14));
+        button.setForeground(Color.WHITE);
+        button.setBackground(new Color(153, 0, 153));
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setMaximumSize(new Dimension(180, 40));
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+    }
+
     private JPanel createEmployeeListPanel() {
         JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
         
-        employeeTable = new JTable();
+        // Add title
+        JLabel titleLabel = new JLabel("Employee List", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 18));
+        titleLabel.setForeground(new Color(102, 0, 102));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        panel.add(titleLabel, BorderLayout.NORTH);
+        
+        // Create table with proper model
+        String[] columnNames = {"Employee ID", "Last Name", "First Name", "Birthday", 
+                               "Address", "Phone", "Status", "Position", "Department", 
+                               "Supervisor", "Basic Salary", "Hourly Rate"};
+        
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Make table read-only
+            }
+        };
+        
+        employeeTable = new JTable(model);
+        employeeTable.setFont(new Font("Arial", Font.PLAIN, 12));
+        employeeTable.setRowHeight(25);
+        employeeTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        employeeTable.getTableHeader().setBackground(new Color(102, 0, 102));
+        employeeTable.getTableHeader().setForeground(Color.WHITE);
+        employeeTable.setSelectionBackground(new Color(153, 0, 153));
+        employeeTable.setSelectionForeground(Color.WHITE);
+        
         JScrollPane scrollPane = new JScrollPane(employeeTable);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         panel.add(scrollPane, BorderLayout.CENTER);
+        
+        // Add refresh button
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.setBackground(Color.WHITE);
+        JButton btnRefresh = new JButton("Refresh Data");
+        btnRefresh.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 12));
+        btnRefresh.setBackground(new Color(102, 0, 102));
+        btnRefresh.setForeground(Color.WHITE);
+        btnRefresh.addActionListener(e -> {
+            System.out.println("Manually refreshing employee data...");
+            loadEmployeeData();
+        });
+        buttonPanel.add(btnRefresh);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
         
         return panel;
     }
 
     private JPanel createEmployeeDetailsPanel() {
         JPanel panel = new JPanel();
+        panel.setBackground(Color.WHITE);
         panel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
+
+        // Add title
+        JLabel titleLabel = new JLabel("Employee Management");
+        titleLabel.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 18));
+        titleLabel.setForeground(new Color(102, 0, 102));
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 4;
+        panel.add(titleLabel, gbc);
+        gbc.gridwidth = 1; // Reset
 
         // Initialize text fields
         txtEmployeeId = new JTextField(15);
@@ -127,58 +204,134 @@ public class HRManagerDashboard extends JFrame {
         comboRole = new JComboBox<>(new String[]{"Employee", "HR Manager", "Payroll Staff"});
 
         // Add components to panel
-        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        gbc.gridx = 0; gbc.gridy = 1;
         panel.add(new JLabel("Employee ID:"), gbc);
         gbc.gridx = 1;
         panel.add(txtEmployeeId, gbc);
+        
+        gbc.gridx = 2;
+        panel.add(new JLabel("Role:"), gbc);
+        gbc.gridx = 3;
+        panel.add(comboRole, gbc);
 
-        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridx = 0; gbc.gridy = 2;
         panel.add(new JLabel("First Name:"), gbc);
         gbc.gridx = 1;
         panel.add(txtFirstName, gbc);
 
-        gbc.gridx = 2; gbc.gridy = 1;
+        gbc.gridx = 2;
         panel.add(new JLabel("Last Name:"), gbc);
         gbc.gridx = 3;
         panel.add(txtLastName, gbc);
 
-        // Add more fields...
-        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.gridx = 0; gbc.gridy = 3;
         panel.add(new JLabel("Username:"), gbc);
         gbc.gridx = 1;
         panel.add(txtUsername, gbc);
 
-        gbc.gridx = 2; gbc.gridy = 2;
+        gbc.gridx = 2;
         panel.add(new JLabel("Password:"), gbc);
         gbc.gridx = 3;
         panel.add(txtPassword, gbc);
 
+        gbc.gridx = 0; gbc.gridy = 4;
+        panel.add(new JLabel("Birthday (YYYY-MM-DD):"), gbc);
+        gbc.gridx = 1;
+        panel.add(txtBirthday, gbc);
+
+        gbc.gridx = 2;
+        panel.add(new JLabel("Phone:"), gbc);
+        gbc.gridx = 3;
+        panel.add(txtPhoneNumber, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 5;
+        panel.add(new JLabel("Address:"), gbc);
+        gbc.gridx = 1; gbc.gridwidth = 3;
+        panel.add(txtAddress, gbc);
+        gbc.gridwidth = 1; // Reset
+
+        gbc.gridx = 0; gbc.gridy = 6;
+        panel.add(new JLabel("Position:"), gbc);
+        gbc.gridx = 1;
+        panel.add(comboPosition, gbc);
+
+        gbc.gridx = 2;
+        panel.add(new JLabel("Status:"), gbc);
+        gbc.gridx = 3;
+        panel.add(comboStatus, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 7;
+        panel.add(new JLabel("Department:"), gbc);
+        gbc.gridx = 1;
+        panel.add(txtDepartment, gbc);
+
+        gbc.gridx = 2;
+        panel.add(new JLabel("Basic Salary:"), gbc);
+        gbc.gridx = 3;
+        panel.add(txtSalary, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 8;
+        panel.add(new JLabel("Supervisor:"), gbc);
+        gbc.gridx = 1; gbc.gridwidth = 3;
+        panel.add(txtSupervisor, gbc);
+        gbc.gridwidth = 1; // Reset
+
         // Add buttons
-        JPanel buttonPanel = new JPanel();
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.setBackground(Color.WHITE);
+        
         JButton btnCreate = new JButton("Create");
         JButton btnUpdate = new JButton("Update");
         JButton btnDelete = new JButton("Delete");
+        JButton btnClear = new JButton("Clear");
+
+        styleActionButton(btnCreate);
+        styleActionButton(btnUpdate);
+        styleActionButton(btnDelete);
+        styleActionButton(btnClear);
 
         btnCreate.addActionListener(this::createEmployeeActionPerformed);
         btnUpdate.addActionListener(this::updateEmployeeActionPerformed);
         btnDelete.addActionListener(this::deleteEmployeeActionPerformed);
+        btnClear.addActionListener(e -> clearEmployeeFields());
 
         buttonPanel.add(btnCreate);
         buttonPanel.add(btnUpdate);
         buttonPanel.add(btnDelete);
+        buttonPanel.add(btnClear);
 
-        gbc.gridx = 0; gbc.gridy = 10;
+        gbc.gridx = 0; gbc.gridy = 9;
         gbc.gridwidth = 4;
         panel.add(buttonPanel, gbc);
 
         return panel;
     }
 
+    private void styleActionButton(JButton button) {
+        button.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 12));
+        button.setBackground(new Color(102, 0, 102));
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setPreferredSize(new Dimension(100, 30));
+    }
+
     private JPanel createLeaveRequestPanel() {
         JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+        
+        // Add title
+        JLabel titleLabel = new JLabel("Leave Request Management", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 18));
+        titleLabel.setForeground(new Color(102, 0, 102));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        panel.add(titleLabel, BorderLayout.NORTH);
         
         // Top panel for controls
-        JPanel controlPanel = new JPanel();
+        JPanel controlPanel = new JPanel(new FlowLayout());
+        controlPanel.setBackground(Color.WHITE);
         controlPanel.add(new JLabel("Leave ID:"));
         txtLeaveId = new JTextField(20);
         controlPanel.add(txtLeaveId);
@@ -188,14 +341,37 @@ public class HRManagerDashboard extends JFrame {
         controlPanel.add(comboLeaveStatus);
         
         JButton btnUpdateLeave = new JButton("Update Leave Request");
+        styleActionButton(btnUpdateLeave);
         btnUpdateLeave.addActionListener(this::updateLeaveActionPerformed);
         controlPanel.add(btnUpdateLeave);
+        
+        JButton btnRefreshLeave = new JButton("Refresh");
+        styleActionButton(btnRefreshLeave);
+        btnRefreshLeave.addActionListener(e -> loadLeaveData());
+        controlPanel.add(btnRefreshLeave);
         
         panel.add(controlPanel, BorderLayout.NORTH);
         
         // Table for leave requests
-        leaveTable = new JTable();
+        String[] columnNames = {"ID", "Employee ID", "Leave Type", "Start Date", "End Date", "Status"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        
+        leaveTable = new JTable(model);
+        leaveTable.setFont(new Font("Arial", Font.PLAIN, 12));
+        leaveTable.setRowHeight(25);
+        leaveTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
+        leaveTable.getTableHeader().setBackground(new Color(102, 0, 102));
+        leaveTable.getTableHeader().setForeground(Color.WHITE);
+        leaveTable.setSelectionBackground(new Color(153, 0, 153));
+        leaveTable.setSelectionForeground(Color.WHITE);
+        
         JScrollPane scrollPane = new JScrollPane(leaveTable);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         panel.add(scrollPane, BorderLayout.CENTER);
         
         return panel;
@@ -207,64 +383,154 @@ public class HRManagerDashboard extends JFrame {
         
         // Refresh data when showing panels
         switch (panelName) {
-            case "employees" -> loadEmployeeData();
-            case "leave_requests" -> loadLeaveData();
+            case "employees" -> {
+                System.out.println("Showing employees panel, loading data...");
+                loadEmployeeData();
+            }
+            case "leave_requests" -> {
+                System.out.println("Showing leave requests panel, loading data...");
+                loadLeaveData();
+            }
         }
     }
 
     private void loadEmployeeData() {
-        List<Employee> employees = employeeService.getAllEmployees();
-        String[] columnNames = {"Employee ID", "Last Name", "First Name", "Birthday", 
-                               "Address", "Phone", "Status", "Position", "Department", 
-                               "Supervisor", "Basic Salary", "Hourly Rate"};
+        System.out.println("Starting to load employee data...");
         
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-        
-        for (Employee emp : employees) {
-            Object[] row = {
-                emp.getEmployeeId(), emp.getLastName(), emp.getFirstName(),
-                emp.getBirthday(), emp.getAddress(), emp.getPhoneNumber(),
-                emp.getStatus(), emp.getPosition(), emp.getDepartment(),
-                emp.getSupervisor(), emp.getBasicSalary(), emp.getHourlyRate()
-            };
-            model.addRow(row);
+        try {
+            List<Employee> employees = employeeService.getAllEmployees();
+            System.out.println("Retrieved " + employees.size() + " employees from service");
+            
+            DefaultTableModel model = (DefaultTableModel) employeeTable.getModel();
+            model.setRowCount(0); // Clear existing data
+            
+            for (Employee emp : employees) {
+                Object[] row = {
+                    emp.getEmployeeId() != null ? emp.getEmployeeId() : "N/A",
+                    emp.getLastName() != null ? emp.getLastName() : "N/A",
+                    emp.getFirstName() != null ? emp.getFirstName() : "N/A",
+                    emp.getBirthday() != null ? emp.getBirthday().toString() : "N/A",
+                    emp.getAddress() != null ? emp.getAddress() : "N/A",
+                    emp.getPhoneNumber() != null ? emp.getPhoneNumber() : "N/A",
+                    emp.getStatus() != null ? emp.getStatus() : "N/A",
+                    emp.getPosition() != null ? emp.getPosition() : "N/A",
+                    emp.getDepartment() != null ? emp.getDepartment() : "N/A",
+                    emp.getSupervisor() != null ? emp.getSupervisor() : "N/A",
+                    String.format("%.2f", emp.getBasicSalary()),
+                    String.format("%.2f", emp.getHourlyRate())
+                };
+                model.addRow(row);
+                System.out.println("Added employee: " + emp.getEmployeeId() + " - " + emp.getFullName());
+            }
+            
+            System.out.println("Employee table updated with " + model.getRowCount() + " rows");
+            
+            // Force table to refresh
+            employeeTable.revalidate();
+            employeeTable.repaint();
+            
+        } catch (Exception e) {
+            System.out.println("Error loading employee data: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, 
+                "Error loading employee data: " + e.getMessage(), 
+                "Database Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
-        
-        employeeTable.setModel(model);
     }
 
     private void loadLeaveData() {
-        List<LeaveRequest> leaveRequests = leaveRequestService.getAllLeaveRequests();
-        String[] columnNames = {"ID", "Employee ID", "Leave Type", "Start Date", "End Date", "Status"};
+        System.out.println("Starting to load leave data...");
         
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-        
-        for (LeaveRequest leave : leaveRequests) {
-            Object[] row = {
-                leave.getId(), leave.getEmployeeId(), leave.getLeaveType(),
-                leave.getStartDate(), leave.getEndDate(), leave.getStatus()
-            };
-            model.addRow(row);
+        try {
+            List<LeaveRequest> leaveRequests = leaveRequestService.getAllLeaveRequests();
+            System.out.println("Retrieved " + leaveRequests.size() + " leave requests from service");
+            
+            DefaultTableModel model = (DefaultTableModel) leaveTable.getModel();
+            model.setRowCount(0); // Clear existing data
+            
+            for (LeaveRequest leave : leaveRequests) {
+                Object[] row = {
+                    leave.getId() != null ? leave.getId() : "N/A",
+                    leave.getEmployeeId() != null ? leave.getEmployeeId() : "N/A",
+                    leave.getLeaveType() != null ? leave.getLeaveType() : "N/A",
+                    leave.getStartDate() != null ? leave.getStartDate().toString() : "N/A",
+                    leave.getEndDate() != null ? leave.getEndDate().toString() : "N/A",
+                    leave.getStatus() != null ? leave.getStatus() : "N/A"
+                };
+                model.addRow(row);
+                System.out.println("Added leave request: " + leave.getId());
+            }
+            
+            System.out.println("Leave table updated with " + model.getRowCount() + " rows");
+            
+            // Force table to refresh
+            leaveTable.revalidate();
+            leaveTable.repaint();
+            
+        } catch (Exception e) {
+            System.out.println("Error loading leave data: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, 
+                "Error loading leave data: " + e.getMessage(), 
+                "Database Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
-        
-        leaveTable.setModel(model);
     }
 
     private void createEmployeeActionPerformed(ActionEvent evt) {
         try {
+            // Validate required fields
+            if (txtEmployeeId.getText().trim().isEmpty() || 
+                txtFirstName.getText().trim().isEmpty() || 
+                txtLastName.getText().trim().isEmpty() ||
+                txtUsername.getText().trim().isEmpty() ||
+                txtPassword.getText().trim().isEmpty() ||
+                txtSalary.getText().trim().isEmpty()) {
+                
+                JOptionPane.showMessageDialog(this, 
+                    "Please fill in all required fields.", 
+                    "Input Error", 
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             Employee employee = new Employee();
             employee.setEmployeeId(txtEmployeeId.getText().trim());
             employee.setFirstName(txtFirstName.getText().trim());
             employee.setLastName(txtLastName.getText().trim());
             employee.setUsername(txtUsername.getText().trim());
-            employee.setBirthday(LocalDate.parse(txtBirthday.getText().trim()));
+            
+            // Parse birthday
+            String birthdayStr = txtBirthday.getText().trim();
+            if (!birthdayStr.isEmpty()) {
+                try {
+                    employee.setBirthday(LocalDate.parse(birthdayStr));
+                } catch (DateTimeParseException e) {
+                    JOptionPane.showMessageDialog(this, 
+                        "Invalid birthday format. Please use YYYY-MM-DD.", 
+                        "Input Error", 
+                        JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+            
             employee.setAddress(txtAddress.getText().trim());
             employee.setPhoneNumber(txtPhoneNumber.getText().trim());
             employee.setStatus((String) comboStatus.getSelectedItem());
             employee.setPosition((String) comboPosition.getSelectedItem());
             employee.setDepartment(txtDepartment.getText().trim());
             employee.setSupervisor(txtSupervisor.getText().trim());
-            employee.setBasicSalary(Double.parseDouble(txtSalary.getText().trim()));
+            
+            try {
+                employee.setBasicSalary(Double.parseDouble(txtSalary.getText().trim()));
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, 
+                    "Invalid salary format. Please enter a valid number.", 
+                    "Input Error", 
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
             String password = txtPassword.getText().trim();
             String role = (String) comboRole.getSelectedItem();
@@ -276,42 +542,62 @@ public class HRManagerDashboard extends JFrame {
                 clearEmployeeFields();
                 loadEmployeeData();
             } else {
-                JOptionPane.showMessageDialog(this, "Error creating employee.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, 
+                    "Error creating employee. Employee ID might already exist.", 
+                    "Database Error", 
+                    JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Invalid input: " + e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
+            System.out.println("Error creating employee: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, 
+                "Error creating employee: " + e.getMessage(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void updateEmployeeActionPerformed(ActionEvent evt) {
-        // Implementation for update employee
-        JOptionPane.showMessageDialog(this, "Update functionality not yet implemented.");
+        JOptionPane.showMessageDialog(this, 
+            "Update functionality will be implemented in the next version.", 
+            "Feature Not Available", 
+            JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void deleteEmployeeActionPerformed(ActionEvent evt) {
-        String empId = JOptionPane.showInputDialog(this, "Enter Employee ID to delete:");
+        String empId = JOptionPane.showInputDialog(this, 
+            "Enter Employee ID to delete:", 
+            "Delete Employee", 
+            JOptionPane.QUESTION_MESSAGE);
         
         if (empId != null && !empId.trim().isEmpty()) {
-            String empName = employeeService.getEmployeeFullName(empId);
+            String empName = employeeService.getEmployeeFullName(empId.trim());
             
             if (empName != null) {
                 int confirm = JOptionPane.showConfirmDialog(this,
                     "Are you sure you want to delete '" + empName + "'?",
                     "Confirm Deletion",
-                    JOptionPane.YES_NO_OPTION);
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
                 
                 if (confirm == JOptionPane.YES_OPTION) {
-                    boolean success = employeeService.deleteEmployee(empId);
+                    boolean success = employeeService.deleteEmployee(empId.trim());
                     
                     if (success) {
                         JOptionPane.showMessageDialog(this, "Employee deleted successfully!");
                         loadEmployeeData();
                     } else {
-                        JOptionPane.showMessageDialog(this, "Error deleting employee.", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, 
+                            "Error deleting employee.", 
+                            "Database Error", 
+                            JOptionPane.ERROR_MESSAGE);
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Employee not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, 
+                    "Employee not found.", 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -321,7 +607,10 @@ public class HRManagerDashboard extends JFrame {
         String status = (String) comboLeaveStatus.getSelectedItem();
         
         if (leaveId.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter a Leave ID.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, 
+                "Please enter a Leave ID.", 
+                "Input Error", 
+                JOptionPane.ERROR_MESSAGE);
             return;
         }
         
@@ -332,12 +621,18 @@ public class HRManagerDashboard extends JFrame {
             loadLeaveData();
             txtLeaveId.setText("");
         } else {
-            JOptionPane.showMessageDialog(this, "Error updating leave request.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, 
+                "Error updating leave request. Leave ID might not exist.", 
+                "Database Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void logoutActionPerformed(ActionEvent evt) {
-        int choice = JOptionPane.showConfirmDialog(this, "Are you sure you want to logout?", "Logout", JOptionPane.YES_NO_OPTION);
+        int choice = JOptionPane.showConfirmDialog(this, 
+            "Are you sure you want to logout?", 
+            "Logout", 
+            JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
             dispose();
             new LoginForm().setVisible(true);
@@ -356,6 +651,9 @@ public class HRManagerDashboard extends JFrame {
         txtDepartment.setText("");
         txtSupervisor.setText("");
         txtSalary.setText("");
+        comboPosition.setSelectedIndex(0);
+        comboStatus.setSelectedIndex(0);
+        comboRole.setSelectedIndex(0);
     }
 
     public static void main(String args[]) {
