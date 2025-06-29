@@ -29,7 +29,9 @@ public class EmployeeService {
     
     public Employee getEmployeeByUsername(String username) {
         System.out.println("EmployeeService: Looking up employee by username: " + username);
-        Employee employee = employeeDAO.getEmployeeByUsername(username);
+        
+        // First try to get employee with user details (includes username from user table)
+        Employee employee = employeeDAO.getEmployeeWithUserDetails(username);
         
         if (employee == null) {
             System.out.println("EmployeeService: No employee found for username: " + username);

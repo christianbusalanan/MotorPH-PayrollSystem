@@ -80,6 +80,7 @@ public class EmployeeDAO {
             ResultSet rs = pstmt.executeQuery();
             
             if (rs.next()) {
+                // Use the standard mapping method since we're only selecting from employee table
                 Employee employee = mapResultSetToEmployee(rs);
                 System.out.println("EmployeeDAO: Found employee for username '" + username + "': " + 
                                  (employee != null ? employee.getEmployeeId() : "null"));
@@ -113,10 +114,9 @@ public class EmployeeDAO {
             ResultSet rs = pstmt.executeQuery();
             
             if (rs.next()) {
-                Employee employee = mapResultSetToEmployee(rs);
+                // Use special mapping method for joined results
+                Employee employee = mapResultSetToEmployeeWithUserDetails(rs);
                 if (employee != null) {
-                    // Set the username from the user table
-                    employee.setUsername(rs.getString("username"));
                     System.out.println("EmployeeDAO: Successfully loaded employee with user details: " + 
                                      employee.getEmployeeId() + " (" + employee.getUsername() + ")");
                 }
@@ -151,13 +151,9 @@ public class EmployeeDAO {
             System.out.println("EmployeeDAO: Query executed successfully");
             
             while (rs.next()) {
-                Employee employee = mapResultSetToEmployee(rs);
+                // Use special mapping method for joined results
+                Employee employee = mapResultSetToEmployeeWithUserDetails(rs);
                 if (employee != null) {
-                    // Set username from user table if available
-                    String username = rs.getString("username");
-                    if (username != null) {
-                        employee.setUsername(username);
-                    }
                     employees.add(employee);
                     System.out.println("EmployeeDAO: Mapped employee with user details: " + 
                                      employee.getEmployeeId() + " - " + employee.getFullName() + 
@@ -260,6 +256,7 @@ public class EmployeeDAO {
         }
     }
     
+    // Standard mapping method for employee table only
     private Employee mapResultSetToEmployee(ResultSet rs) {
         try {
             Employee employee = new Employee();
@@ -297,6 +294,57 @@ public class EmployeeDAO {
             return employee;
         } catch (SQLException e) {
             System.out.println("Error mapping employee result set: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    // Special mapping method for joined employee and user tables
+    private Employee mapResultSetToEmployeeWithUserDetails(ResultSet rs) {
+        try {
+            Employee employee = new Employee();
+            employee.setEmployeeId(rs.getString("employee_id"));
+            employee.setLastName(rs.getString("last_name"));
+            employee.setFirstName(rs.getString("first_name"));
+            
+            // Handle SQLite TEXT date field safely
+            String birthdayStr = rs.getString("birthday");
+            if (birthdayStr != null && !birthdayStr.trim().isEmpty()) {
+                try {
+                    LocalDate birthday = LocalDate.parse(birthdayStr.trim(), DATE_FORMATTER);
+                    employee.setBirthday(birthday);
+                } catch (DateTimeParseException e) {
+                    try {
+                        LocalDate birthday = LocalDate.parse(birthdayStr.trim());
+                        employee.setBirthday(birthday);
+                    } catch (DateTimeParseException e2) {
+                        System.out.println("Could not parse birthday: " + birthdayStr + " for employee: " + employee.getEmployeeId());
+                        // Continue without setting birthday
+                    }
+                }
+            }
+            
+            employee.setAddress(rs.getString("address"));
+            employee.setPhoneNumber(rs.getString("phone_number"));
+            employee.setStatus(rs.getString("status"));
+            employee.setPosition(rs.getString("position"));
+            employee.setDepartment(rs.getString("department"));
+            employee.setSupervisor(rs.getString("supervisor"));
+            employee.setBasicSalary(rs.getDouble("basic_salary"));
+            employee.setHourlyRate(rs.getDouble("hourly_rate"));
+            
+            // Set username from user table (this column comes from the JOIN)
+            try {
+                String username = rs.getString("username");
+                employee.setUsername(username);
+            } catch (SQLException e) {
+                // Username column might not exist in some queries, that's okay
+                System.out.println("Username column not available in result set");
+            }
+            
+            return employee;
+        } catch (SQLException e) {
+            System.out.println("Error mapping employee with user details result set: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
