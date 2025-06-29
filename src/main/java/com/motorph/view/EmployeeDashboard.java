@@ -270,43 +270,52 @@ public class EmployeeDashboard extends JFrame {
     }
 
     private void loadEmployeeDetails() {
-        System.out.println("Loading employee details for username: " + username);
+        System.out.println("EmployeeDashboard: Loading employee details for username: " + username);
+        
+        // Use the new method that joins user and employee tables
         loggedInEmployee = employeeService.getEmployeeByUsername(username);
         
         if (loggedInEmployee == null) {
-            JOptionPane.showMessageDialog(this, "Error: Employee not found in the database.", "Error", JOptionPane.ERROR_MESSAGE);
-            System.out.println("Employee not found for username: " + username);
+            System.out.println("EmployeeDashboard: Employee not found for username: " + username);
+            JOptionPane.showMessageDialog(this, 
+                "Error: Employee not found for username '" + username + "'.\n" +
+                "Please check if the user account is properly linked to an employee record.", 
+                "Employee Not Found", 
+                JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        System.out.println("Employee found: " + loggedInEmployee.getEmployeeId());
-        lblEmployeeId.setText(loggedInEmployee.getEmployeeId());
-        lblFullName.setText(loggedInEmployee.getFullName());
+        System.out.println("EmployeeDashboard: Employee found: " + loggedInEmployee.getEmployeeId() + 
+                         " - " + loggedInEmployee.getFullName());
+        
+        // Update UI with employee details
+        lblEmployeeId.setText(loggedInEmployee.getEmployeeId() != null ? loggedInEmployee.getEmployeeId() : "N/A");
+        lblFullName.setText(loggedInEmployee.getFullName() != null ? loggedInEmployee.getFullName() : "N/A");
         lblBirthday.setText(loggedInEmployee.getBirthday() != null ? loggedInEmployee.getBirthday().toString() : "N/A");
-        lblAddress.setText(loggedInEmployee.getAddress());
-        lblPhone.setText(loggedInEmployee.getPhoneNumber());
-        lblStatus.setText(loggedInEmployee.getStatus());
-        lblPosition.setText(loggedInEmployee.getPosition());
-        lblDepartment.setText(loggedInEmployee.getDepartment());
-        lblSupervisor.setText(loggedInEmployee.getSupervisor());
-        lblBasicSalary.setText(String.valueOf(loggedInEmployee.getBasicSalary()));
-        lblHourlyRate.setText(String.valueOf(loggedInEmployee.getHourlyRate()));
+        lblAddress.setText(loggedInEmployee.getAddress() != null ? loggedInEmployee.getAddress() : "N/A");
+        lblPhone.setText(loggedInEmployee.getPhoneNumber() != null ? loggedInEmployee.getPhoneNumber() : "N/A");
+        lblStatus.setText(loggedInEmployee.getStatus() != null ? loggedInEmployee.getStatus() : "N/A");
+        lblPosition.setText(loggedInEmployee.getPosition() != null ? loggedInEmployee.getPosition() : "N/A");
+        lblDepartment.setText(loggedInEmployee.getDepartment() != null ? loggedInEmployee.getDepartment() : "N/A");
+        lblSupervisor.setText(loggedInEmployee.getSupervisor() != null ? loggedInEmployee.getSupervisor() : "N/A");
+        lblBasicSalary.setText(String.format("%.2f", loggedInEmployee.getBasicSalary()));
+        lblHourlyRate.setText(String.format("%.2f", loggedInEmployee.getHourlyRate()));
     }
 
     private void loadLeaveData() {
-        System.out.println("Loading leave data...");
+        System.out.println("EmployeeDashboard: Loading leave data...");
         
         if (loggedInEmployee == null) {
-            System.out.println("Cannot load leave data: loggedInEmployee is null");
+            System.out.println("EmployeeDashboard: Cannot load leave data: loggedInEmployee is null");
             JOptionPane.showMessageDialog(this, "Employee information not loaded. Please restart the application.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
-        System.out.println("Loading leave data for employee ID: " + loggedInEmployee.getEmployeeId());
+        System.out.println("EmployeeDashboard: Loading leave data for employee ID: " + loggedInEmployee.getEmployeeId());
         
         try {
             List<LeaveRequest> leaveRequests = leaveRequestService.getLeaveRequestsByEmployeeId(loggedInEmployee.getEmployeeId());
-            System.out.println("Retrieved " + leaveRequests.size() + " leave requests");
+            System.out.println("EmployeeDashboard: Retrieved " + leaveRequests.size() + " leave requests");
             
             String[] columnNames = {"ID", "Employee ID", "Leave Type", "Start Date", "End Date", "Status"};
             DefaultTableModel model = new DefaultTableModel(columnNames, 0);
@@ -321,18 +330,18 @@ public class EmployeeDashboard extends JFrame {
                     leave.getStatus()
                 };
                 model.addRow(row);
-                System.out.println("Added leave request: " + leave.getId());
+                System.out.println("EmployeeDashboard: Added leave request: " + leave.getId());
             }
             
             leaveTable.setModel(model);
-            System.out.println("Leave table model updated with " + model.getRowCount() + " rows");
+            System.out.println("EmployeeDashboard: Leave table model updated with " + model.getRowCount() + " rows");
             
             // Force table to repaint
             leaveTable.revalidate();
             leaveTable.repaint();
             
         } catch (Exception e) {
-            System.out.println("Error loading leave data: " + e.getMessage());
+            System.out.println("EmployeeDashboard: Error loading leave data: " + e.getMessage());
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error loading leave data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -381,7 +390,7 @@ public class EmployeeDashboard extends JFrame {
             LocalDate startDate = LocalDate.parse(startDateStr);
             LocalDate endDate = LocalDate.parse(endDateStr);
             
-            System.out.println("Submitting leave request for employee: " + loggedInEmployee.getEmployeeId());
+            System.out.println("EmployeeDashboard: Submitting leave request for employee: " + loggedInEmployee.getEmployeeId());
             
             boolean success = leaveRequestService.submitLeaveRequest(
                 loggedInEmployee.getEmployeeId(), leaveType, startDate, endDate
@@ -396,7 +405,7 @@ public class EmployeeDashboard extends JFrame {
                 JOptionPane.showMessageDialog(this, "Error submitting leave request.", "Database Error", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
-            System.out.println("Error submitting leave request: " + e.getMessage());
+            System.out.println("EmployeeDashboard: Error submitting leave request: " + e.getMessage());
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
         }

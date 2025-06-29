@@ -35,7 +35,7 @@ public class HRManagerDashboard extends JFrame {
         
         // Load data after UI is initialized
         SwingUtilities.invokeLater(() -> {
-            System.out.println("Loading initial data for HR Manager Dashboard...");
+            System.out.println("HRManagerDashboard: Loading initial data...");
             loadEmployeeData();
             loadLeaveData();
         });
@@ -114,14 +114,14 @@ public class HRManagerDashboard extends JFrame {
         panel.setBackground(Color.WHITE);
         
         // Add title
-        JLabel titleLabel = new JLabel("Employee List", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Employee List with User Details", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Arial Rounded MT Bold", Font.BOLD, 18));
         titleLabel.setForeground(new Color(102, 0, 102));
         titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         panel.add(titleLabel, BorderLayout.NORTH);
         
-        // Create table with proper model
-        String[] columnNames = {"Employee ID", "Last Name", "First Name", "Birthday", 
+        // Create table with proper model including username
+        String[] columnNames = {"Employee ID", "Username", "Last Name", "First Name", "Birthday", 
                                "Address", "Phone", "Status", "Position", "Department", 
                                "Supervisor", "Basic Salary", "Hourly Rate"};
         
@@ -153,7 +153,7 @@ public class HRManagerDashboard extends JFrame {
         btnRefresh.setBackground(new Color(102, 0, 102));
         btnRefresh.setForeground(Color.WHITE);
         btnRefresh.addActionListener(e -> {
-            System.out.println("Manually refreshing employee data...");
+            System.out.println("HRManagerDashboard: Manually refreshing employee data...");
             loadEmployeeData();
         });
         buttonPanel.add(btnRefresh);
@@ -384,22 +384,23 @@ public class HRManagerDashboard extends JFrame {
         // Refresh data when showing panels
         switch (panelName) {
             case "employees" -> {
-                System.out.println("Showing employees panel, loading data...");
+                System.out.println("HRManagerDashboard: Showing employees panel, loading data...");
                 loadEmployeeData();
             }
             case "leave_requests" -> {
-                System.out.println("Showing leave requests panel, loading data...");
+                System.out.println("HRManagerDashboard: Showing leave requests panel, loading data...");
                 loadLeaveData();
             }
         }
     }
 
     private void loadEmployeeData() {
-        System.out.println("Starting to load employee data...");
+        System.out.println("HRManagerDashboard: Starting to load employee data with user details...");
         
         try {
-            List<Employee> employees = employeeService.getAllEmployees();
-            System.out.println("Retrieved " + employees.size() + " employees from service");
+            // Use the new method that includes user details
+            List<Employee> employees = employeeService.getAllEmployeesWithUserDetails();
+            System.out.println("HRManagerDashboard: Retrieved " + employees.size() + " employees from service");
             
             DefaultTableModel model = (DefaultTableModel) employeeTable.getModel();
             model.setRowCount(0); // Clear existing data
@@ -407,6 +408,7 @@ public class HRManagerDashboard extends JFrame {
             for (Employee emp : employees) {
                 Object[] row = {
                     emp.getEmployeeId() != null ? emp.getEmployeeId() : "N/A",
+                    emp.getUsername() != null ? emp.getUsername() : "N/A", // Username from user table
                     emp.getLastName() != null ? emp.getLastName() : "N/A",
                     emp.getFirstName() != null ? emp.getFirstName() : "N/A",
                     emp.getBirthday() != null ? emp.getBirthday().toString() : "N/A",
@@ -420,17 +422,18 @@ public class HRManagerDashboard extends JFrame {
                     String.format("%.2f", emp.getHourlyRate())
                 };
                 model.addRow(row);
-                System.out.println("Added employee: " + emp.getEmployeeId() + " - " + emp.getFullName());
+                System.out.println("HRManagerDashboard: Added employee: " + emp.getEmployeeId() + 
+                                 " - " + emp.getFullName() + " (username: " + emp.getUsername() + ")");
             }
             
-            System.out.println("Employee table updated with " + model.getRowCount() + " rows");
+            System.out.println("HRManagerDashboard: Employee table updated with " + model.getRowCount() + " rows");
             
             // Force table to refresh
             employeeTable.revalidate();
             employeeTable.repaint();
             
         } catch (Exception e) {
-            System.out.println("Error loading employee data: " + e.getMessage());
+            System.out.println("HRManagerDashboard: Error loading employee data: " + e.getMessage());
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, 
                 "Error loading employee data: " + e.getMessage(), 
@@ -440,11 +443,11 @@ public class HRManagerDashboard extends JFrame {
     }
 
     private void loadLeaveData() {
-        System.out.println("Starting to load leave data...");
+        System.out.println("HRManagerDashboard: Starting to load leave data...");
         
         try {
             List<LeaveRequest> leaveRequests = leaveRequestService.getAllLeaveRequests();
-            System.out.println("Retrieved " + leaveRequests.size() + " leave requests from service");
+            System.out.println("HRManagerDashboard: Retrieved " + leaveRequests.size() + " leave requests from service");
             
             DefaultTableModel model = (DefaultTableModel) leaveTable.getModel();
             model.setRowCount(0); // Clear existing data
@@ -459,17 +462,17 @@ public class HRManagerDashboard extends JFrame {
                     leave.getStatus() != null ? leave.getStatus() : "N/A"
                 };
                 model.addRow(row);
-                System.out.println("Added leave request: " + leave.getId());
+                System.out.println("HRManagerDashboard: Added leave request: " + leave.getId());
             }
             
-            System.out.println("Leave table updated with " + model.getRowCount() + " rows");
+            System.out.println("HRManagerDashboard: Leave table updated with " + model.getRowCount() + " rows");
             
             // Force table to refresh
             leaveTable.revalidate();
             leaveTable.repaint();
             
         } catch (Exception e) {
-            System.out.println("Error loading leave data: " + e.getMessage());
+            System.out.println("HRManagerDashboard: Error loading leave data: " + e.getMessage());
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, 
                 "Error loading leave data: " + e.getMessage(), 
@@ -548,7 +551,7 @@ public class HRManagerDashboard extends JFrame {
                     JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
-            System.out.println("Error creating employee: " + e.getMessage());
+            System.out.println("HRManagerDashboard: Error creating employee: " + e.getMessage());
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, 
                 "Error creating employee: " + e.getMessage(), 

@@ -19,12 +19,30 @@ public class EmployeeService {
         return employeeDAO.getAllEmployees();
     }
     
+    public List<Employee> getAllEmployeesWithUserDetails() {
+        return employeeDAO.getAllEmployeesWithUserDetails();
+    }
+    
     public Employee getEmployeeById(String employeeId) {
         return employeeDAO.getEmployeeById(employeeId);
     }
     
     public Employee getEmployeeByUsername(String username) {
-        return employeeDAO.getEmployeeByUsername(username);
+        System.out.println("EmployeeService: Looking up employee by username: " + username);
+        Employee employee = employeeDAO.getEmployeeByUsername(username);
+        
+        if (employee == null) {
+            System.out.println("EmployeeService: No employee found for username: " + username);
+        } else {
+            System.out.println("EmployeeService: Found employee: " + employee.getEmployeeId() + " - " + employee.getFullName());
+        }
+        
+        return employee;
+    }
+    
+    public Employee getEmployeeWithUserDetails(String username) {
+        System.out.println("EmployeeService: Getting employee with user details for username: " + username);
+        return employeeDAO.getEmployeeWithUserDetails(username);
     }
     
     public boolean createEmployee(Employee employee, String password, String role) {

@@ -63,7 +63,15 @@ public class EmployeeDAO {
     }
     
     public Employee getEmployeeByUsername(String username) {
-        String sql = "SELECT * FROM employee WHERE username = ?";
+        // Join user and employee tables to get employee data by username
+        String sql = """
+            SELECT e.* 
+            FROM employee e 
+            INNER JOIN user u ON e.employee_id = u.id 
+            WHERE u.username = ?
+            """;
+        
+        System.out.println("EmployeeDAO: Looking up employee by username: " + username);
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -72,13 +80,99 @@ public class EmployeeDAO {
             ResultSet rs = pstmt.executeQuery();
             
             if (rs.next()) {
-                return mapResultSetToEmployee(rs);
+                Employee employee = mapResultSetToEmployee(rs);
+                System.out.println("EmployeeDAO: Found employee for username '" + username + "': " + 
+                                 (employee != null ? employee.getEmployeeId() : "null"));
+                return employee;
+            } else {
+                System.out.println("EmployeeDAO: No employee found for username: " + username);
             }
         } catch (SQLException e) {
-            System.out.println("Error retrieving employee by username: " + e.getMessage());
+            System.out.println("EmployeeDAO: Error retrieving employee by username: " + e.getMessage());
+            e.printStackTrace();
         }
         
         return null;
+    }
+    
+    public Employee getEmployeeWithUserDetails(String username) {
+        // Get both employee and user details in one query
+        String sql = """
+            SELECT e.*, u.username, u.role 
+            FROM employee e 
+            INNER JOIN user u ON e.employee_id = u.id 
+            WHERE u.username = ?
+            """;
+        
+        System.out.println("EmployeeDAO: Getting employee with user details for username: " + username);
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                Employee employee = mapResultSetToEmployee(rs);
+                if (employee != null) {
+                    // Set the username from the user table
+                    employee.setUsername(rs.getString("username"));
+                    System.out.println("EmployeeDAO: Successfully loaded employee with user details: " + 
+                                     employee.getEmployeeId() + " (" + employee.getUsername() + ")");
+                }
+                return employee;
+            } else {
+                System.out.println("EmployeeDAO: No employee found with user details for username: " + username);
+            }
+        } catch (SQLException e) {
+            System.out.println("EmployeeDAO: Error retrieving employee with user details: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return null;
+    }
+    
+    public List<Employee> getAllEmployeesWithUserDetails() {
+        List<Employee> employees = new ArrayList<>();
+        // Join employee and user tables to get complete information
+        String sql = """
+            SELECT e.*, u.username, u.role 
+            FROM employee e 
+            LEFT JOIN user u ON e.employee_id = u.id 
+            ORDER BY e.employee_id
+            """;
+        
+        System.out.println("EmployeeDAO: Executing query to get all employees with user details");
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            
+            System.out.println("EmployeeDAO: Query executed successfully");
+            
+            while (rs.next()) {
+                Employee employee = mapResultSetToEmployee(rs);
+                if (employee != null) {
+                    // Set username from user table if available
+                    String username = rs.getString("username");
+                    if (username != null) {
+                        employee.setUsername(username);
+                    }
+                    employees.add(employee);
+                    System.out.println("EmployeeDAO: Mapped employee with user details: " + 
+                                     employee.getEmployeeId() + " - " + employee.getFullName() + 
+                                     " (username: " + employee.getUsername() + ")");
+                }
+            }
+            
+            System.out.println("EmployeeDAO: Retrieved " + employees.size() + " employees with user details");
+            
+        } catch (SQLException e) {
+            System.out.println("EmployeeDAO: Error retrieving employees with user details: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return employees;
     }
     
     public boolean createEmployee(Employee employee) {
