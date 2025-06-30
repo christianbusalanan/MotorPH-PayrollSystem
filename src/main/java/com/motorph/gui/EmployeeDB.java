@@ -466,7 +466,6 @@ public class EmployeeDB extends javax.swing.JFrame {
         payrollPanel.add(jLabel28, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 80, 20));
 
         lblPayrollId.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        lblPayrollId.setText("payroll_id");
         payrollPanel.add(lblPayrollId, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 20, 310, 20));
 
         btnGeneratePayslip.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
