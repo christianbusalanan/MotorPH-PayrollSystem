@@ -165,8 +165,8 @@ public class HRManagerDB extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         comboLeaveStatus = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
-        txtLeaveId = new javax.swing.JTextField();
         updateLeave = new javax.swing.JButton();
+        lblLeaveId = new javax.swing.JLabel();
         employee_details = new javax.swing.JPanel();
         label2 = new java.awt.Label();
         label3 = new java.awt.Label();
@@ -294,6 +294,11 @@ public class HRManagerDB extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        leaveTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                leaveTableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(leaveTable);
 
         leavePanel.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, 720, 360));
@@ -309,9 +314,6 @@ public class HRManagerDB extends javax.swing.JFrame {
         jLabel3.setText("ID");
         leavePanel.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 60, 30));
 
-        txtLeaveId.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        leavePanel.add(txtLeaveId, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 10, 320, 30));
-
         updateLeave.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 14)); // NOI18N
         updateLeave.setText("Update Leave Request");
         updateLeave.addActionListener(new java.awt.event.ActionListener() {
@@ -320,6 +322,7 @@ public class HRManagerDB extends javax.swing.JFrame {
             }
         });
         leavePanel.add(updateLeave, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 10, 200, 30));
+        leavePanel.add(lblLeaveId, new org.netbeans.lib.awtextra.AbsoluteConstraints(77, 10, 290, 30));
 
         parentPanel.add(leavePanel, "card4");
 
@@ -738,7 +741,7 @@ public class HRManagerDB extends javax.swing.JFrame {
 
     private void updateLeaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateLeaveActionPerformed
         // TODO add your handling code here:
-        String leaveId = txtLeaveId.getText().trim();
+        String leaveId = lblLeaveId.getText().trim();
         String status = (String) comboLeaveStatus.getSelectedItem();
         
         if (leaveId.isEmpty()) {
@@ -751,7 +754,7 @@ public class HRManagerDB extends javax.swing.JFrame {
         if (success) {
             JOptionPane.showMessageDialog(this, "Leave request updated successfully!");
             loadLeaveData();
-            txtLeaveId.setText("");
+            lblLeaveId.setText("");
         } else {
             JOptionPane.showMessageDialog(this, "Error updating leave request.", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -803,6 +806,20 @@ public class HRManagerDB extends javax.swing.JFrame {
         parentPanel.repaint();
         parentPanel.revalidate();
     }//GEN-LAST:event_btnAttendanceActionPerformed
+
+    private void leaveTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_leaveTableMouseClicked
+        // TODO add your handling code here:
+        int selectedRow = leaveTable.getSelectedRow();
+        if (selectedRow >= 0) {
+            Object payrollIdObject = leaveTable.getModel().getValueAt(selectedRow, 0);
+            if (payrollIdObject != null) {
+                String payrollId = payrollIdObject.toString();
+                lblLeaveId.setText(payrollId);
+            } else {
+                lblLeaveId.setText("N/A");
+            }
+        }
+    }//GEN-LAST:event_leaveTableMouseClicked
 
     /**
      * @param args the command line arguments
@@ -882,6 +899,7 @@ public class HRManagerDB extends javax.swing.JFrame {
     private java.awt.Label label7;
     private java.awt.Label label8;
     private java.awt.Label label9;
+    private javax.swing.JLabel lblLeaveId;
     private javax.swing.JPanel leavePanel;
     private javax.swing.JTable leaveTable;
     private javax.swing.JButton logout;
@@ -893,7 +911,6 @@ public class HRManagerDB extends javax.swing.JFrame {
     private javax.swing.JTextField txtEmployeeId;
     private javax.swing.JTextField txtFirstName;
     private javax.swing.JTextField txtLastName;
-    private javax.swing.JTextField txtLeaveId;
     private javax.swing.JTextField txtPassword;
     private javax.swing.JTextField txtPhoneNumber;
     private javax.swing.JTextField txtSalary;
