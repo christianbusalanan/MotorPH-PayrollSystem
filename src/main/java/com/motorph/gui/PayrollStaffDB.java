@@ -4,6 +4,7 @@
  */
 package com.motorph.gui;
 
+import com.motorph.dao.AttendanceDAO;
 import com.motorph.model.Employee;
 import com.motorph.model.Payroll;
 import com.motorph.service.EmployeeService;
@@ -23,15 +24,18 @@ import java.util.List;
 public class PayrollStaffDB extends javax.swing.JFrame {
     private final EmployeeService employeeService;
     private final PayrollService payrollService;
+    private final AttendanceDAO attendanceDAO;
     /**
      * Creates new form PayrollStaffDB
      */
     public PayrollStaffDB() {
         this.employeeService = new EmployeeService();
         this.payrollService = new PayrollService();
+        this.attendanceDAO = new AttendanceDAO();
         initComponents();
         loadEmployeeData();
         loadPayrollData();
+        loadAttendanceData();
         setLocationRelativeTo(null);
         
     }
@@ -77,6 +81,42 @@ public class PayrollStaffDB extends javax.swing.JFrame {
         }
         
         payrollTable.setModel(model);
+    }
+   
+   private void loadAttendanceData() {
+        
+        try {
+            List<AttendanceDAO.AttendanceWithEmployee> attendanceRecords = attendanceDAO.getAllAttendanceWithEmployeeDetails();
+            
+            
+            DefaultTableModel model = (DefaultTableModel) attendanceTable.getModel();
+            model.setRowCount(0); // Clear existing data
+            
+            for (AttendanceDAO.AttendanceWithEmployee attendance : attendanceRecords) {
+                Object[] row = {
+                    attendance.getEmployeeId() != null ? attendance.getEmployeeId() : "N/A",
+                    attendance.getLastName() != null ? attendance.getLastName() : "N/A",
+                    attendance.getFirstName() != null ? attendance.getFirstName() : "N/A",
+                    attendance.getDate() != null ? attendance.getDate().toString() : "N/A",
+                    attendance.getTimeIn() != null ? attendance.getTimeIn().toString() : "0:00",
+                    attendance.getTimeOut() != null ? attendance.getTimeOut().toString() : "0:00"
+                };
+                model.addRow(row);
+               
+            }
+            
+            // Force table to refresh
+            attendanceTable.revalidate();
+            attendanceTable.repaint();
+            
+        } catch (Exception e) {
+            System.out.println("HRManagerDashboard: Error loading attendance data: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, 
+                "Error loading attendance data: " + e.getMessage(), 
+                "Database Error", 
+                JOptionPane.ERROR_MESSAGE);
+        }
     }
    
    private void clearFields() {
@@ -153,7 +193,7 @@ public class PayrollStaffDB extends javax.swing.JFrame {
         lblPhone = new java.awt.Label();
         lblHoursWorked = new java.awt.Label();
         panelAttendance = new javax.swing.JScrollPane();
-        attendance_data = new javax.swing.JTable();
+        attendanceTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PAYROLL DASHBOARD");
@@ -402,18 +442,18 @@ public class PayrollStaffDB extends javax.swing.JFrame {
 
         parentPanel.add(processPayrollPanel, "card3");
 
-        attendance_data.setModel(new javax.swing.table.DefaultTableModel(
+        attendanceTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "Last Name", "First Name", "Date", "Time-in", "Time-out"
+                "Employee ID", "Last Name", "First Name", "Date", "Time-in", "Time-out"
             }
         ));
-        panelAttendance.setViewportView(attendance_data);
+        panelAttendance.setViewportView(attendanceTable);
 
         parentPanel.add(panelAttendance, "card5");
 
@@ -572,14 +612,14 @@ public class PayrollStaffDB extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PayrollStaffDashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PayrollStaffDB.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
-        java.awt.EventQueue.invokeLater(() -> new PayrollStaffDashboard().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new PayrollStaffDB().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable attendance_data;
+    private javax.swing.JTable attendanceTable;
     private javax.swing.JButton btnAttendance;
     private javax.swing.JButton btnCalculate;
     private javax.swing.JButton btnPP;

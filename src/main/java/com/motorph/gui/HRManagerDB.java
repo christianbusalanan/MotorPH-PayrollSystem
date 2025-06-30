@@ -85,7 +85,6 @@ public class HRManagerDB extends javax.swing.JFrame {
     }
     
     private void loadAttendanceData() {
-        System.out.println("HRManagerDashboard: Starting to load attendance data with employee details...");
         
         try {
             List<AttendanceWithEmployee> attendanceRecords = attendanceDAO.getAllAttendanceWithEmployeeDetails();
@@ -842,10 +841,10 @@ public class HRManagerDB extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(HRManagerDashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(HRManagerDB.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
-        java.awt.EventQueue.invokeLater(() -> new HRManagerDashboard().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new HRManagerDB().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

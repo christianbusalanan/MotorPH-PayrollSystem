@@ -618,10 +618,10 @@ public class EmployeeDB extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(EmployeeDashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EmployeeDB.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
-        java.awt.EventQueue.invokeLater(() -> new EmployeeDashboard("testuser").setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new EmployeeDB("testuser").setVisible(true));
     }
     
 
