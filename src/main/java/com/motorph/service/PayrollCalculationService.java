@@ -51,40 +51,47 @@ public class PayrollCalculationService {
     }
     
     public double calculatePhilhealthContribution(double salary) {
-        return salary * 0.015;
+        double philhealth =  salary * 0.015;
+        return Math.round(philhealth * 100.0) / 100.0;
     }
     
     public double calculatePagibigContribution(double monthlySalary) {
-        if (monthlySalary >= 1000 && monthlySalary <= 1500) {
-            return 0.01 * monthlySalary;
-        } else if (monthlySalary > 1500) {
-            return 0.02 * monthlySalary;
-        } else {
-            return 0.00; // Below 1,000, no contribution
-        }
+    double contribution;
+    if (monthlySalary >= 1000 && monthlySalary <= 1500) {
+        contribution = 0.01 * monthlySalary;
+    } else if (monthlySalary > 1500) {
+        contribution = 0.02 * monthlySalary;
+    } else {
+        contribution = 0.00; // Below 1,000, no contribution
     }
-    
+    return Math.round(contribution * 100.0) / 100.0;
+}
+
     public double calculateWithholdingTax(double monthlySalary) {
+        double tax;
         if (monthlySalary <= 20832) {
-            return 0.0; // No tax
+            tax = 0.0;
         } else if (monthlySalary < 33333) {
-            return (monthlySalary - 20833) * 0.20;
+            tax = (monthlySalary - 20833) * 0.20;
         } else if (monthlySalary < 66667) {
-            return 2500 + (monthlySalary - 33333) * 0.25;
+            tax = 2500 + (monthlySalary - 33333) * 0.25;
         } else if (monthlySalary < 166667) {
-            return 10833 + (monthlySalary - 66667) * 0.30;
+            tax = 10833 + (monthlySalary - 66667) * 0.30;
         } else if (monthlySalary < 666667) {
-            return 40833.33 + (monthlySalary - 166667) * 0.32;
+            tax = 40833.33 + (monthlySalary - 166667) * 0.32;
         } else {
-            return 200833.33 + (monthlySalary - 666667) * 0.35;
+            tax = 200833.33 + (monthlySalary - 666667) * 0.35;
         }
+        return Math.round(tax * 100.0) / 100.0;
     }
     
     public double calculateGrossIncome(double hourlyRate, double hoursWorked) {
-        return hourlyRate * hoursWorked;
+        double gross = hourlyRate * hoursWorked;
+        return Math.round(gross * 100.0) / 100.0;
     }
     
     public double calculateNetSalary(double grossIncome, double totalDeductions, double totalBenefits) {
-        return grossIncome + totalBenefits - totalDeductions;
+        double netSalary=  grossIncome + totalBenefits - totalDeductions;
+        return Math.round(netSalary * 100.0) / 100.0;
     }
 }

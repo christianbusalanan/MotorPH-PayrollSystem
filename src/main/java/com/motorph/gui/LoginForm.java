@@ -1,6 +1,7 @@
 package com.motorph.gui;
 
 import com.motorph.controller.LoginController;
+import java.awt.Image;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -84,6 +85,9 @@ public class LoginForm extends JFrame {
         JLabel jLabel4 = new JLabel();
         jLabel4.setIcon(new ImageIcon(getClass().getResource("/com/background.jpg")));
         getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 960, 500));
+        
+        ImageIcon icon = new ImageIcon(getClass().getResource("/com/logo.png"));
+        setIconImage(icon.getImage());
 
         pack();
     }
@@ -109,7 +113,7 @@ public class LoginForm extends JFrame {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-
+        
         java.awt.EventQueue.invokeLater(() -> new LoginForm().setVisible(true));
     }
 }

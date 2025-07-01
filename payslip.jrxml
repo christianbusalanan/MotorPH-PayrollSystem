@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.20.6.final using JasperReports Library version 6.20.6-5c96b6aa8a39ac1dc6b6bea4b81168e16dd39231  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Invoice" pageWidth="595" pageHeight="750" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter (4)"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50" isBold="false" pdfFontName="Times-Bold"/>
 	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18" isBold="false" pdfFontName="Times-Roman"/>
 	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14" isBold="true"/>
@@ -61,6 +70,8 @@
 	<parameter name="payroll_id" class="java.lang.String">
 		<defaultValueExpression><![CDATA[$P{payroll_id}]]></defaultValueExpression>
 	</parameter>
+	<parameter name="Parameter1" class="java.lang.String"/>
+	<parameter name="logo" class="java.io.InputStream"/>
 	<queryString language="SQL">
 		<![CDATA[SELECT 
 	p.payroll_id,
@@ -225,7 +236,7 @@ WHERE p.payroll_id = $P{payroll_id}]]>
 				<textElement textAlignment="Right"/>
 				<text><![CDATA[Date:]]></text>
 			</staticText>
-			<textField pattern="EEEEE dd MMMMM yyyy">
+			<textField pattern="yyyy-MM-dd">
 				<reportElement x="465" y="10" width="84" height="20" uuid="bb10dbe1-0a4f-4722-9953-c163b63cf979"/>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
@@ -287,6 +298,10 @@ WHERE p.payroll_id = $P{payroll_id}]]>
 				<reportElement x="0" y="115" width="80" height="15" uuid="7c850248-a5ca-4a59-8831-413ef6c65b11"/>
 				<text><![CDATA[Payroll ID:]]></text>
 			</staticText>
+			<image>
+				<reportElement x="0" y="10" width="80" height="70" uuid="0b82e626-8d50-44af-9cc4-6e99985946ab"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<columnHeader>
@@ -319,15 +334,15 @@ WHERE p.payroll_id = $P{payroll_id}]]>
 				<reportElement x="0" y="70" width="80" height="15" uuid="0b621edb-c902-48ae-8049-ef5076739eb6"/>
 				<text><![CDATA[Hours Worked:]]></text>
 			</staticText>
-			<textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
 				<reportElement x="80" y="40" width="200" height="14" uuid="a4f2de77-c092-4da1-bab5-5fe6ed4865bb"/>
 				<textFieldExpression><![CDATA[$F{basic_salary}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
 				<reportElement x="80" y="55" width="200" height="14" uuid="27da8312-843f-41e4-a959-a55abce130ab"/>
 				<textFieldExpression><![CDATA[$F{hourly_rate}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
 				<reportElement x="80" y="70" width="200" height="14" uuid="4ee6c630-1374-41e8-a4aa-19fd696f84b8"/>
 				<textFieldExpression><![CDATA[$F{working_hours}]]></textFieldExpression>
 			</textField>
@@ -335,7 +350,7 @@ WHERE p.payroll_id = $P{payroll_id}]]>
 				<reportElement x="0" y="85" width="80" height="15" uuid="29b28869-51a8-4770-b938-041577e804e1"/>
 				<text><![CDATA[Gross Income]]></text>
 			</staticText>
-			<textField>
+			<textField pattern="#,##0.###;#,##0.###-" isBlankWhenNull="false">
 				<reportElement x="80" y="85" width="200" height="14" uuid="92066109-c3c6-458f-a031-42c6c24f5cb5"/>
 				<textFieldExpression><![CDATA[$F{gross_income}]]></textFieldExpression>
 			</textField>
@@ -367,15 +382,15 @@ WHERE p.payroll_id = $P{payroll_id}]]>
 				<reportElement x="0" y="195" width="80" height="15" uuid="3e4c6ae4-d546-4bd9-9ad4-0bc99d5b55b5"/>
 				<text><![CDATA[PAGIBIG]]></text>
 			</staticText>
-			<textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
 				<reportElement x="80" y="165" width="200" height="14" uuid="438dbf87-2c13-433d-b2c2-ef90c94ea54b"/>
 				<textFieldExpression><![CDATA[$F{sss_contribution}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
 				<reportElement x="80" y="180" width="200" height="14" uuid="8786ffc9-ffe4-45f6-ab7f-6f554561de9f"/>
 				<textFieldExpression><![CDATA[$F{philhealth_contribution}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
 				<reportElement x="80" y="195" width="200" height="14" uuid="dda43186-902c-4015-8fa8-2e00b20cd80e"/>
 				<textFieldExpression><![CDATA[$F{pagibig_contribution}]]></textFieldExpression>
 			</textField>
@@ -387,11 +402,11 @@ WHERE p.payroll_id = $P{payroll_id}]]>
 				<reportElement x="0" y="225" width="80" height="15" uuid="769bdc0b-9768-42b4-8a88-ce9456091161"/>
 				<text><![CDATA[Total Deductions:]]></text>
 			</staticText>
-			<textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
 				<reportElement x="80" y="210" width="200" height="14" uuid="13a3c7f4-5f33-415d-8c86-eb7505fb1475"/>
 				<textFieldExpression><![CDATA[$F{witholding_tax}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
 				<reportElement x="80" y="225" width="200" height="14" uuid="a5640d3d-0106-401f-820a-50f5cd33e71f"/>
 				<textFieldExpression><![CDATA[$F{total_deductions}]]></textFieldExpression>
 			</textField>
@@ -423,15 +438,15 @@ WHERE p.payroll_id = $P{payroll_id}]]>
 				<reportElement x="0" y="335" width="80" height="15" uuid="433120fa-4d6b-4640-a028-11a5ce9dfee4"/>
 				<text><![CDATA[Clothing:]]></text>
 			</staticText>
-			<textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
 				<reportElement x="80" y="305" width="200" height="14" uuid="d149ed15-7df8-47fd-a5b4-5c0b860ee1ab"/>
 				<textFieldExpression><![CDATA[$F{rice_subsidy}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
 				<reportElement x="80" y="320" width="200" height="14" uuid="4ddfe535-c148-4ffa-918b-aba7092b2385"/>
 				<textFieldExpression><![CDATA[$F{phone_allowance}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
 				<reportElement x="80" y="335" width="200" height="14" uuid="85ccde08-5ab9-475e-9f8b-2638cf209cd0"/>
 				<textFieldExpression><![CDATA[$F{clothing_allowance}]]></textFieldExpression>
 			</textField>
@@ -439,14 +454,14 @@ WHERE p.payroll_id = $P{payroll_id}]]>
 				<reportElement x="0" y="350" width="80" height="15" uuid="b99e1e1e-cb53-4aa0-983f-bd0b92264525"/>
 				<text><![CDATA[Total Benefits:]]></text>
 			</staticText>
-			<textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
 				<reportElement x="80" y="350" width="200" height="14" uuid="e70a0bff-0683-41a9-ba39-591cd8f9f97e"/>
 				<textFieldExpression><![CDATA[$F{total_benefits}]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="116">
+		<band height="101">
 			<line>
 				<reportElement x="0" y="0" width="556" height="1" uuid="2cd6b61d-19a8-40a8-af4d-ba627a120d77">
 					<property name="local_mesure_unitheight" value="pixel"/>
@@ -475,15 +490,15 @@ WHERE p.payroll_id = $P{payroll_id}]]>
 				<reportElement x="0" y="70" width="80" height="15" uuid="64548b6d-7df4-4490-b5e0-95dbaad5090c"/>
 				<text><![CDATA[Deductions:]]></text>
 			</staticText>
-			<textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
 				<reportElement x="80" y="40" width="200" height="14" uuid="52cf3b03-0a1a-4b69-bb2f-04631da36e8a"/>
 				<textFieldExpression><![CDATA[$F{gross_income}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
 				<reportElement x="80" y="55" width="200" height="14" uuid="34861474-30f3-45a1-b6f1-43921fca4b89"/>
 				<textFieldExpression><![CDATA[$F{total_benefits}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
 				<reportElement x="80" y="70" width="200" height="14" uuid="f5c03ed1-77ec-4d0d-9575-d76772990238"/>
 				<textFieldExpression><![CDATA[$F{total_deductions}]]></textFieldExpression>
 			</textField>
@@ -491,7 +506,7 @@ WHERE p.payroll_id = $P{payroll_id}]]>
 				<reportElement x="0" y="85" width="80" height="15" uuid="fc2a2568-8729-48f8-b48d-437c9417c5bc"/>
 				<text><![CDATA[Net Pay:]]></text>
 			</staticText>
-			<textField>
+			<textField pattern="#,##0.00#;#,##0.00#-">
 				<reportElement x="80" y="85" width="200" height="14" uuid="b41608b9-116b-45c0-ba7c-3ee7f7b585f4"/>
 				<textFieldExpression><![CDATA[$F{net_salary}]]></textFieldExpression>
 			</textField>
