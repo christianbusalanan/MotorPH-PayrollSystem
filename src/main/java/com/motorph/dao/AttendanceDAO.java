@@ -38,34 +38,30 @@ public class AttendanceDAO {
     
     public List<AttendanceWithEmployee> getAllAttendanceWithEmployeeDetails() {
         List<AttendanceWithEmployee> attendanceList = new ArrayList<>();
-        String sql = """
-            SELECT a.employee_id, e.last_name, e.first_name, a.date, a.time_in, a.time_out
-            FROM attendance a
-            INNER JOIN employee e ON a.employee_id = e.employee_id
-            ORDER BY a.date DESC, a.employee_id
-            """;
+        // Use the AttendanceView instead of JOIN query
+        String sql = "SELECT employee_id, last_name, first_name, date, time_in, time_out FROM AttendanceView ORDER BY date DESC, employee_id";
         
-        System.out.println("AttendanceDAO: Executing query to get attendance with employee details");
+        System.out.println("AttendanceDAO: Executing query to get attendance from AttendanceView");
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
             
             while (rs.next()) {
-                AttendanceWithEmployee attendance = mapResultSetToAttendanceWithEmployee(rs);
+                AttendanceWithEmployee attendance = mapResultSetToAttendanceView(rs);
                 if (attendance != null) {
                     attendanceList.add(attendance);
-                    System.out.println("AttendanceDAO: Mapped attendance for " + 
+                    System.out.println("AttendanceDAO: Mapped attendance from view for " + 
                                      attendance.getEmployeeId() + " - " + 
                                      attendance.getFirstName() + " " + attendance.getLastName() + 
                                      " on " + attendance.getDate());
                 }
             }
             
-            System.out.println("AttendanceDAO: Retrieved " + attendanceList.size() + " attendance records with employee details");
+            System.out.println("AttendanceDAO: Retrieved " + attendanceList.size() + " attendance records from AttendanceView");
             
         } catch (SQLException e) {
-            System.out.println("AttendanceDAO: Error retrieving attendance with employee details: " + e.getMessage());
+            System.out.println("AttendanceDAO: Error retrieving attendance from AttendanceView: " + e.getMessage());
             e.printStackTrace();
         }
         
@@ -74,15 +70,10 @@ public class AttendanceDAO {
     
     public List<AttendanceWithEmployee> getAttendanceWithEmployeeDetailsByEmployeeId(String employeeId) {
         List<AttendanceWithEmployee> attendanceList = new ArrayList<>();
-        String sql = """
-            SELECT a.employee_id, e.last_name, e.first_name, a.date, a.time_in, a.time_out
-            FROM attendance a
-            INNER JOIN employee e ON a.employee_id = e.employee_id
-            WHERE a.employee_id = ?
-            ORDER BY a.date DESC
-            """;
+        // Use the AttendanceView instead of JOIN query
+        String sql = "SELECT employee_id, last_name, first_name, date, time_in, time_out FROM AttendanceView WHERE employee_id = ? ORDER BY date DESC";
         
-        System.out.println("AttendanceDAO: Getting attendance with employee details for employee: " + employeeId);
+        System.out.println("AttendanceDAO: Getting attendance from AttendanceView for employee: " + employeeId);
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -91,17 +82,17 @@ public class AttendanceDAO {
             ResultSet rs = pstmt.executeQuery();
             
             while (rs.next()) {
-                AttendanceWithEmployee attendance = mapResultSetToAttendanceWithEmployee(rs);
+                AttendanceWithEmployee attendance = mapResultSetToAttendanceView(rs);
                 if (attendance != null) {
                     attendanceList.add(attendance);
                 }
             }
             
             System.out.println("AttendanceDAO: Retrieved " + attendanceList.size() + 
-                             " attendance records for employee: " + employeeId);
+                             " attendance records from AttendanceView for employee: " + employeeId);
             
         } catch (SQLException e) {
-            System.out.println("AttendanceDAO: Error retrieving attendance for employee: " + e.getMessage());
+            System.out.println("AttendanceDAO: Error retrieving attendance from AttendanceView for employee: " + e.getMessage());
             e.printStackTrace();
         }
         
@@ -191,7 +182,8 @@ public class AttendanceDAO {
         }
     }
     
-    private AttendanceWithEmployee mapResultSetToAttendanceWithEmployee(ResultSet rs) {
+    // New mapping method specifically for AttendanceView
+    private AttendanceWithEmployee mapResultSetToAttendanceView(ResultSet rs) {
         try {
             AttendanceWithEmployee attendance = new AttendanceWithEmployee();
             attendance.setEmployeeId(rs.getString("employee_id"));
@@ -209,7 +201,7 @@ public class AttendanceDAO {
                         LocalDate date = LocalDate.parse(dateStr.trim());
                         attendance.setDate(date);
                     } catch (DateTimeParseException e2) {
-                        System.out.println("Could not parse attendance date: " + dateStr);
+                        System.out.println("Could not parse attendance date from view: " + dateStr);
                         return null;
                     }
                 }
@@ -228,7 +220,7 @@ public class AttendanceDAO {
                         LocalTime timeIn = LocalTime.parse(timeInStr.trim());
                         attendance.setTimeIn(timeIn);
                     } catch (DateTimeParseException e2) {
-                        System.out.println("Could not parse time in: " + timeInStr);
+                        System.out.println("Could not parse time in from view: " + timeInStr);
                     }
                 }
             }
@@ -242,14 +234,14 @@ public class AttendanceDAO {
                         LocalTime timeOut = LocalTime.parse(timeOutStr.trim());
                         attendance.setTimeOut(timeOut);
                     } catch (DateTimeParseException e2) {
-                        System.out.println("Could not parse time out: " + timeOutStr);
+                        System.out.println("Could not parse time out from view: " + timeOutStr);
                     }
                 }
             }
             
             return attendance;
         } catch (SQLException e) {
-            System.out.println("Error mapping attendance with employee result set: " + e.getMessage());
+            System.out.println("Error mapping attendance view result set: " + e.getMessage());
             return null;
         }
     }

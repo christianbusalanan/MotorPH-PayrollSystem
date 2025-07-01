@@ -1,6 +1,7 @@
 package com.motorph.service;
 
 import com.motorph.dao.LeaveRequestDAO;
+import com.motorph.dao.LeaveRequestDAO.LeaveRequestWithEmployee;
 import com.motorph.model.LeaveRequest;
 import java.time.LocalDate;
 import java.util.List;
@@ -14,6 +15,10 @@ public class LeaveRequestService {
     
     public List<LeaveRequest> getAllLeaveRequests() {
         return leaveRequestDAO.getAllLeaveRequests();
+    }
+    
+    public List<LeaveRequestWithEmployee> getAllLeaveRequestsWithEmployeeDetails() {
+        return leaveRequestDAO.getAllLeaveRequestsWithEmployeeDetails();
     }
     
     public List<LeaveRequest> getLeaveRequestsByEmployeeId(String employeeId) {

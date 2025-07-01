@@ -11,6 +11,7 @@ import com.motorph.service.EmployeeService;
 import com.motorph.service.LeaveRequestService;
 import com.motorph.dao.AttendanceDAO;
 import com.motorph.dao.AttendanceDAO.AttendanceWithEmployee;
+import com.motorph.dao.LeaveRequestDAO.LeaveRequestWithEmployee;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -68,15 +69,16 @@ public class HRManagerDB extends javax.swing.JFrame {
     }
    
     private void loadLeaveData() {
-        List<LeaveRequest> leaveRequests = leaveRequestService.getAllLeaveRequests();
-        String[] columnNames = {"ID", "Employee ID", "Leave Type", "Start Date", "End Date", "Status"};
+        // Use the new method that gets data from LeaveView
+        List<LeaveRequestWithEmployee> leaveRequests = leaveRequestService.getAllLeaveRequestsWithEmployeeDetails();
+        String[] columnNames = {"ID", "Employee ID", "Employee Name", "Leave Type", "Start Date", "End Date", "Status"};
         
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         
-        for (LeaveRequest leave : leaveRequests) {
+        for (LeaveRequestWithEmployee leave : leaveRequests) {
             Object[] row = {
-                leave.getId(), leave.getEmployeeId(), leave.getLeaveType(),
-                leave.getStartDate(), leave.getEndDate(), leave.getStatus()
+                leave.getId(), leave.getEmployeeId(), leave.getEmployeeName(), 
+                leave.getLeaveType(), leave.getStartDate(), leave.getEndDate(), leave.getStatus()
             };
             model.addRow(row);
         }
@@ -87,8 +89,9 @@ public class HRManagerDB extends javax.swing.JFrame {
     private void loadAttendanceData() {
         
         try {
+            // Use the updated method that gets data from AttendanceView
             List<AttendanceWithEmployee> attendanceRecords = attendanceDAO.getAllAttendanceWithEmployeeDetails();
-            System.out.println("HRManagerDashboard: Retrieved " + attendanceRecords.size() + " attendance records with employee details");
+            System.out.println("HRManagerDashboard: Retrieved " + attendanceRecords.size() + " attendance records from AttendanceView");
             
             DefaultTableModel model = (DefaultTableModel) attendanceTable.getModel();
             model.setRowCount(0); // Clear existing data
@@ -103,22 +106,22 @@ public class HRManagerDB extends javax.swing.JFrame {
                     attendance.getTimeOut() != null ? attendance.getTimeOut().toString() : "0:00"
                 };
                 model.addRow(row);
-                System.out.println("HRManagerDashboard: Added attendance record for " + 
+                System.out.println("HRManagerDashboard: Added attendance record from view for " + 
                                  attendance.getEmployeeId() + " - " + attendance.getFullName() + 
                                  " on " + attendance.getDate());
             }
             
-            System.out.println("HRManagerDashboard: Attendance table updated with " + model.getRowCount() + " rows");
+            System.out.println("HRManagerDashboard: Attendance table updated with " + model.getRowCount() + " rows from AttendanceView");
             
             // Force table to refresh
             attendanceTable.revalidate();
             attendanceTable.repaint();
             
         } catch (Exception e) {
-            System.out.println("HRManagerDashboard: Error loading attendance data: " + e.getMessage());
+            System.out.println("HRManagerDashboard: Error loading attendance data from AttendanceView: " + e.getMessage());
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, 
-                "Error loading attendance data: " + e.getMessage(), 
+                "Error loading attendance data from AttendanceView: " + e.getMessage(), 
                 "Database Error", 
                 JOptionPane.ERROR_MESSAGE);
         }
@@ -277,17 +280,17 @@ public class HRManagerDB extends javax.swing.JFrame {
 
         leaveTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Date", "Employee ID", "Description", "Leave Date", "Status"
+                "ID", "Employee ID", "Employee Name", "Leave Type", "Start Date", "End Date", "Status"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                true, false, false, false, false, false
+                true, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
