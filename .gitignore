@@ -1,5 +1,6 @@
-# /target
-*.log
-*.class
-.DS_Store
-target/
+# Ignore all .jar files inside target/
+target/*.jar
+
+# But include everything else inside target/
+!target/
+!target/**/*
