@@ -1,0 +1,495 @@
+@startuml MotorPH_Payroll_System_Class_Diagram
+
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 10
+skinparam packageStyle rectangle
+
+title MotorPH Payroll System - Class Diagram
+
+package "Model Layer" {
+    class User {
+        -String id
+        -String username
+        -String password
+        -String role
+        +User()
+        +User(id, username, password, role)
+        +getId() : String
+        +setId(String) : void
+        +getUsername() : String
+        +setUsername(String) : void
+        +getPassword() : String
+        +setPassword(String) : void
+        +getRole() : String
+        +setRole(String) : void
+        +toString() : String
+    }
+
+    class Employee {
+        -String employeeId
+        -String lastName
+        -String firstName
+        -String username
+        -LocalDate birthday
+        -String address
+        -String phoneNumber
+        -String status
+        -String position
+        -String department
+        -String supervisor
+        -double basicSalary
+        -double hourlyRate
+        +Employee()
+        +Employee(employeeId, lastName, firstName, username, birthday, address, phoneNumber, status, position, department, supervisor, basicSalary, hourlyRate)
+        +getEmployeeId() : String
+        +setEmployeeId(String) : void
+        +getLastName() : String
+        +setLastName(String) : void
+        +getFirstName() : String
+        +setFirstName(String) : void
+        +getUsername() : String
+        +setUsername(String) : void
+        +getBirthday() : LocalDate
+        +setBirthday(LocalDate) : void
+        +getAddress() : String
+        +setAddress(String) : void
+        +getPhoneNumber() : String
+        +setPhoneNumber(String) : void
+        +getStatus() : String
+        +setStatus(String) : void
+        +getPosition() : String
+        +setPosition(String) : void
+        +getDepartment() : String
+        +setDepartment(String) : void
+        +getSupervisor() : String
+        +setSupervisor(String) : void
+        +getBasicSalary() : double
+        +setBasicSalary(double) : void
+        +getHourlyRate() : double
+        +setHourlyRate(double) : void
+        +getFullName() : String
+        +toString() : String
+    }
+
+    class LeaveRequest {
+        -String id
+        -String employeeId
+        -String leaveType
+        -LocalDate startDate
+        -LocalDate endDate
+        -String status
+        +LeaveRequest()
+        +LeaveRequest(id, employeeId, leaveType, startDate, endDate, status)
+        +getId() : String
+        +setId(String) : void
+        +getEmployeeId() : String
+        +setEmployeeId(String) : void
+        +getLeaveType() : String
+        +setLeaveType(String) : void
+        +getStartDate() : LocalDate
+        +setStartDate(LocalDate) : void
+        +getEndDate() : LocalDate
+        +setEndDate(LocalDate) : void
+        +getStatus() : String
+        +setStatus(String) : void
+        +toString() : String
+    }
+
+    class Attendance {
+        -String employeeId
+        -LocalDate date
+        -LocalTime timeIn
+        -LocalTime timeOut
+        +Attendance()
+        +Attendance(employeeId, date, timeIn, timeOut)
+        +getEmployeeId() : String
+        +setEmployeeId(String) : void
+        +getDate() : LocalDate
+        +setDate(LocalDate) : void
+        +getTimeIn() : LocalTime
+        +setTimeIn(LocalTime) : void
+        +getTimeOut() : LocalTime
+        +setTimeOut(LocalTime) : void
+        +getHoursWorked() : double
+        +toString() : String
+    }
+
+    class Payroll {
+        -String payrollId
+        -String employeeId
+        -LocalDate periodStart
+        -LocalDate periodEnd
+        -double workingHours
+        -double sssContribution
+        -double philhealthContribution
+        -double pagibigContribution
+        -double withholdingTax
+        -double riceSubsidy
+        -double phoneAllowance
+        -double clothingAllowance
+        +Payroll()
+        +Payroll(payrollId, employeeId, periodStart, periodEnd, workingHours, sssContribution, philhealthContribution, pagibigContribution, withholdingTax, riceSubsidy, phoneAllowance, clothingAllowance)
+        +getPayrollId() : String
+        +setPayrollId(String) : void
+        +getEmployeeId() : String
+        +setEmployeeId(String) : void
+        +getPeriodStart() : LocalDate
+        +setPeriodStart(LocalDate) : void
+        +getPeriodEnd() : LocalDate
+        +setPeriodEnd(LocalDate) : void
+        +getWorkingHours() : double
+        +setWorkingHours(double) : void
+        +getSssContribution() : double
+        +setSssContribution(double) : void
+        +getPhilhealthContribution() : double
+        +setPhilhealthContribution(double) : void
+        +getPagibigContribution() : double
+        +setPagibigContribution(double) : void
+        +getWithholdingTax() : double
+        +setWithholdingTax(double) : void
+        +getRiceSubsidy() : double
+        +setRiceSubsidy(double) : void
+        +getPhoneAllowance() : double
+        +setPhoneAllowance(double) : void
+        +getClothingAllowance() : double
+        +setClothingAllowance(double) : void
+        +getGrossIncome(double) : double
+        +getTotalDeductions() : double
+        +getTotalBenefits() : double
+        +getNetSalary(double) : double
+        +toString() : String
+    }
+
+    class Benefits {
+        -String position
+        -double riceSubsidy
+        -double phoneAllowance
+        -double clothingAllowance
+        +Benefits()
+        +Benefits(position, riceSubsidy, phoneAllowance, clothingAllowance)
+        +getPosition() : String
+        +setPosition(String) : void
+        +getRiceSubsidy() : double
+        +setRiceSubsidy(double) : void
+        +getPhoneAllowance() : double
+        +setPhoneAllowance(double) : void
+        +getClothingAllowance() : double
+        +setClothingAllowance(double) : void
+        +getTotalBenefits() : double
+        +toString() : String
+    }
+}
+
+package "Data Access Layer (DAO)" {
+    class DatabaseConnection {
+        -{static} String URL
+        -{static} Connection connection
+        -DatabaseConnection()
+        +{static} getConnection() : Connection
+        +{static} closeConnection() : void
+        -{static} testDatabaseConnection() : void
+    }
+
+    class UserDAO {
+        +UserDAO()
+        +authenticateUser(String, String) : User
+        +createUser(User) : boolean
+        +deleteUser(String) : boolean
+    }
+
+    class EmployeeDAO {
+        +EmployeeDAO()
+        +getAllEmployees() : List<Employee>
+        +getEmployeeById(String) : Employee
+        +getEmployeeByUsername(String) : Employee
+        +getEmployeeWithUserDetails(String) : Employee
+        +getAllEmployeesWithUserDetails() : List<Employee>
+        +createEmployee(Employee) : boolean
+        +updateEmployee(Employee) : boolean
+        +deleteEmployee(String) : boolean
+        -mapResultSetToEmployee(ResultSet) : Employee
+        -mapResultSetToEmployeeWithUserDetails(ResultSet) : Employee
+    }
+
+    class LeaveRequestDAO {
+        +LeaveRequestDAO()
+        +getAllLeaveRequests() : List<LeaveRequest>
+        +getAllLeaveRequestsWithEmployeeDetails() : List<LeaveRequestWithEmployee>
+        +getLeaveRequestsByEmployeeId(String) : List<LeaveRequest>
+        +createLeaveRequest(LeaveRequest) : boolean
+        +updateLeaveRequestStatus(String, String) : boolean
+        -mapResultSetToLeaveRequest(ResultSet) : LeaveRequest
+        -mapResultSetToLeaveView(ResultSet) : LeaveRequestWithEmployee
+    }
+
+    class "LeaveRequestDAO.LeaveRequestWithEmployee" as LeaveRequestWithEmployee {
+        -String id
+        -String employeeId
+        -String employeeName
+        -String leaveType
+        -LocalDate startDate
+        -LocalDate endDate
+        -String status
+        +getId() : String
+        +setId(String) : void
+        +getEmployeeId() : String
+        +setEmployeeId(String) : void
+        +getEmployeeName() : String
+        +setEmployeeName(String) : void
+        +getLeaveType() : String
+        +setLeaveType(String) : void
+        +getStartDate() : LocalDate
+        +setStartDate(LocalDate) : void
+        +getEndDate() : LocalDate
+        +setEndDate(LocalDate) : void
+        +getStatus() : String
+        +setStatus(String) : void
+    }
+
+    class AttendanceDAO {
+        +AttendanceDAO()
+        +getAllAttendance() : List<Attendance>
+        +getAllAttendanceWithEmployeeDetails() : List<AttendanceWithEmployee>
+        +getAttendanceWithEmployeeDetailsByEmployeeId(String) : List<AttendanceWithEmployee>
+        +getTotalHoursWorked(String, LocalDate, LocalDate) : double
+        -mapResultSetToAttendance(ResultSet) : Attendance
+        -mapResultSetToAttendanceView(ResultSet) : AttendanceWithEmployee
+    }
+
+    class "AttendanceDAO.AttendanceWithEmployee" as AttendanceWithEmployee {
+        -String employeeId
+        -String lastName
+        -String firstName
+        -LocalDate date
+        -LocalTime timeIn
+        -LocalTime timeOut
+        +getEmployeeId() : String
+        +setEmployeeId(String) : void
+        +getLastName() : String
+        +setLastName(String) : void
+        +getFirstName() : String
+        +setFirstName(String) : void
+        +getDate() : LocalDate
+        +setDate(LocalDate) : void
+        +getTimeIn() : LocalTime
+        +setTimeIn(LocalTime) : void
+        +getTimeOut() : LocalTime
+        +setTimeOut(LocalTime) : void
+        +getHoursWorked() : double
+        +getFullName() : String
+    }
+
+    class PayrollDAO {
+        +PayrollDAO()
+        +getAllPayrolls() : List<Payroll>
+        +getPayrollsByEmployeeId(String) : List<Payroll>
+        +createPayroll(Payroll) : boolean
+        -mapResultSetToPayroll(ResultSet) : Payroll
+    }
+
+    class BenefitsDAO {
+        +BenefitsDAO()
+        +getBenefitsByPosition(String) : Benefits
+    }
+}
+
+package "Service Layer" {
+    class AuthenticationService {
+        -UserDAO userDAO
+        +AuthenticationService()
+        +authenticateUser(String, String) : User
+        +isValidRole(String) : boolean
+    }
+
+    class EmployeeService {
+        -EmployeeDAO employeeDAO
+        -UserDAO userDAO
+        +EmployeeService()
+        +getAllEmployees() : List<Employee>
+        +getAllEmployeesWithUserDetails() : List<Employee>
+        +getEmployeeById(String) : Employee
+        +getEmployeeByUsername(String) : Employee
+        +getEmployeeWithUserDetails(String) : Employee
+        +createEmployee(Employee, String, String) : boolean
+        +updateEmployee(Employee) : boolean
+        +deleteEmployee(String) : boolean
+        +isValidEmployeeId(String) : boolean
+        +getEmployeeFullName(String) : String
+    }
+
+    class LeaveRequestService {
+        -LeaveRequestDAO leaveRequestDAO
+        +LeaveRequestService()
+        +getAllLeaveRequests() : List<LeaveRequest>
+        +getAllLeaveRequestsWithEmployeeDetails() : List<LeaveRequestWithEmployee>
+        +getLeaveRequestsByEmployeeId(String) : List<LeaveRequest>
+        +submitLeaveRequest(String, String, LocalDate, LocalDate) : boolean
+        +updateLeaveRequestStatus(String, String) : boolean
+        -isValidLeaveRequest(String, String, LocalDate, LocalDate) : boolean
+        -isValidStatus(String) : boolean
+        -generateLeaveId(String, LocalDate, LocalDate) : String
+    }
+
+    class PayrollCalculationService {
+        +PayrollCalculationService()
+        +calculateSSSContribution(double) : double
+        +calculatePhilhealthContribution(double) : double
+        +calculatePagibigContribution(double) : double
+        +calculateWithholdingTax(double) : double
+        +calculateGrossIncome(double, double) : double
+        +calculateNetSalary(double, double, double) : double
+    }
+
+    class PayrollService {
+        -PayrollDAO payrollDAO
+        -AttendanceDAO attendanceDAO
+        -BenefitsDAO benefitsDAO
+        -PayrollCalculationService calculationService
+        -EmployeeService employeeService
+        +PayrollService()
+        +getAllPayrolls() : List<Payroll>
+        +getPayrollsByEmployeeId(String) : List<Payroll>
+        +calculatePayroll(String, LocalDate, LocalDate) : Payroll
+        +processPayroll(Payroll) : boolean
+        -generatePayrollId(String, LocalDate, LocalDate) : String
+    }
+
+    class ReportService {
+        +ReportService()
+        +generatePayslip(String) : void
+    }
+}
+
+package "Controller Layer" {
+    class LoginController {
+        -AuthenticationService authService
+        +LoginController()
+        +handleLogin(String, String, JFrame) : void
+    }
+}
+
+package "Presentation Layer (GUI)" {
+    class LoginForm {
+        -JTextField txtUsername
+        -JPasswordField txtPassword
+        -JButton btnLogin
+        -LoginController loginController
+        +LoginForm()
+        -initComponents() : void
+        -btnLoginActionPerformed(ActionEvent) : void
+        +{static} main(String[]) : void
+    }
+
+    class HRManagerDB {
+        -EmployeeService employeeService
+        -LeaveRequestService leaveRequestService
+        -AttendanceDAO attendanceDAO
+        +HRManagerDB()
+        -loadEmployeeData() : void
+        -loadLeaveData() : void
+        -loadAttendanceData() : void
+        -clearEmployeeFields() : void
+        +{static} main(String[]) : void
+    }
+
+    class EmployeeDB {
+        -String username
+        -EmployeeService employeeService
+        -LeaveRequestService leaveRequestService
+        -PayrollService payrollService
+        -ReportService reportService
+        -Employee loggedInEmployee
+        +EmployeeDB(String)
+        -loadEmployeeDetails() : void
+        -loadLeaveData() : void
+        -loadPayrollData() : void
+        +{static} main(String[]) : void
+    }
+
+    class PayrollStaffDB {
+        -EmployeeService employeeService
+        -PayrollService payrollService
+        -AttendanceDAO attendanceDAO
+        +PayrollStaffDB()
+        -loadEmployeeData() : void
+        -loadPayrollData() : void
+        -loadAttendanceData() : void
+        -clearFields() : void
+        +{static} main(String[]) : void
+    }
+}
+
+' Relationships between Model classes
+User ||--|| Employee : "1:1 (employee_id = id)"
+Employee ||--o{ LeaveRequest : "1:many"
+Employee ||--o{ Attendance : "1:many"
+Employee ||--o{ Payroll : "1:many"
+Employee }o--|| Benefits : "many:1 (position)"
+
+' DAO Dependencies on DatabaseConnection
+UserDAO --> DatabaseConnection : uses
+EmployeeDAO --> DatabaseConnection : uses
+LeaveRequestDAO --> DatabaseConnection : uses
+AttendanceDAO --> DatabaseConnection : uses
+PayrollDAO --> DatabaseConnection : uses
+BenefitsDAO --> DatabaseConnection : uses
+
+' Inner Classes
+LeaveRequestDAO +-- LeaveRequestWithEmployee : inner class
+AttendanceDAO +-- AttendanceWithEmployee : inner class
+
+' Service Dependencies on DAOs
+AuthenticationService --> UserDAO : uses
+EmployeeService --> EmployeeDAO : uses
+EmployeeService --> UserDAO : uses
+LeaveRequestService --> LeaveRequestDAO : uses
+PayrollService --> PayrollDAO : uses
+PayrollService --> AttendanceDAO : uses
+PayrollService --> BenefitsDAO : uses
+PayrollService --> PayrollCalculationService : uses
+PayrollService --> EmployeeService : uses
+
+' Controller Dependencies
+LoginController --> AuthenticationService : uses
+
+' GUI Dependencies
+LoginForm --> LoginController : uses
+HRManagerDB --> EmployeeService : uses
+HRManagerDB --> LeaveRequestService : uses
+HRManagerDB --> AttendanceDAO : uses
+EmployeeDB --> EmployeeService : uses
+EmployeeDB --> LeaveRequestService : uses
+EmployeeDB --> PayrollService : uses
+EmployeeDB --> ReportService : uses
+PayrollStaffDB --> EmployeeService : uses
+PayrollStaffDB --> PayrollService : uses
+PayrollStaffDB --> AttendanceDAO : uses
+
+' Model Usage (creates/returns)
+UserDAO ..> User : creates/returns
+EmployeeDAO ..> Employee : creates/returns
+LeaveRequestDAO ..> LeaveRequest : creates/returns
+LeaveRequestDAO ..> LeaveRequestWithEmployee : creates/returns
+AttendanceDAO ..> Attendance : creates/returns
+AttendanceDAO ..> AttendanceWithEmployee : creates/returns
+PayrollDAO ..> Payroll : creates/returns
+BenefitsDAO ..> Benefits : creates/returns
+
+AuthenticationService ..> User : returns
+EmployeeService ..> Employee : returns
+LeaveRequestService ..> LeaveRequest : returns
+LeaveRequestService ..> LeaveRequestWithEmployee : returns
+PayrollService ..> Payroll : returns
+
+' GUI Navigation
+LoginForm --> HRManagerDB : "HR Manager role"
+LoginForm --> EmployeeDB : "Employee role"
+LoginForm --> PayrollStaffDB : "Payroll Staff role"
+
+note top of User : "Normalized authentication\ntable separate from Employee"
+note top of Employee : "Main employee data\nwithout authentication info"
+note top of LeaveRequestWithEmployee : "View model for\nLeaveView database view"
+note top of AttendanceWithEmployee : "View model for\nAttendanceView database view"
+
+@enduml
