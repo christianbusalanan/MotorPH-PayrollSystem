@@ -1,4 +1,4 @@
-package Test;
+package com.motorph;
 
 import com.motorph.dao.UserDAO;
 import com.motorph.service.AuthenticationService;

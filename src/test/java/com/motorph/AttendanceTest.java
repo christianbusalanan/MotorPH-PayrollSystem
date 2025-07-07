@@ -1,4 +1,4 @@
-package Test;
+package com.motorph;
 
 import com.motorph.model.Attendance;
 import org.junit.jupiter.api.BeforeEach;

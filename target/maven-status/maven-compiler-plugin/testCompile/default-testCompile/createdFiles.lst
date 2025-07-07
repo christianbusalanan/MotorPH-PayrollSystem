@@ -1,0 +1,9 @@
+com\motorph\AuthenticationServiceTest.class
+com\motorph\PayrollIntegrationTest.class
+com\motorph\AttendanceTest.class
+com\motorph\EmployeeTest.class
+com\motorph\PayrollCalculationServiceTest.class
+com\motorph\PayrollTest.class
+com\motorph\LeaveRequestTest.class
+com\motorph\UserTest.class
+com\motorph\BenefitsTest.class
