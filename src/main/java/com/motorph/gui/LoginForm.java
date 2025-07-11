@@ -83,10 +83,10 @@ public class LoginForm extends JFrame {
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 80, 310, 310));
 
         JLabel jLabel4 = new JLabel();
-        jLabel4.setIcon(new ImageIcon(getClass().getResource("/com/background.jpg")));
+        jLabel4.setIcon(new ImageIcon(getClass().getResource("/images/background.jpg")));
         getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 960, 500));
         
-        ImageIcon icon = new ImageIcon(getClass().getResource("/com/logo.png"));
+        ImageIcon icon = new ImageIcon(getClass().getResource("/images/logo.png"));
         setIconImage(icon.getImage());
 
         pack();

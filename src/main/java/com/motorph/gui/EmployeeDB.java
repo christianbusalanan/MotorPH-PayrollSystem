@@ -221,7 +221,7 @@ public class EmployeeDB extends javax.swing.JFrame {
         });
         jPanel1.add(btnPayroll, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, 180, 40));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/background.jpg"))); // NOI18N
+        jLabel1.setIcon(new ImageIcon(getClass().getResource("/images/background.jpg")));
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 500));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 500));
