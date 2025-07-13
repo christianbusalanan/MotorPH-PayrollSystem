@@ -21,7 +21,7 @@ public class ReportService {
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("payroll_id", payrollId);
             
-            InputStream logoStream = getClass().getResourceAsStream("/com/logo.png");
+            InputStream logoStream = getClass().getResourceAsStream("/images/logo.png");
             parameters.put("logo", logoStream);
             
             Connection conn = DriverManager.getConnection("jdbc:sqlite:MotorPH Payroll System.db");
