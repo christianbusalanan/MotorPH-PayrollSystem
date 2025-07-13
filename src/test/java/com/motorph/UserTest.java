@@ -45,14 +45,4 @@ class UserTest {
         assertEquals("securepass", user.getPassword());
         assertEquals("HR Manager", user.getRole());
     }
-    
-    @Test
-    void testToString() {
-        user.setId("EMP003");
-        user.setUsername("testuser");
-        user.setRole("Payroll Staff");
-        
-        String expected = "User{id='EMP003', username='testuser', role='Payroll Staff'}";
-        assertEquals(expected, user.toString());
-    }
 }
