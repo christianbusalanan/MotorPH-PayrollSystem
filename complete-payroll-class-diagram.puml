@@ -1,0 +1,377 @@
+@startuml MotorPH_Payroll_System_Complete
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #333333
+skinparam arrowColor #666666
+
+' Define colors for different layers
+skinparam class {
+    BackgroundColor<<Model>> #E8F4FD
+    BackgroundColor<<DAO>> #FFF2CC
+    BackgroundColor<<Service>> #E1F5FE
+    BackgroundColor<<GUI>> #F3E5F5
+    BackgroundColor<<Controller>> #E8F5E8
+    BackgroundColor<<Interface>> #FFE0E0
+    BackgroundColor<<Factory>> #FFF8E1
+    BackgroundColor<<Test>> #F0F0F0
+}
+
+package "Interfaces Layer" {
+    interface Authenticatable <<Interface>> {
+        +authenticate(username, password): boolean
+        +isAuthorized(action): boolean
+        +logout(): void
+    }
+    
+    interface Payable <<Interface>> {
+        +calculateGrossPay(startDate, endDate): double
+        +calculateNetPay(startDate, endDate): double
+        +getHourlyRate(): double
+    }
+    
+    interface Manageable <<Interface>> {
+        +approveLeaveRequest(id): boolean
+        +rejectLeaveRequest(id): boolean
+        +getSubordinates(): List<Employee>
+    }
+    
+    interface Calculable <<Interface>> {
+        +calculate(): double
+        +isValid(): boolean
+    }
+}
+
+package "Model Layer" {
+    abstract class Person <<Model>> {
+        #id: String
+        #firstName: String
+        #lastName: String
+        #birthday: LocalDate
+        #address: String
+        #phoneNumber: String
+        +getFullName(): String
+        +getAge(): int
+        {abstract} +getRole(): String
+        {abstract} +getDisplayInfo(): String
+    }
+    
+    class Employee <<Model>> {
+        -username: String
+        -status: String
+        -position: String
+        -department: String
+        -supervisor: String
+        -basicSalary: double
+        -hourlyRate: double
+        -leaveRequests: List<LeaveRequest>
+        +calculateMonthlySalary(): double
+        +canTakeLeave(): boolean
+        +addLeaveRequest(): void
+    }
+    
+    class Manager <<Model>> {
+        -subordinates: List<Employee>
+        -managementBonus: double
+        +addSubordinate(): void
+        +getTeamSize(): int
+        +getTeamTotalSalary(): double
+    }
+    
+    class User <<Model>> {
+        -id: String
+        -username: String
+        -password: String
+        -role: String
+        -isLoggedIn: boolean
+        -loginAttempts: int
+        -employee: Employee
+        +hasRole(): boolean
+    }
+    
+    class Payroll <<Model>> {
+        -payrollId: String
+        -employeeId: String
+        -periodStart: LocalDate
+        -periodEnd: LocalDate
+        -workingHours: double
+        -sssContribution: double
+        -philhealthContribution: double
+        -pagibigContribution: double
+        -withholdingTax: double
+        -employee: Employee
+        +getGrossIncome(): double
+        +getTotalDeductions(): double
+        +getNetSalary(): double
+    }
+    
+    class LeaveRequest <<Model>> {
+        -id: String
+        -employeeId: String
+        -leaveType: String
+        -startDate: LocalDate
+        -endDate: LocalDate
+        -status: String
+    }
+    
+    class Attendance <<Model>> {
+        -employeeId: String
+        -date: LocalDate
+        -timeIn: LocalTime
+        -timeOut: LocalTime
+        +getHoursWorked(): double
+    }
+    
+    class Benefits <<Model>> {
+        -position: String
+        -riceSubsidy: double
+        -phoneAllowance: double
+        -clothingAllowance: double
+        +getTotalBenefits(): double
+    }
+}
+
+package "DAO Layer" {
+    class DatabaseConnection <<DAO>> {
+        -connection: Connection
+        +getConnection(): Connection
+        +closeConnection(): void
+    }
+    
+    class EmployeeDAO <<DAO>> {
+        +getAllEmployees(): List<Employee>
+        +getEmployeeById(id): Employee
+        +createEmployee(employee): boolean
+        +updateEmployee(employee): boolean
+        +deleteEmployee(id): boolean
+    }
+    
+    class UserDAO <<DAO>> {
+        +authenticateUser(username, password): User
+        +createUser(user): boolean
+        +deleteUser(id): boolean
+    }
+    
+    class PayrollDAO <<DAO>> {
+        +getAllPayrolls(): List<Payroll>
+        +createPayroll(payroll): boolean
+        +getPayrollsByEmployeeId(id): List<Payroll>
+    }
+    
+    class LeaveRequestDAO <<DAO>> {
+        +getAllLeaveRequests(): List<LeaveRequest>
+        +createLeaveRequest(request): boolean
+        +updateLeaveRequestStatus(id, status): boolean
+        +getLeaveRequestsByEmployeeId(id): List<LeaveRequest>
+    }
+    
+    class AttendanceDAO <<DAO>> {
+        +getAllAttendance(): List<Attendance>
+        +getTotalHoursWorked(id, start, end): double
+        +getAllAttendanceWithEmployeeDetails(): List<AttendanceWithEmployee>
+    }
+    
+    class BenefitsDAO <<DAO>> {
+        +getBenefitsByPosition(position): Benefits
+    }
+}
+
+package "Service Layer" {
+    class AuthenticationService <<Service>> {
+        -userDAO: UserDAO
+        +authenticateUser(username, password): User
+        +isValidRole(role): boolean
+    }
+    
+    class EmployeeService <<Service>> {
+        -employeeDAO: EmployeeDAO
+        -userDAO: UserDAO
+        +getAllEmployees(): List<Employee>
+        +createEmployee(employee, password, role): boolean
+        +updateEmployee(employee): boolean
+        +deleteEmployee(id): boolean
+        +getEmployeeByUsername(username): Employee
+    }
+    
+    class PayrollService <<Service>> {
+        -payrollDAO: PayrollDAO
+        -attendanceDAO: AttendanceDAO
+        -benefitsDAO: BenefitsDAO
+        -calculationService: PayrollCalculationService
+        +calculatePayroll(id, start, end): Payroll
+        +processPayroll(payroll): boolean
+        +getAllPayrolls(): List<Payroll>
+    }
+    
+    class PayrollCalculationService <<Service>> {
+        +calculateSSSContribution(salary): double
+        +calculatePhilhealthContribution(salary): double
+        +calculatePagibigContribution(salary): double
+        +calculateWithholdingTax(salary): double
+        +calculateGrossIncome(rate, hours): double
+        +calculateNetSalary(gross, deductions, benefits): double
+    }
+    
+    class LeaveRequestService <<Service>> {
+        -leaveRequestDAO: LeaveRequestDAO
+        +submitLeaveRequest(id, type, start, end): boolean
+        +updateLeaveRequestStatus(id, status): boolean
+        +getAllLeaveRequests(): List<LeaveRequest>
+        +getLeaveRequestsByEmployeeId(id): List<LeaveRequest>
+    }
+    
+    class ReportService <<Service>> {
+        +generatePayslip(payrollId): void
+    }
+}
+
+package "Controller Layer" {
+    class LoginController <<Controller>> {
+        -authService: AuthenticationService
+        +handleLogin(username, password, frame): void
+    }
+}
+
+package "GUI Layer" {
+    class LoginForm <<GUI>> {
+        -txtUsername: JTextField
+        -txtPassword: JPasswordField
+        -btnLogin: JButton
+        -loginController: LoginController
+        +btnLoginActionPerformed(): void
+    }
+    
+    class HRManagerDB <<GUI>> {
+        -employeeService: EmployeeService
+        -leaveRequestService: LeaveRequestService
+        -attendanceDAO: AttendanceDAO
+        +loadEmployeeData(): void
+        +loadLeaveData(): void
+        +loadAttendanceData(): void
+        +btncreateActionPerformed(): void
+        +btnupdateActionPerformed(): void
+        +btndeleteActionPerformed(): void
+    }
+    
+    class EmployeeDB <<GUI>> {
+        -username: String
+        -employeeService: EmployeeService
+        -leaveRequestService: LeaveRequestService
+        -payrollService: PayrollService
+        -loggedInEmployee: Employee
+        +loadEmployeeDetails(): void
+        +loadLeaveData(): void
+        +loadPayrollData(): void
+        +btnRequestLeaveProcessActionPerformed(): void
+    }
+    
+    class PayrollStaffDB <<GUI>> {
+        -employeeService: EmployeeService
+        -payrollService: PayrollService
+        -attendanceDAO: AttendanceDAO
+        +loadEmployeeData(): void
+        +loadPayrollData(): void
+        +loadAttendanceData(): void
+        +btnCalculateActionPerformed(): void
+        +btnPPActionPerformed(): void
+    }
+}
+
+package "Factory Layer" {
+    class EmployeeFactory <<Factory>> {
+        +createEmployee(...): Employee
+        +createDefaultEmployee(id, position): Employee
+        -isManagerialPosition(position): boolean
+    }
+}
+
+package "Test Layer" {
+    class UserTest <<Test>> {
+        +testDefaultConstructor(): void
+        +testParameterizedConstructor(): void
+        +testSettersAndGetters(): void
+    }
+    
+    class EmployeeTest <<Test>> {
+        +testDefaultConstructor(): void
+        +testGetFullName(): void
+        +testSettersAndGetters(): void
+    }
+    
+    class PayrollTest <<Test>> {
+        +testGetGrossIncome(): void
+        +testGetTotalDeductions(): void
+        +testGetNetSalary(): void
+    }
+    
+    class PayrollCalculationServiceTest <<Test>> {
+        +testCalculateSSSContribution(): void
+        +testCalculatePhilhealthContribution(): void
+        +testCalculateWithholdingTax(): void
+    }
+}
+
+' Inheritance relationships
+Person <|-- Employee
+Employee <|-- Manager
+
+' Interface implementations
+User ..|> Authenticatable
+Employee ..|> Payable
+Manager ..|> Manageable
+Payroll ..|> Calculable
+
+' Composition relationships
+Employee *-- LeaveRequest : contains
+Manager *-- Employee : manages
+Payroll *-- Employee : references
+User *-- Employee : has
+
+' Service dependencies
+AuthenticationService --> UserDAO
+EmployeeService --> EmployeeDAO
+EmployeeService --> UserDAO
+PayrollService --> PayrollDAO
+PayrollService --> AttendanceDAO
+PayrollService --> BenefitsDAO
+PayrollService --> PayrollCalculationService
+LeaveRequestService --> LeaveRequestDAO
+
+' DAO dependencies
+EmployeeDAO --> DatabaseConnection
+UserDAO --> DatabaseConnection
+PayrollDAO --> DatabaseConnection
+LeaveRequestDAO --> DatabaseConnection
+AttendanceDAO --> DatabaseConnection
+BenefitsDAO --> DatabaseConnection
+
+' Controller dependencies
+LoginController --> AuthenticationService
+
+' GUI dependencies
+LoginForm --> LoginController
+HRManagerDB --> EmployeeService
+HRManagerDB --> LeaveRequestService
+HRManagerDB --> AttendanceDAO
+EmployeeDB --> EmployeeService
+EmployeeDB --> LeaveRequestService
+EmployeeDB --> PayrollService
+PayrollStaffDB --> EmployeeService
+PayrollStaffDB --> PayrollService
+PayrollStaffDB --> AttendanceDAO
+
+' Factory usage
+EmployeeService --> EmployeeFactory
+
+' Test relationships
+UserTest ..> User : tests
+EmployeeTest ..> Employee : tests
+PayrollTest ..> Payroll : tests
+PayrollCalculationServiceTest ..> PayrollCalculationService : tests
+
+note top of Person : Abstract base class\nDemonstrates Abstraction\nand Inheritance
+note top of Authenticatable : Interface Segregation\nPrinciple applied
+note top of EmployeeFactory : Factory Pattern\nfor object creation
+note top of DatabaseConnection : Singleton Pattern\nfor DB connections
+
+@enduml
