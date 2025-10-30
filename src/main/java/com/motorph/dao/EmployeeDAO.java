@@ -15,7 +15,7 @@ public class EmployeeDAO {
     
     public List<Employee> getAllEmployees() {
         List<Employee> employees = new ArrayList<>();
-        String sql = "SELECT * FROM employee ORDER BY employee_id";
+        String sql = "SELECT * FROM employee_masked_view ORDER BY employee_id";
         
         System.out.println("EmployeeDAO: Executing query to get all employees");
         

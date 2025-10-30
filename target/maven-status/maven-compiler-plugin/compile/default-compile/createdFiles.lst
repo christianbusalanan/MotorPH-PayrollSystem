@@ -1,5 +1,6 @@
 com\motorph\gui\PayrollStaffDB$4.class
 com\motorph\gui\HRManagerDB$6.class
+com\motorph\interfaces\Manageable.class
 com\motorph\dao\AttendanceDAO.class
 com\motorph\dao\BenefitsDAO.class
 com\motorph\gui\HRManagerDB$16.class
@@ -8,6 +9,7 @@ com\motorph\gui\PayrollStaffDB.class
 com\motorph\gui\EmployeeDB$4.class
 com\motorph\gui\HRManagerDB$9.class
 com\motorph\gui\EmployeeDB$1.class
+com\motorph\interfaces\Calculable.class
 com\motorph\service\LeaveRequestService.class
 com\motorph\gui\LoginForm$1.class
 com\motorph\model\Attendance.class
@@ -20,11 +22,13 @@ com\motorph\gui\EmployeeDB$7.class
 com\motorph\dao\DatabaseConnection.class
 com\motorph\gui\EmployeeDB$3.class
 com\motorph\gui\HRManagerDB$15.class
+com\motorph\interfaces\Payable.class
 com\motorph\dao\LeaveRequestDAO.class
 com\motorph\dao\UserDAO.class
 com\motorph\gui\HRManagerDB$5.class
 com\motorph\gui\HRManagerDB$2.class
 com\motorph\gui\HRManagerDB$20.class
+com\motorph\interfaces\Authenticatable.class
 com\motorph\model\Employee.class
 com\motorph\gui\HRManagerDB$18.class
 com\motorph\controller\LoginController.class
@@ -39,12 +43,15 @@ com\motorph\gui\HRManagerDB$11.class
 com\motorph\gui\PayrollStaffDB$2.class
 com\motorph\gui\EmployeeDB$9.class
 com\motorph\gui\HRManagerDB$4.class
+com\motorph\model\Manager.class
+com\motorph\model\Person.class
 com\motorph\service\PayrollCalculationService.class
 com\motorph\gui\PayrollStaffDB$5.class
 com\motorph\gui\HRManagerDB$14.class
 com\motorph\model\Benefits.class
 com\motorph\service\AuthenticationService.class
 com\motorph\gui\HRManagerDB$1.class
+com\motorph\factory\EmployeeFactory.class
 com\motorph\model\Payroll.class
 com\motorph\gui\HRManagerDB$17.class
 com\motorph\gui\HRManagerDB$22.class
